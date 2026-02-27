@@ -40,21 +40,31 @@
             color: var(--mtu-gold);
         }
         .hero {
+            /* @ BEGIN SOLEIL ECTOR: Gives dimension to website with image background */
             /* background-color: white; */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('your-image.https://www.appily.com/sites/default/files/styles/max_2400/public/images/hero/college/171128_hero.jpg?itok=Gsi_HTy1');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.imgur.com/gtrm0XD.jpeg');
+            /* @ END SOLEIL ECTOR */
+
             padding: 4rem 5%;
             text-align: center;
             border-bottom: 4px solid var(--mtu-gold);
         }
         .hero h2 {
+            /* BEGIN @SOLEIL ECTOR: Makes text legible with image background */
+            color: white;
+            /* END @SOLEIL ECTOR */
+
             font-size: 2.5rem;
             margin-bottom: 1rem;
         }
         .hero p {
+            /* BEGIN @SOLEIL ECTOR: Makes text legible with image background */
+            color: #fff;
+            /* END @SOLEIL ECTOR */
+
             font-size: 1.2rem;
             max-width: 800px;
             margin: 0 auto 2rem auto;
-            color: #666;
         }
         .search-bar {
             display: flex;
@@ -69,6 +79,13 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 1rem;
+            color:white;
+        }
+        .search-bar input::placeholder {
+            /* BEGIN @SOLEIL ECTOR: should make the placeholder text work */
+            color:white; 
+            font-style: italic;
+            /* END @SOLEIL ECTOR  */
         }
         .search-bar button {
             padding: 15px 30px;
