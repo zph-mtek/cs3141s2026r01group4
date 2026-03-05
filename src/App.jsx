@@ -8,13 +8,11 @@ import Properties from './pages/Properties'
 import PropertiesInfo from './pages/PropertiesInfo'
 import Navbar from './components/Navbar'
 
-
-
-
 const App = () => {
   return (
     <div>
       <Navbar/>
+      {/* CREATE NAVIGIBLE PAGE PATHS HERE */}
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<Login/>}/>
