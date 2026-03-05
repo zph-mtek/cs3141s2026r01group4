@@ -1,5 +1,5 @@
-    import React from 'react'
-    import logoImage from "../assets/husyrentlens.png";
+import React from 'react'
+import { Link } from 'react-router-dom';
 
     const Home = () => {
         return (
@@ -7,17 +7,7 @@
                 <div className="min-h-screen bg-white text-gray-900">
 
                     {/* navbar */}
-                    <div className="flex w-full items-center justify-between px-6 md:px-15 py-4">
-                        <img src={logoImage} className="w-20 h-auto" alt="Logo" />
 
-                        <div className="flex items-center">
-                            <ul className="flex text-lg md:text-xl space-x-6 md:space-x-10">
-                                <li className="cursor-pointer">Find properties</li>
-                                <li className="cursor-pointer">About</li>
-                                <li className="cursor-pointer">Sign in</li>
-                            </ul>
-                        </div>
-                    </div>
 
                     {/* text section */}
                     <section className="text-center mt-6 md:mt-10 px-6">
@@ -65,19 +55,23 @@
                                     </p>
 
                                     {/* mobile button */}
-                                    <div className="mt-4 md:hidden">
-                                        <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-xl cursor-pointer">
-                                            See Feedbacks
-                                        </button>
-                                    </div>
+                                    <Link to={"/properties/id"}>
+                                        <div className="mt-4 md:hidden">
+                                            <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-xl cursor-pointer">
+                                                See Feedbacks
+                                            </button>
+                                        </div>
+                                    </Link>
                                 </div>
 
                                 {/* desktop Button */}
+                                <Link to={"/properties/id"}>
                                 <div className="hidden md:block md:ml-8">
                                     <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl cursor-pointer">
                                         See Feedbacks
                                     </button>
                                 </div>
+                                </Link>
                             </div>
                         ))}
                     </section>
@@ -89,7 +83,6 @@
                         </span>
                     </div>
                 </div>
-                );
             </div>
         )
     }
