@@ -1,4 +1,13 @@
 <?php
+// Get the JSON payload from GitHub
+$content = file_get_contents("php://input");
+$payload = json_decode($content, true);
+
+// Only proceed if the push was to the 'main' branch
+if ($payload['ref'] !== 'refs/heads/main') {
+    die("Not the main branch. Skipping deployment.");
+}
+
 // Path to your public_html folder
 $path = "/home/huskyrentlens/public_html";
 
