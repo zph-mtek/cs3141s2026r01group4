@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route} from 'react-router-dom'
+import { Routes, Route, useLocation} from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -9,10 +9,11 @@ import PropertiesInfo from './pages/PropertiesInfo'
 import Navbar from './components/Navbar'
 
 const App = () => {
+  const location = useLocation();
+  const navActive = (path) => location.pathname === path
   return (
     <div>
-      <Navbar/>
-      {/* CREATE NAVIGIBLE PAGE PATHS HERE */}
+      {navActive('/login') ? '':<Navbar/>}
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<Login/>}/>
