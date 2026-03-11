@@ -1,63 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import axios from 'axios';
-import { Fragment, useEffect } from 'react';
-
-// Test function for the API
-const TestDBAPI = () => {
-    // Abort controller if request takes too long
-    const controller = new AbortController();
-
-    // Configuration for the database request
-    const config = {
-        headers : { // headers by which to send the api request with
-            'Content-Type' : 'application/json',
-            //'Authorization': '',
-            //'X-Custom-Header': 'Value'
-        },
-        params: {},
-        timeout: 5000000, // the limit by which the controller cancels the request
-        signal: controller.signal
-    }
-
-    // Specifiers for retrieved data
-    const data = {
-        "propertyId" : 0,
-    }
-
-    // Create axios command here
-    useEffect(() => {
-        const doDataRequest = async () => {
-            try { // just in
-                const dbResponse = await axios.post("https://huskyrentlens.cs.mtu.edu/connect.php",data,config);
-                console.log(JSON.stringify(dbResponse));
-            } catch (error) {
-                if (axios.isCancel(error)) {
-                    console.log('cancelled ask');
-                } else {
-                    console.error('error: ',error);
-                }
-            }
-        }    
-
-        doDataRequest();
-    },[]); // variable dependencies, runs only once per run
-
-    return ( // Empty filler tags
-        <Fragment>
-        </Fragment>
-    )
-}
-
-const Home = () => {
-        return (
-        <Fragment>
-            <TestDBAPI />
-            
-            <div>
-                <div className="min-h-screen bg-white text-gray-900">
-=======
 // import axios from 'axios';
 
 // const TestDBAPI = (passedData) => {
@@ -100,7 +42,6 @@ const Home = () => {
 //         </Fragment>
 //     )
 // }
->>>>>>> c8d0f2bab95be06543a788ebcbc116a5342fc285
 
 const Home = () => {
     return (
@@ -184,14 +125,8 @@ const Home = () => {
                     </span>
                 </div>
             </div>
-<<<<<<< HEAD
-        </Fragment>
-        )
-    }
-=======
         </div>
     )
 }
->>>>>>> c8d0f2bab95be06543a788ebcbc116a5342fc285
 
 export default Home
