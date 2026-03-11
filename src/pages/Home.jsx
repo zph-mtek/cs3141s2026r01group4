@@ -1,5 +1,47 @@
-import React from 'react'
+import React from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const TestDBAPI = (passedData) => {
+
+    const controller = new AbortController();
+
+    const config = {
+        headers : {
+            'Content-Type' : 'application/json',
+            //'Authorization': '',
+            //'X-Custom-Header': 'Value'
+        },
+        params: {},
+        timeout: 5000
+    }
+
+    const data = {
+        propertyId : 0
+    }
+
+    // Create axios command here
+    useEffect(() => {
+        const doDataRequest = () => {
+            try {
+                const dbResponse = await.post(URL,data,config)
+    
+            } catch (error) {
+                if (axios.isCancel(error)) {
+                    console.log('cancelled ask');
+                } else {
+                    console.lerror('error: ',error);
+                }
+            }
+        }    
+    },[]); // variable dependencies
+
+    return ( // this
+        <Fragment>
+
+        </Fragment>
+    )
+}
 
     const Home = () => {
         return (
