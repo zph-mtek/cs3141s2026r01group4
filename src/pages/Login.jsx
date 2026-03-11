@@ -7,7 +7,7 @@ const Login = () => {
   return (
     <>
           <Link to={"/"}>
-            <img src={logoImage} className="w-40 h-auto fixed top-6 left-10 rounded-4xl" alt="Logo" />
+            <img src={logoImage} className="w-24 md:w-40 h-auto absolute md:fixed top-6 left-6 md:left-10 rounded-4xl"alt="Logo"/>
           </Link>
       <div className='grid grid-cols-1 md:grid-cols-2 h-screen'>
         <div className='hidden md:flex flex-col justify-center items-center pb-30'>
@@ -16,7 +16,7 @@ const Login = () => {
           <p className='text-xl'>Real reviews from students. No more surprise</p>
         </div>
 
-        <div className='bg-yellow-400 h-full w-full flex justify-center items-center'>
+        <div className='bg-yellow-400 h-full w-full flex justify-center items-center pt-20 md:pt-0'>
           <div className='bg-gray-200 w-[90%] md:w-[420px] p-10 rounded-2xl flex flex-col gap-6'>
             <div className='flex flex-col gap-2'>
               <label className='text-lg'>Email</label>
