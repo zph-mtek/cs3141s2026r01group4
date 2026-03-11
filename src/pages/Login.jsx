@@ -1,5 +1,6 @@
 import React from 'react'
 import logoImage from "../assets/husyrentlens.png";
+import googleImage from "../assets/google.png";
 import { Link } from 'react-router-dom';
 
 
@@ -27,7 +28,7 @@ const Login = () => {
             </div>
             <button className='cursor-pointer bg-yellow-400 h-12 rounded-full font-semibold hover:bg-yellow-500 transition'>sign in</button>
             <button className='cursor-pointer bg-white h-12 rounded-full flex items-center justify-center gap-3'>
-              <img src="https://developers.google.com/identity/images/g-logo.png" className='w-5 h-5'/>
+              <img src={googleImage} className='w-5 h-5'/>
               continue with google
             </button>
             <button className='cursor-pointer bg-gray-100 h-12 rounded-full hover:bg-white transition'>
