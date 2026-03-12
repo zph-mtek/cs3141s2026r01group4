@@ -1,6 +1,5 @@
 <?php
 // Get the JSON payload from GitHub. 
-// Testing
 $content = file_get_contents("php://input");
 $payload = json_decode($content, true);
 
@@ -10,7 +9,7 @@ if ($payload['ref'] !== 'refs/heads/main') {
 }
 
 // Path to your public_html folder
-$path = "/home/huskyrentlens/public_html";
+$path = "/itss/home/huskyrentlens/public_html";
 
 // Run the pull command and capture output
 $output = shell_exec("cd $path && git pull origin main 2>&1");
