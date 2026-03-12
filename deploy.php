@@ -1,5 +1,6 @@
 <?php
-// Get the JSON payload from GitHub.
+// Get the JSON payload from GitHub. 
+// Testing
 $content = file_get_contents("php://input");
 $payload = json_decode($content, true);
 
