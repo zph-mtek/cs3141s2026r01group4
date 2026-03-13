@@ -14,6 +14,7 @@ const Navbar = () => {
                     <li className="cursor-pointer"><Link to={"/properties"}>Find properties</Link></li>
                     <li className="cursor-pointer"><Link to={"/about"}>About</Link></li>
                     <li className="cursor-pointer"><Link to={"/login"}>Sign in</Link></li>
+                    <li className="cursor-pointer"><Link to={"/add"}>Add properties</Link></li>
                 </ul>
             </div>
         </div>

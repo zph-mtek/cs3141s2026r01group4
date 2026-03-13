@@ -7,6 +7,7 @@ import About from './pages/About'
 import Properties from './pages/Properties'
 import PropertiesInfo from './pages/PropertiesInfo'
 import Navbar from './components/Navbar'
+import AddProperties from './pages/AddProperties'
 
 const App = () => {
   const location = useLocation();
@@ -21,6 +22,7 @@ const App = () => {
         <Route path='/about' element={<About/>}/>
         <Route path='/properties' element={<Properties/>}/>
         <Route path='/properties/id' element={<PropertiesInfo/>}/>
+        <Route path='/add' element={<AddProperties/>}/>
       </Routes>
     </div>
   )
