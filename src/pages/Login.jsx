@@ -6,13 +6,19 @@ import { Link } from 'react-router-dom';
 const Login = () => {
   return (
     <>
-          <Link to={"/"}>
-            <img src={logoImage} className="w-24 md:w-40 h-auto absolute md:fixed top-6 left-6 md:left-10 rounded-4xl"alt="Logo"/>
-          </Link>
+      <div className="md:hidden w-full h-30 bg-white flex items-center px-4">
+        <Link to={"/"}>
+          <img src={logoImage} className="w-30 h-auto" alt="Logo"/>
+        </Link>
+      </div>
+
+      <Link to={"/"}>
+        <img src={logoImage} className="hidden md:block w-40 h-auto fixed top-6 left-10 rounded-4xl" alt="Logo"/>
+      </Link>
       <div className='grid grid-cols-1 md:grid-cols-2 h-screen'>
         <div className='hidden md:flex flex-col justify-center items-center pb-30'>
-          <p className='text-6xl pb-10 font-extrabold text-center'>search. compare. review.</p>
-          <p className='text-xl'>Find Your Next Home Near Campus</p>
+          <p className='text-6xl pb-10 font-extrabold text-center'>Search. Compare. Review.</p>
+          <p className='text-xl'>Find your next home near campus</p>
           <p className='text-xl'>Real reviews from students. No more surprise</p>
         </div>
 
