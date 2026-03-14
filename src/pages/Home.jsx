@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getAllProperties } from '../API/getAllProperties';
 // import axios from 'axios';
 
 // const TestDBAPI = (passedData) => {
@@ -44,6 +45,25 @@ import { Link } from 'react-router-dom';
 // }
 
 const Home = () => {
+    //Save data 
+    const [properties, setProperties] = useState([])
+
+    //fucntion to call API
+    const loadAllPropertyData = async () => {
+        //call function 
+        const result = await getAllProperties()
+        //if the response is success set all data to state
+        if (result.status === "success") {
+            setProperties(result.data)
+        }
+    }
+
+    //call API when page is loded
+    useEffect(() => {
+        loadAllPropertyData()
+    }, [])
+
+
     return (
         <div>
             <div className="min-h-screen bg-white text-gray-900">
@@ -56,6 +76,7 @@ const Home = () => {
                     <h1 className="text-3xl md:text-5xl font-bold leading-tight">
                         Find the best apartments near <br className="hidden md:block" />
                         Michigan Technological University
+
                     </h1>
                     <p className="mt-4 md:mt-6 text-base md:text-xl text-gray-600">
                         See ratings and read real student reviews <br className="hidden md:block" />
@@ -63,59 +84,65 @@ const Home = () => {
                     </p>
                 </section>
 
-                {/* listing */}
                 <section className="mt-10 md:mt-16 bg-gray-100 rounded-none md:rounded-3xl mx-0 md:mx-8 p-4 md:p-10 space-y-6 md:space-y-8">
-                    {[1, 2, 3].map((item) => (
-                        <div
-                            key={item}
-                            className="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm p-4 md:p-6 md:items-center"
-                        >
-                            {/* image */}
-                            <div className="w-full md:w-64 h-48 bg-black rounded-xl flex items-center justify-center text-white text-2xl">
-                                picture
-                            </div>
+                    {properties.slice(0, 3).map((propertie, index) => {
+                        return (
 
-                            {/* info text*/}
-                            <div className="flex-1 md:ml-8 mt-4 md:mt-0">
-                                <div className="flex flex-col md:flex-row md:justify-between md:items-start">
-                                    <h2 className="text-xl md:text-2xl font-bold">
-                                        Huskies Heights Apartments
-                                    </h2>
-                                    <p className="text-2xl md:text-3xl font-bold mt-2 md:mt-0">
-                                        $700<span className="text-sm md:text-lg font-medium">/month</span>
+
+                            <div
+                                className="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm p-4 md:p-6 md:items-center"
+                            >
+
+                                <div className="w-full md:w-64 md:h-48 h-48 bg-black rounded-xl overflow-hidden flex-shrink-0">
+                                    <img
+                                        src={propertie.image_url}
+                                        alt={propertie.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+
+
+                                <div className="flex-1 md:ml-8 mt-4 md:mt-0">
+                                    <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+                                        <h2 className="text-xl md:text-2xl font-bold">
+                                            {propertie.name}
+                                        </h2>
+                                        <p className="text-2xl md:text-3xl font-bold mt-2 md:mt-0">
+                                            ${propertie.price}<span className="text-sm md:text-lg font-medium">/month</span>
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-3 space-y-1 text-gray-700 text-sm md:text-base">
+                                        <p>📍 {propertie.address}</p>
+                                        <p>📞 {propertie.phone}</p>
+                                    </div>
+
+                                    <p className="mt-3 text-gray-600 text-sm md:text-base">
+                                        {propertie.description}
                                     </p>
+
+
+                                    <Link to={"/properties/id"}>
+                                        <div className="mt-4 md:hidden">
+                                            <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-xl cursor-pointer">
+                                                See Feedbacks
+                                            </button>
+                                        </div>
+                                    </Link>
                                 </div>
 
-                                <div className="mt-3 space-y-1 text-gray-700 text-sm md:text-base">
-                                    <p>📍 123 university street 000-000</p>
-                                    <p>📞 313-123-5555</p>
-                                </div>
 
-                                <p className="mt-3 text-gray-600 text-sm md:text-base">
-                                    Modern apartments with walking distance to campus.
-                                    Free wifi, gym, study room,
-                                </p>
-
-                                {/* mobile button */}
                                 <Link to={"/properties/id"}>
-                                    <div className="mt-4 md:hidden">
-                                        <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-xl cursor-pointer">
+                                    <div className="hidden md:block md:ml-8">
+                                        <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl cursor-pointer">
                                             See Feedbacks
                                         </button>
                                     </div>
                                 </Link>
                             </div>
 
-                            {/* desktop Button */}
-                            <Link to={"/properties/id"}>
-                                <div className="hidden md:block md:ml-8">
-                                    <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl cursor-pointer">
-                                        See Feedbacks
-                                    </button>
-                                </div>
-                            </Link>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </section>
 
                 {/* footer */}
