@@ -26,27 +26,20 @@ export const TestDBAPI = ({ jsonData }) => {
         }
     }
 
-    useEffect(() => {
-        const doDataRequest = async () => {
-            try { // j
-                const dbResponse = await axios.post("https://huskyrentlens.cs.mtu.edu/connect.php",data,config);
-                console.log(JSON.stringify(dbResponse));
-            } catch (error) {
-                if (axios.isCancel(error)) {
-                    console.log('cancelled ask');
-                } else {
-                    console.error('error: ',error);
-                }
+
+
+    const doDataRequest = async () => {
+        try { // try the request
+            const dbResponse = await axios.post("https://huskyrentlens.cs.mtu.edu/connect.php",jsonData,config);
+            return JSON.stringify(dbResponse);
+        } catch (error) {
+            if (axios.isCancel(error)) {
+                console.log('cancelled ask');
+            } else {
+                console.error('error: ',error);
             }
-        }    
+        }
+    }
 
-        doDataRequest();
-    },[]); // variable dependencies, runs only once per run
-
-    return ( // Empty filler tags
-        <Fragment>
-        </Fragment>
-    )
+    doDataRequest();
 }
-
-return TestDBAPI;
