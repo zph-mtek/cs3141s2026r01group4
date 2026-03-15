@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import About from './pages/About'
 import Properties from './pages/Properties'
-import PropertiesInfo from './pages/PropertiesInfo'
+import PropertyInfo from './pages/PropertyInfo'
 import Navbar from './components/Navbar'
 import AddProperties from './pages/AddProperties'
 
@@ -21,7 +21,7 @@ const App = () => {
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/about' element={<About/>}/>
         <Route path='/properties' element={<Properties/>}/>
-        <Route path='/properties/id' element={<PropertiesInfo/>}/>
+        <Route path='/property/id' element={<PropertyInfo/>}/>
         <Route path='/add' element={<AddProperties/>}/>
       </Routes>
     </div>

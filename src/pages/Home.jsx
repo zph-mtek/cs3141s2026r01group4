@@ -122,7 +122,7 @@ const Home = () => {
                                     </p>
 
 
-                                    <Link to={"/properties/id"}>
+                                    <Link to={"/property/id"}>
                                         <div className="mt-4 md:hidden">
                                             <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-xl cursor-pointer">
                                                 See Feedbacks
@@ -132,7 +132,7 @@ const Home = () => {
                                 </div>
 
 
-                                <Link to={"/properties/id"}>
+                                <Link to={"/property/id"}>
                                     <div className="hidden md:block md:ml-8">
                                         <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl cursor-pointer">
                                             See Feedbacks
@@ -148,7 +148,7 @@ const Home = () => {
                 {/* footer */}
                 <div className="bg-yellow-400 mt-10 md:mt-16 py-6 md:py-8 text-center md:text-right md:pr-16">
                     <span className="text-lg md:text-2xl font-medium cursor-pointer">
-                        Search for more --&gt;
+                        <Link to={"/properties"}>Search for more --&gt;</Link>
                     </span>
                 </div>
             </div>

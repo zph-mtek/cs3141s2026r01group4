@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PropertiesInfo = () => {
+const PropertyInfo = () => {
   return (
     <div>
         <h1 className='text-3xl flex justify-center'>Properties Info</h1>
@@ -8,4 +8,4 @@ const PropertiesInfo = () => {
   )
 }
 
-export default PropertiesInfo
+export default PropertyInfo
