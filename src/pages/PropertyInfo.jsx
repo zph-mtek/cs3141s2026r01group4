@@ -89,16 +89,16 @@ const PropertyInfo = () => {
       {/* info section */}
       <div className='min-h-[400px] xl:row-span-2 xl:sticky xl:top-8 self-start'>
         <div className='flex flex-col bg-white h-full rounded-2xl shadow-xl p-8'>
-          <div className='flex justify-between items-center pb-5'>
-            <h1 className='text-4xl font-extrabold leading-none text-gray-900'>
+          <div className='flex flex-col md:flex-row justify-between items-center pb-5'>
+            <h1 className='text-4xl pb-5 md:pb-0 font-extrabold leading-none text-gray-900'>
               Husky Heights
             </h1>
             <p className='flex items-center text-lg leading-none'>
               ⭐⭐⭐⭐⭐ <span className='ml-1 font-bold'>5</span>
             </p>
           </div>
-
           <p className='pb-10'><span className='text-3xl font-bold'>$700</span>/month</p>
+
           <div className='flex pb-1'>
             <img className='h-5' src={addressIcon} alt="" />
             <p>1801 Townsend Dr, Houghton, MI 49931, United States</p>
@@ -172,23 +172,23 @@ const PropertyInfo = () => {
 
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
             <div key={index} className='border-2 shadow-xl p-3 rounded-2xl'>
-              <div className='flex items-center'>
+              <div className='flex flex-col md:flex-row items-center text-center md:text-left'>
 
                 <div>
-                  <img src={pfp} className='rounded-full border-3 border-amber-400 h-15 w-15 shrink-0 object-cover' alt="" />
+                  <img src={pfp} className='rounded-full border-3 border-amber-400 h-10 w-10 xl:h-15 xl:w-15 shrink-0 object-cover' alt="" />
                 </div>
 
-                <div className='pl-5'>
+                <div className='mt-3 md:mt-0 md:pl-5'>
                     <p>Jane doe</p>
                     <p className='tracking-tighter'>Sep 2025  ~  Jan 2026</p>
                 </div>
 
-                <div className='pl-5'>
+                <div className='mt-2 text-center md:mt-0 md:pl-5 md:ml-auto'>
                   <p>⭐⭐⭐⭐⭐5</p>
                 </div>
               </div>
 
-              <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eligendi et similique vero accusantium repudiandae sed magni aperiam maxime, consectetur placeat? Ratione adipisci earum iste alias, ea non est ipsa expedita!</p>
+              <p className='mt-4 text-gray-700'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eligendi et similique vero accusantium repudiandae sed magni aperiam maxime, consectetur placeat? Ratione adipisci earum iste alias, ea non est ipsa expedita!</p>
             </div>
           ))}
           

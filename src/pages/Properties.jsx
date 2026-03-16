@@ -10,7 +10,7 @@ const Properties = () => {
   return (
     <div className='flex flex-col'>
       {/* div for search and filter */}
-      <div className='flex items-center justify-center pt-20 pb-[5%] space-x-10'>
+      <div className='flex flex-col space-y-5 items-center justify-center pt-20 pb-[5%] md:flex-row md:space-x-10 md:space-y-0'>
 
         <div className='w-[300px] md:w-[570px]'>
           <input type="text" placeholder='Search appartments...' className='w-full h-13 border-2 border-yellow-400 pl-5 rounded-3xl focus:outline-none'/> 
