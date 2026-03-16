@@ -8,7 +8,7 @@ import { LuHeater } from "react-icons/lu";
 import { CgGym } from "react-icons/cg";
 import pfp from "../assets/catpfp.jpg"
 
-import GoogleMapCom from '../components/MapCom';
+import MapComponents from '../components/MapCom';
 
 
 
@@ -87,7 +87,7 @@ const PropertyInfo = () => {
 
 
       {/* info section */}
-      <div className='min-h-[400px] xl:row-span-2'>
+      <div className='min-h-[400px] xl:row-span-2 xl:sticky xl:top-8 self-start'>
         <div className='flex flex-col bg-white h-full rounded-2xl shadow-xl p-8'>
           <div className='flex justify-between items-center pb-5'>
             <h1 className='text-4xl font-extrabold leading-none text-gray-900'>
@@ -146,7 +146,17 @@ const PropertyInfo = () => {
               </p>
             </div>
 
-          <GoogleMapCom/>
+            <div className='pb-10'>
+              <MapComponents/>
+            </div>
+
+            {/* Been a tenant? Leave a review to help fellow Huskies. */}
+            {/* "Lived here before? Share your experience to help future Huskies!" */}
+            {/* "Help future Huskies find their next home. Share your review!" */}
+          <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
+            <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
+          </div>
+
         </div>
       </div>
 
@@ -160,7 +170,7 @@ const PropertyInfo = () => {
         <div className='grid grid-cols-1 2xl:grid-cols-[1fr_1fr] gap-5'>
           {/*  */}
 
-          {[1, 2, 3, 4, 5].map((index) => (
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
             <div key={index} className='border-2 shadow-xl p-3 rounded-2xl'>
               <div className='flex items-center'>
 
