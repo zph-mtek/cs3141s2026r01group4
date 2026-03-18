@@ -32,7 +32,7 @@ const MapCom = () => {
 return (
     // 親要素に必ず高さを指定すること（例：h-[400px]）
     <div className='h-[400px] w-full rounded-2xl overflow-hidden'>
-      <MapContainer center={[47.1211, -88.5694]} zoom={13} className='h-full w-full'>
+      <MapContainer center={[47.121, -88.5694]} zoom={13} className='h-full w-full'>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

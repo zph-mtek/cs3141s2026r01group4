@@ -37,9 +37,12 @@ const Login = () => {
               <img src={googleImage} className='w-5 h-5'/>
               continue with google
             </button>
-            <button className='cursor-pointer bg-gray-100 h-12 rounded-full hover:bg-white transition'>
-              <Link to={"/signup"}>Sign up</Link>
-            </button>
+
+            <Link to={"/signup"}  className='flex cursor-pointer bg-gray-100 h-12 rounded-full hover:bg-white transition'>
+              <button className='text-center m-auto cursor-pointer'>
+                Student sign up
+              </button>
+            </Link>
           </div>
         </div>
       </div>
