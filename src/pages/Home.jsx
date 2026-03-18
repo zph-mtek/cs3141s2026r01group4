@@ -112,9 +112,15 @@ const Home = () => {
                                         </p>
                                     </div>
 
-                                    <div className="mt-3 space-y-1 text-gray-700 text-sm md:text-base">
+                                    <div className="mt-3 space-y-1 text-gray-700 text-sm md:text-base pb-5">
                                         <p>📍 {propertie.address}</p>
                                         <p>📞 {propertie.phone}</p>
+                                    </div>
+
+                                    <div className='bg-yellow-400 w-fit px-5 py-1 rounded-full font-semibold text-sm'>
+                                        <p>
+                                            5 minutes from campus
+                                        </p>
                                     </div>
 
                                     <p className="mt-3 text-gray-600 text-sm md:text-base">

@@ -1,4 +1,4 @@
-import React from 'react'
+  import React from 'react'
 import { Routes, Route, useLocation} from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -10,6 +10,7 @@ import Navbar from './components/Navbar'
 import AddProperties from './pages/AddProperties'
 import StudentSignup from './pages/StudentSignup'
 import LandlordSignup from './pages/LandlordSignup'
+import AddReview from './pages/AddReview'
 
 const App = () => {
   const location = useLocation();
@@ -27,6 +28,7 @@ const App = () => {
         <Route path='/properties' element={<Properties/>}/>
         <Route path='/property/id' element={<PropertyInfo/>}/>
         <Route path='/add' element={<AddProperties/>}/>
+        <Route path='/addreview' element={<AddReview/>}/>
       </Routes>
     </div>
   )
