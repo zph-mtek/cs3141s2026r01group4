@@ -2,7 +2,7 @@
 import React from 'react';
 import axios from 'axios';
 
-export const TestDBAPI = ({ jsonData }) => {
+export const Database = ({ jsonData }) => {
     // Abort controller if request takes too long
     const controller = new AbortController();
 
@@ -25,8 +25,6 @@ export const TestDBAPI = ({ jsonData }) => {
             "propertyId" : 0
         }
     }
-
-
 
     const doDataRequest = async () => {
         try { // try the request
