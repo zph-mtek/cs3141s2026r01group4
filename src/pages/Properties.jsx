@@ -6,14 +6,66 @@ import { Database } from '../Architect/Architect.jsx'
 //-- Will make it more easily repeatable
 const PropertyCard = (data) => {
   console.log(data);
+
   const propertyInfo = data.propInfo;
+  const mainImage = propertyInfo.images.split(',')[0]; // exfiltrate the primary image from the string
+  const [costRange, updateCostRange ] = useState({min:0,max:0});
+
+  //-- Use this API to fetch all of the properties that exist once, when the page loads
+  useEffect(()=>{
+    const fetchPropertyRentals = async () => {
+      console.log("Database connection is is running...");
+
+      const getData = await Database({
+        propertyId: propertyInfo.propertyId,
+        allRentals: "yes"
+      });
+
+      if (getData != null) {
+        const rentalData = getData.data.data;
+
+        //-- Determine range of cost for rentals for the property
+        let lowestPrice;
+        let highestPrice;
+
+        console.log(rentalData);
+        Object.keys(rentalData).map((index,dummyKey) => {
+          const thisRentalInfo = rentalData[index];
+
+          // Determine the average rating for this property's rentals
+          //nts: Do later
+
+          // Determine the range of cost for this property's rentals
+          if (lowestPrice == null) {
+            lowestPrice = thisRentalInfo.cost
+          } else {
+            if (thisRentalInfo.cost < lowestPrice) {
+              lowestPrice = thisRentalInfo.cost
+            } else if (thisRentalInfo.cost > lowestPrice) {
+              if (highestPrice == null || thisRentalInfo.cost > highestPrice) { // if we don't have a highest price yet or it is higher than the higest price...
+                highestPrice = thisRentalInfo.cost
+              }
+            }
+          }
+
+          // Now display them as a range
+          updateCostRange({min: lowestPrice, max: highestPrice});
+        });
+      }
+    }
+    
+    fetchPropertyRentals();
+
+  },[]);
 
   return (
     <Link to={"/property/"}> {/* Put the id of the propery here to make link dynamic */}
             
           <div className='flex flex-col rounded-2xl h-110 2xl:h-100 bg-white overflow-hidden cursor-pointer hover:bg-amber-200 transform transition duration-300 group'>
             <div className='p-5'>
-              <img className='h-55 w-full object-cover rounded-2xl ' src="https://res.cloudinary.com/dxhogizsr/image/upload/v1773440479/jarmoluk-apartment-2094661_1920_ql47qw.jpg" alt="" />
+              <img className='h-55 w-full object-cover rounded-2xl '
+                  src={mainImage}
+              alt="" />
             </div>
 
             <div className='px-5 flex'>
@@ -21,7 +73,12 @@ const PropertyCard = (data) => {
 
                 <div className='flex justify-between'>
                   <p className='font-extrabold text-2xl'>{propertyInfo.name}</p>
-                  <p className=''><span className='text-yellow-400 text-3xl font-semibold group-hover:text-black transform transition duration-300'>{data.propInfo.price}</span>/month</p>
+                  <p className=''><
+                    span className='text-yellow-400 text-3xl font-semibold group-hover:text-black transform transition duration-300'>
+                      {`${costRange.min} - ${costRange.max}`}
+                    </span>
+                    /month
+                  </p>
                 </div>
 
                 <p>⭐⭐⭐⭐⭐ 5</p>
@@ -33,7 +90,7 @@ const PropertyCard = (data) => {
                 </div>
 
                 <div className='bg-yellow-300 inline-block rounded-xl px-2 py-1'>
-                  <p className='text-sm'>5 minutes from campus</p>
+                  <p className='text-sm'>{propertyInfo.distanceFromMTU} minutes from campus</p>
                 </div>
               </div>
             </div>
@@ -46,6 +103,7 @@ const PropertyCard = (data) => {
 const Properties = () => {
   const [ availableProperties, updateProperties ] = useState({});
   
+  //-- Use this API to fetch all of the properties that exist once, when the page loads
   useEffect(()=>{
     const fetchAllProperties = async () => {
       console.log("Database connection is is running...");
@@ -57,7 +115,7 @@ const Properties = () => {
     
     fetchAllProperties();
 
-  },[]); // This should run?
+  },[]);
 
   return (
     <div className='flex flex-col'>
