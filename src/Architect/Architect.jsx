@@ -2,7 +2,9 @@
 import React from 'react';
 import axios from 'axios';
 
-export const Database = ({ jsonData }) => {
+export const Database = async (jsonData) => {
+    console.log('Function is running...');
+
     // Abort controller if request takes too long
     const controller = new AbortController();
 
@@ -26,18 +28,14 @@ export const Database = ({ jsonData }) => {
         }
     }
 
-    const doDataRequest = async () => {
-        try { // try the request
-            const dbResponse = await axios.post("https://huskyrentlens.cs.mtu.edu/connect.php",jsonData,config);
-            return JSON.stringify(dbResponse);
-        } catch (error) {
-            if (axios.isCancel(error)) {
-                console.log('cancelled ask');
-            } else {
-                console.error('error: ',error);
-            }
+    try { // try the request
+        const dbResponse = await axios.post("https://huskyrentlens.cs.mtu.edu/connect.php",jsonData,config);
+        return dbResponse;
+    } catch (error) {
+        if (axios.isCancel(error)) {
+            console.log('cancelled ask');
+        } else {
+            console.error('error: ',error);
         }
     }
-
-    doDataRequest();
 }
