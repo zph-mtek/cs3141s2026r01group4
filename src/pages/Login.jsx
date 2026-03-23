@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import logoImage from "../assets/husyrentlens.png";
 import googleImage from "../assets/google.png";
@@ -17,6 +17,7 @@ const Login = () => {
   const [step, setStep] = useState('login') // 'login' | 'verify_unverified'
   const [verificationCode, setVerificationCode] = useState('')
   const [userId, setUserId] = useState(null)
+  const autoResendAttempted = useRef(false)
 
   const onChangeHandler = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value })
@@ -146,7 +147,21 @@ const Login = () => {
     setStatusMessage('')
     setVerificationCode('')
     setUserId(null)
+    autoResendAttempted.current = false
   }
+
+  useEffect(() => {
+    if (step !== 'verify_unverified') {
+      return
+    }
+
+    if (autoResendAttempted.current) {
+      return
+    }
+
+    autoResendAttempted.current = true
+    handleResendCode()
+  }, [step])
 
   const getStatusColor = () => {
     if (messageType === 'success') return 'bg-green-200 text-green-900'
