@@ -5,10 +5,10 @@ import { Database } from '../Architect/Architect.jsx'
 
 //-- Will make it more easily repeatable
 const PropertyCard = (data) => {
-  console.log(data);
+  console.log("IN THE PROPERTY CARD"+JSON.stringify(data));
 
   const propertyInfo = data.propInfo;
-  const mainImage = propertyInfo.images.split(',')[0]; // exfiltrate the primary image from the string
+  const mainImage = (propertyInfo.images == (null || undefined) ? "" : (propertyInfo.images.split(',')[0]) ); // exfiltrate the primary image from the string
   const [costRange, updateCostRange ] = useState({min:0,max:0});
 
   //-- Use this API to fetch all of the properties that exist once, when the page loads
@@ -46,6 +46,10 @@ const PropertyCard = (data) => {
                 highestPrice = thisRentalInfo.cost
               }
             }
+          }
+
+          if (highestPrice == null) {
+            highestPrice = thisRentalInfo.cost
           }
 
           // Now display them as a range
@@ -86,7 +90,7 @@ const PropertyCard = (data) => {
 
                 <div className='flex items-center'>
                   <img className='h-5' src={addressIcon} alt="" />
-                  <p className='text-gray-600 pb-2 pt-2'>1801 Townsend Dr, Houghton, MI 49931, United States</p>
+                  <p className='text-gray-600 pb-2 pt-2'>{propertyInfo.address}</p>
                 </div>
 
                 <div className='bg-yellow-300 inline-block rounded-xl px-2 py-1'>
@@ -107,10 +111,16 @@ const Properties = () => {
   useEffect(()=>{
     const fetchAllProperties = async () => {
       console.log("Database connection is is running...");
-      const getData = await Database(null);
-      if (getData != null) {
-        updateProperties(getData.data.data);
+
+      const propertyData = await Database({
+        propertyId : -1
+      });
+
+      // If the data did not return null, update our information storage to the page
+      if (propertyData != null) {
+        updateProperties(propertyData.data.data);
       }
+      
     }
     
     fetchAllProperties();
@@ -130,16 +140,23 @@ const Properties = () => {
         
       </div>
 
+      {
+        console.log("Available properties: "+JSON.stringify(availableProperties))
+      }
+
       {/* div for properties card */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 bg-gray-100 px-10 py-10'>
         { availableProperties ? 
           // @SOLEIL ECTOR
-          Object.keys(availableProperties).map((propInfoId,dummyKey) => {
-            const thisPropertyInfo = availableProperties[propInfoId];
-            console.log(thisPropertyInfo)
+          Object.keys(availableProperties).map((propertyId) => {
+            const thisPropertyInfo = availableProperties[propertyId];
+            console.log("The info for this property: "+JSON.stringify(thisPropertyInfo));
+
+            // Return the propertycard image
             return (
-              <Fragment>
-                <PropertyCard propInfo={thisPropertyInfo} propId={propInfoId} />
+              <Fragment key={propertyId}>
+                {
+                thisPropertyInfo == null ? null : <PropertyCard propInfo={thisPropertyInfo} />}
               </Fragment>
             )
           })
