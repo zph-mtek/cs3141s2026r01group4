@@ -7,7 +7,7 @@ const Home = () => {
         <Fragment>
             
             <div>
-                <div className="min-h-screen bg-white text-gray-900">
+                <div className="min-h-screen bg-white text-gray-900 flex flex-col">
 
                     {/* navbar */}
 
@@ -85,6 +85,21 @@ const Home = () => {
                             Search for more --&gt;
                         </span>
                     </div>
+                    {/* NEW CUTE DISCLAIMER FOOTER */}
+                    <footer className="bg-gray-50 text-gray-500 py-10 px-6 text-center text-sm md:text-base border-t border-gray-200 mt-auto">
+                        <p className="max-w-3xl mx-auto leading-relaxed">
+                            🐾 <strong>HuskyRentLens</strong> is an independent student project built with love for the CS3141 Team Software Project course. 
+                            <br className="hidden md:block" />
+                            We are not affiliated with, officially maintained by, or endorsed by Michigan Technological University (MTU). 
+                            Reviews and opinions expressed here belong solely to the students, not the school! 🎓
+                        </p>
+                        <div className="mt-5 space-x-6 font-medium">
+                            <Link to="/privacy-policy" className="hover:text-yellow-500 transition-colors duration-200">Privacy Policy</Link>
+                            <span className="text-gray-300">|</span>
+                            <Link to="/guidelines" className="hover:text-yellow-500 transition-colors duration-200">Community Guidelines</Link>
+                        </div>
+                    </footer>
+                    
                 </div>
             </div>
         </Fragment>
