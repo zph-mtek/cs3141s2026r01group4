@@ -3,6 +3,7 @@ import axios from 'axios'
 import logoImage from "../assets/husyrentlens.png";
 import googleImage from "../assets/google.png";
 import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
 
@@ -34,8 +35,16 @@ const Login = () => {
 
       if(response.data.status === 'success'){
         console.log(response.data)
+        const token = response.data.token
+        //store in localstorage. 
+        //Read some article that storing in local storage is not safe so maybe store in cookie later
+        const decoded = jwtDecode(token);
+        console.log(decoded.data)
+        localStorage.setItem('token', token);
+        navigate('/')
       }
       else{
+        alert(response.data.message)
         console.log(response.data)
       }
 
@@ -84,7 +93,7 @@ const Login = () => {
 
             <Link to={"/signup"} className='flex cursor-pointer bg-gray-100 h-12 rounded-full hover:bg-white transition'>
               <button className='text-center m-auto cursor-pointer'>
-                Student sign up
+                Sign up
               </button>
             </Link>
           </div>
