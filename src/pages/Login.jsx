@@ -10,61 +10,67 @@ const Login = () => {
   const navigate = useNavigate();
   const API_BASE_URL = 'https://huskyrentlens.cs.mtu.edu';
 
-  const [loginData, setloginData] = useState(
-    {
-      email: '',
-      password: '',
-    }
-  )
+  const [loginData, setLoginData] = useState({ email: '', password: '' })
+  const [statusMessage, setStatusMessage] = useState('')
+  const [messageType, setMessageType] = useState('') // 'error' | 'warning' | 'success'
+  const [isLoading, setIsLoading] = useState(false)
 
   const onChangeHandler = (e) => {
-    setloginData({ ...loginData, [e.target.name]: e.target.value })
+    setLoginData({ ...loginData, [e.target.name]: e.target.value })
   }
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (loginData.email) {
-      try {
-        const response = await axios.post(`${API_BASE_URL}/backend/login.php`, loginData,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+    setStatusMessage('')
 
-      if(response.data.status === 'success'){
-        console.log(response.data)
-        const token = response.data.token
-        //store in localstorage. 
-        //Read some article that storing in local storage is not safe so maybe store in cookie later
-        const decoded = jwtDecode(token);
-        console.log(decoded.data)
-        localStorage.setItem('token', token);
-        navigate('/')
-      }
-      else{
-        alert(response.data.message)
-        console.log(response.data)
-      }
+    if (!loginData.email || !loginData.password) {
+      setStatusMessage('Please fill in email and password.')
+      setMessageType('error')
+      return
+    }
 
-      } catch (error) {
-        console.log(error)
+    try {
+      setIsLoading(true)
+      const response = await axios.post(`${API_BASE_URL}/backend/login.php`, loginData, { headers: { 'Content-Type': 'application/json' } })
+      const data = response.data
+      setIsLoading(false)
+
+      if (data.status === 'success') {
+        const token = data.token
+        localStorage.setItem('token', token)
+        setStatusMessage('Login successful! Redirecting...')
+        setMessageType('success')
+        setTimeout(() => {
+          navigate('/')
+        }, 1000)
+        return
       }
 
+      setStatusMessage(data.message || 'Login failed')
+      setMessageType('error')
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+      setStatusMessage('Unable to connect to server. Try again.')
+      setMessageType('error')
     }
   }
 
+  const getStatusColor = () => {
+    if (messageType === 'success') return 'bg-green-200 text-green-900'
+    if (messageType === 'warning') return 'bg-yellow-200 text-yellow-900'
+    return 'bg-red-200 text-red-900'
+  }
 
   return (
     <>
       <div className="md:hidden w-full h-30 bg-white flex items-center px-4">
-        <Link to={"/"}>
+        <Link to={'/'}>
           <img src={logoImage} className="w-30 h-auto" alt="Logo" />
         </Link>
       </div>
 
-      <Link to={"/"}>
+      <Link to={'/'}>
         <img src={logoImage} className="hidden md:block w-40 h-auto fixed top-6 left-10 rounded-4xl" alt="Logo" />
       </Link>
 
@@ -77,22 +83,35 @@ const Login = () => {
 
         <div className='bg-yellow-400 h-full w-full flex justify-center items-center pt-20 md:pt-0'>
           <div className='bg-gray-200 w-[90%] md:w-[420px] p-10 rounded-2xl flex flex-col gap-6'>
+            <h2 className='text-2xl font-bold text-center text-yellow-900'>Sign In</h2>
+            
+            {statusMessage && (
+              <div className={`p-3 rounded-lg text-sm text-center ${getStatusColor()}`}>
+                {statusMessage}
+              </div>
+            )}
+
             <div className='flex flex-col gap-2'>
               <label className='text-lg'>Email</label>
-              <input type="text" name='email' onChange={onChangeHandler} value={loginData.email} className='h-12 rounded-md px-3 bg-gray-100 focus:outline-none' />
+              <input type='email' name='email' onChange={onChangeHandler} value={loginData.email} className='h-12 rounded-md px-3 bg-white focus:outline-none border-2 border-transparent focus:border-yellow-400' required />
             </div>
+            
             <div className='flex flex-col gap-2'>
               <label className='text-lg'>Password</label>
-              <input type="password" name='password' onChange={onChangeHandler} value={loginData.password} className='h-12 rounded-md px-3 bg-gray-100 focus:outline-none' />
+              <input type='password' name='password' onChange={onChangeHandler} value={loginData.password} className='h-12 rounded-md px-3 bg-white focus:outline-none border-2 border-transparent focus:border-yellow-400' required />
             </div>
-            <button className='cursor-pointer bg-yellow-400 h-12 rounded-full font-semibold hover:bg-yellow-500 transition'>sign in</button>
-            <button className='cursor-pointer bg-white h-12 rounded-full flex items-center justify-center gap-3'>
-              <img src={googleImage} className='w-5 h-5' />
+            
+            <button disabled={isLoading} type='submit' className='cursor-pointer bg-yellow-400 h-12 rounded-full font-semibold hover:bg-yellow-500 transition disabled:opacity-50'>
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </button>
+
+            <button type='button' className='cursor-pointer bg-white h-12 rounded-full flex items-center justify-center gap-3 hover:bg-gray-100 transition'>
+              <img src={googleImage} className='w-5 h-5' alt='Google' />
               continue with google
             </button>
 
-            <Link to={"/signup"} className='flex cursor-pointer bg-gray-100 h-12 rounded-full hover:bg-white transition'>
-              <button className='text-center m-auto cursor-pointer'>
+            <Link to={'/signup'} className='flex cursor-pointer bg-gray-100 h-12 rounded-full hover:bg-white transition'>
+              <button type='button' className='text-center m-auto cursor-pointer font-semibold'>
                 Sign up
               </button>
             </Link>
@@ -104,3 +123,4 @@ const Login = () => {
 }
 
 export default Login
+
