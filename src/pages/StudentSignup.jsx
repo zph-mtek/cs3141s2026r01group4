@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const StudentSignup = () => {
@@ -24,6 +24,7 @@ const StudentSignup = () => {
     const [matchPassword, setMatchPassword] = useState('')
     const [userId, setUserId] = useState(null)
     const [otpCode, setOtpCode] = useState('')
+    const [sendCooldown, setSendCooldown] = useState(0)
 
     const onChangeHandler = (e) => {
         setSignUpData({ ...signupData, [e.target.name]: e.target.value })
@@ -67,6 +68,7 @@ const StudentSignup = () => {
                 setUserId(response.data.userId)
                 setStep('otp')
                 setStatusMsg('Verification code sent to your email')
+                setSendCooldown(60)
             } else {
                 setStatusMsg(response.data.message || 'Signup failed')
             }
@@ -118,11 +120,70 @@ const StudentSignup = () => {
         }
     }
 
+    const handleSendCode = async (e) => {
+        if (e?.preventDefault) {
+            e.preventDefault()
+        }
+
+        if (sendCooldown > 0) {
+            return
+        }
+
+        const normalizedEmail = signupData.email.trim().toLowerCase()
+
+        if (!normalizedEmail) {
+            setStatusMsg('Email required to send code')
+            return
+        }
+
+        try {
+            setIsLoading(true)
+            const response = await axios.post(
+                `${API_BASE_URL}/backend/resend_otp.php`,
+                { email: normalizedEmail },
+                { headers: { 'Content-Type': 'application/json' } }
+            )
+            setIsLoading(false)
+
+            if (response.data.status === 'success' && response.data.userId) {
+                setUserId(response.data.userId)
+                setStatusMsg('Verification code sent to your email')
+                setSendCooldown(60)
+            } else {
+                setStatusMsg(response.data.message || 'Unable to send code')
+            }
+        } catch (error) {
+            setIsLoading(false)
+            console.log(error)
+            setStatusMsg('Network error - please try again')
+        }
+    }
+
     const handleBackToForm = () => {
         setStep('form')
         setStatusMsg('')
         setOtpCode('')
+        setSendCooldown(0)
     }
+
+    useEffect(() => {
+        if (sendCooldown <= 0) {
+            return
+        }
+
+        const timer = setInterval(() => {
+            setSendCooldown((current) => {
+                if (current <= 1) {
+                    clearInterval(timer)
+                    return 0
+                }
+
+                return current - 1
+            })
+        }, 1000)
+
+        return () => clearInterval(timer)
+    }, [sendCooldown])
     return (
         <div className='flex justify-center w-full pt-20 md:p-0'>
             <div className='flex flex-col items-center gap-4 w-full max-w-xl bg-gray-100 p-10 rounded-2xl'>
@@ -193,6 +254,15 @@ const StudentSignup = () => {
 
                         <button disabled={isLoading} type='submit' className='w-full bg-yellow-400 py-3 cursor-pointer rounded-full mt-5 hover:bg-amber-300 disabled:opacity-50'>
                             {isLoading ? 'Verifying...' : 'Verify Code'}
+                        </button>
+
+                        <button 
+                            disabled={isLoading || sendCooldown > 0}
+                            type='button' 
+                            onClick={handleSendCode}
+                            className='w-full bg-white py-3 cursor-pointer rounded-full border-2 border-gray-300 hover:bg-gray-100 disabled:opacity-50'
+                        >
+                            {isLoading ? 'Sending...' : sendCooldown > 0 ? `Send Code (${sendCooldown}s)` : 'Send Code'}
                         </button>
 
                         <button 

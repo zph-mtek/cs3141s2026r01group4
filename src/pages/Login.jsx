@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import logoImage from "../assets/husyrentlens.png";
 import googleImage from "../assets/google.png";
@@ -17,7 +17,7 @@ const Login = () => {
   const [step, setStep] = useState('login') // 'login' | 'verify_unverified'
   const [verificationCode, setVerificationCode] = useState('')
   const [userId, setUserId] = useState(null)
-  const autoResendAttempted = useRef(false)
+  const [sendCooldown, setSendCooldown] = useState(0)
 
   const onChangeHandler = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value })
@@ -54,6 +54,7 @@ const Login = () => {
         setStatusMessage(data.message)
         setMessageType('warning')
         setStep('verify_unverified')
+        setSendCooldown(0)
         return
       }
 
@@ -71,6 +72,11 @@ const Login = () => {
     if (e?.preventDefault) {
       e.preventDefault();
     }
+
+    if (sendCooldown > 0) {
+      return
+    }
+
     setStatusMessage('')
 
     if (!loginData.email) {
@@ -89,6 +95,7 @@ const Login = () => {
         setUserId(data.userId)
         setStatusMessage('Verification code sent to your email')
         setMessageType('success')
+        setSendCooldown(60)
       } else {
         setStatusMessage(data.message || 'Unable to resend code')
         setMessageType('error')
@@ -149,21 +156,27 @@ const Login = () => {
     setStatusMessage('')
     setVerificationCode('')
     setUserId(null)
-    autoResendAttempted.current = false
+    setSendCooldown(0)
   }
 
   useEffect(() => {
-    if (step !== 'verify_unverified') {
+    if (sendCooldown <= 0) {
       return
     }
 
-    if (autoResendAttempted.current) {
-      return
-    }
+    const timer = setInterval(() => {
+      setSendCooldown((current) => {
+        if (current <= 1) {
+          clearInterval(timer)
+          return 0
+        }
 
-    autoResendAttempted.current = true
-    handleResendCode()
-  }, [step])
+        return current - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [sendCooldown])
 
   const getStatusColor = () => {
     if (messageType === 'success') return 'bg-green-200 text-green-900'
@@ -248,12 +261,12 @@ const Login = () => {
                 </button>
 
                 <button 
-                  disabled={isLoading}
+                  disabled={isLoading || sendCooldown > 0}
                   type='button' 
                   onClick={handleResendCode}
                   className='cursor-pointer bg-white h-12 rounded-full font-semibold hover:bg-gray-100 transition disabled:opacity-50'
                 >
-                  {isLoading ? 'Sending...' : 'Resend Code'}
+                  {isLoading ? 'Sending...' : sendCooldown > 0 ? `Send Code (${sendCooldown}s)` : 'Send Code'}
                 </button>
 
                 <button 
