@@ -68,7 +68,9 @@ const Login = () => {
   }
 
   const handleResendCode = async (e) => {
-    e.preventDefault();
+    if (e?.preventDefault) {
+      e.preventDefault();
+    }
     setStatusMessage('')
 
     if (!loginData.email) {
