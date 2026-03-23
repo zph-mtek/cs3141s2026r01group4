@@ -59,7 +59,7 @@ const PropertyCard = (data) => {
   },[]);
 
   return (
-    <Link to={"/property/"}> {/* Put the id of the propery here to make link dynamic */}
+    <Link to={"/properties/id "}> {/* Put the id of the propery here to make link dynamic */}
             
           <div className='flex flex-col rounded-2xl h-110 2xl:h-100 bg-white overflow-hidden cursor-pointer hover:bg-amber-200 transform transition duration-300 group'>
             <div className='p-5'>

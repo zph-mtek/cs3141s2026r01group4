@@ -1,4 +1,4 @@
-  import React from 'react'
+import React from 'react'
 import { Routes, Route, useLocation} from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -11,6 +11,7 @@ import AddProperties from './pages/AddProperties'
 import StudentSignup from './pages/StudentSignup'
 import LandlordSignup from './pages/LandlordSignup'
 import AddReview from './pages/AddReview'
+import Profile from './pages/Profile'
 
 const App = () => {
   const location = useLocation();
@@ -26,9 +27,10 @@ const App = () => {
         <Route path='/signup/landlord' element={<LandlordSignup/>}/>
         <Route path='/about' element={<About/>}/>
         <Route path='/properties' element={<Properties/>}/>
-        <Route path='/property/:id' element={<PropertyInfo/>}/>
+        <Route path='/properties/id' element={<PropertyInfo/>}/>
         <Route path='/add' element={<AddProperties/>}/>
         <Route path='/addreview' element={<AddReview/>}/>
+        <Route path='/profile' element={<Profile/>}/>
       </Routes>
     </div>
   )
