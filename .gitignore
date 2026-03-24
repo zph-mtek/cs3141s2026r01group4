@@ -1,11 +1,23 @@
+# Dependencies and build artifacts
 node_modules/
 dist/
 build/
+.vite/
+
+# Environment files and secrets
 .env
 .env.*
-backend/keys/
-backend/vendor/
-backend/*.log
-backend/error_log
-backend/debug.log
-backend/deploy_log.txt
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Private backend runtime (if present in deployment/workspace)
+server_backend/keys/
+server_backend/vendor/
+server_backend/*.log
+server_backend/error_log
+server_backend/debug.log
+server_backend/deploy_log.txt

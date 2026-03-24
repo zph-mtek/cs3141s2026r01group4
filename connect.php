@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once __DIR__ . '/backend/connect.php';
+require_once __DIR__ . '/server_backend/connect.php';
 $rawBody = file_get_contents('php://input');
 $input = json_decode($rawBody, true);
 if (!is_array($input)) {

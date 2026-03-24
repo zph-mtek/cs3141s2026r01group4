@@ -1,4 +1,6 @@
 <?php
+// OTP resend endpoint for unverified users.
+
 session_start();
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -10,9 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-include_once __DIR__ . '/collectSet.php';
+include_once __DIR__ . '/../../server_backend/collectSet.php';
 
 function sendSMTPEmail($to, $subject, $body, $from = '') {
+    // SMTP values come from server_backend/keys/.env
     $host = getenv('SMTP_HOST');
     $port = getenv('SMTP_PORT');
     $username = getenv('SMTP_USER');
@@ -25,6 +28,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
 
     $port = intval($port);
 
+    // Reads one SMTP server response (supports multiline replies).
     $readReply = function ($connection) {
         $lines = [];
         $code = null;
@@ -52,6 +56,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
     };
 
     try {
+        // Open secure SMTP socket.
         $context = stream_context_create([
             'ssl' => [
                 'verify_peer' => false,
@@ -66,6 +71,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
         }
 
         $readReply($connection);
+        // Authenticate with AUTH LOGIN.
         fwrite($connection, "EHLO husky.local\r\n");
         [$code] = $readReply($connection);
         if ($code !== '250') {
@@ -116,6 +122,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
             return false;
         }
 
+        // Submit message payload.
         $headers = "From: HuskyRentLens <{$from}>\r\nTo: <{$to}>\r\nSubject: {$subject}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n";
         fwrite($connection, $headers . $body . "\r\n.\r\n");
         [$code] = $readReply($connection);
@@ -128,6 +135,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
     }
 }
 
+// Parse request body.
 $input = json_decode(file_get_contents('php://input'), true);
 $email = strtolower(trim($input['email'] ?? ''));
 if (!$email) {
@@ -135,6 +143,7 @@ if (!$email) {
     exit();
 }
 
+// Find unverified user account.
 $stmt = $conn->prepare("SELECT userId FROM huskyrentlens_users WHERE email = ? AND is_verified = 0");
 if (!$stmt) {
     echo json_encode(["status" => "error", "message" => "Database error"]);
@@ -151,6 +160,8 @@ if ($result->num_rows === 0) {
 
 $user = $result->fetch_assoc();
 $userId = $user['userId'];
+
+// Replace old OTP with a new 5-minute code.
 $otp = random_int(100000, 999999);
 $otpHash = password_hash((string)$otp, PASSWORD_DEFAULT);
 $expiresAt = (new DateTime('+5 minutes'))->format('Y-m-d H:i:s');
