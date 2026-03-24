@@ -10,14 +10,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-include_once __DIR__ . '/../../backend/collectSet.php';
+include_once __DIR__ . '/collectSet.php';
 
 function sendSMTPEmail($to, $subject, $body, $from = '') {
-    $host = getenv('SMTP_HOST') ?: 'groups-2024.it.mtu.edu';
-    $port = intval(getenv('SMTP_PORT') ?: 465);
-    $username = getenv('SMTP_USER') ?: 'huskyrentlens@huskyrentlens.cs.mtu.edu';
-    $password = getenv('SMTP_PASS') ?: 'mmROqc.6I.Bn61L=';
+    $host = getenv('SMTP_HOST');
+    $port = getenv('SMTP_PORT');
+    $username = getenv('SMTP_USER');
+    $password = getenv('SMTP_PASS');
     $from = getenv('SMTP_FROM') ?: ($from ?: $username);
+
+    if (!$host || !$port || !$username || !$password || !$from) {
+        return false;
+    }
+
+    $port = intval($port);
 
     $readReply = function ($connection) {
         $lines = [];

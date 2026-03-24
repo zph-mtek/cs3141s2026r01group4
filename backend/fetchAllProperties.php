@@ -5,7 +5,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
 
 
-include_once __DIR__ . '/../../backend/collectSet.php';
+include_once __DIR__ . '/collectSet.php';
 
 $stmt = $conn->prepare("SELECT * FROM test_property");
 $stmt->execute();
