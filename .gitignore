@@ -1,5 +1,11 @@
 node_modules/
 dist/
 build/
-backend/
 .env
+.env.*
+backend/keys/
+backend/vendor/
+backend/*.log
+backend/error_log
+backend/debug.log
+backend/deploy_log.txt
