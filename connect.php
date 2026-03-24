@@ -9,9 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Support both deployment layouts:
-// 1) private server_backend at project root
-// 2) legacy backend bridge include
+// Support both layouts:
+// 1) project_root/server_backend/connect.php
+// 2) one level above
+// 3) backend bridge file
 $bootstrapCandidates = [
     __DIR__ . '/server_backend/connect.php',
     __DIR__ . '/../server_backend/connect.php',
@@ -27,18 +28,16 @@ foreach ($bootstrapCandidates as $candidate) {
     }
 }
 
-if (!$bootstrapLoaded) {
+if (!$bootstrapLoaded || !isset($conn)) {
     http_response_code(500);
     echo json_encode([
-        "error" => "Database bootstrap not found",
-        "checked" => [
-            "server_backend/connect.php",
-            "../server_backend/connect.php",
-            "backend/collectSet.php"
-        ]
+        "status" => "error",
+        "message" => "Database bootstrap not found"
     ]);
     exit();
 }
+
+// Read JSON body (fallback to POST/GET)
 $rawBody = file_get_contents('php://input');
 $input = json_decode($rawBody, true);
 if (!is_array($input)) {
@@ -48,31 +47,42 @@ if (!is_array($input)) {
 $propertyId = $input['propertyId'] ?? $_POST['propertyId'] ?? $_GET['propertyId'] ?? null;
 $allRentals = $input['allRentals'] ?? $_POST['allRentals'] ?? $_GET['allRentals'] ?? null;
 
-if (!isset($conn)) {
-    echo json_encode(["error" => "Database connection not available"]);
-    exit();
-}
-
 if ($propertyId === null || $propertyId === '') {
     echo json_encode([
-        "error" => "No propertyId detected",
-        "server_info" => [
-            "query_string" => $_SERVER['QUERY_STRING'] ?? '',
-            "request_uri" => $_SERVER['REQUEST_URI'] ?? ''
-        ]
+        "status" => "error",
+        "message" => "No propertyId detected"
     ]);
     exit();
 }
 
+// List all properties
 if ((string)$propertyId === '-1') {
-    $stmt = $conn->prepare("SELECT * FROM huskyrentlens_property");
+    $stmt = $conn->prepare(
+        "SELECT
+            id AS propertyId,
+            id,
+            name,
+            name AS propertyName,
+            image_url,
+            image_url AS images,
+            price,
+            price AS cost,
+            address,
+            phone,
+            description,
+            created_at,
+            0 AS distanceFromMTU
+         FROM test_property"
+    );
+
     if (!$stmt) {
-        echo json_encode(["error" => "Prepare failed: " . $conn->error]);
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
         exit();
     }
 
     if (!$stmt->execute()) {
-        echo json_encode(["error" => "Execute failed: " . $stmt->error]);
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
         exit();
     }
 
@@ -84,52 +94,79 @@ if ((string)$propertyId === '-1') {
         "data" => $result->fetch_all(MYSQLI_ASSOC)
     ]);
     $stmt->close();
+    $conn->close();
     exit();
 }
 
+// Get all rentals for one property
 if ($allRentals === 'yes') {
+    $propertyIdInt = (int)$propertyId;
+
     $stmt = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ?");
     if (!$stmt) {
-        echo json_encode(["error" => "Prepare failed: " . $conn->error]);
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
         exit();
     }
 
-    $stmt->bind_param("s", $propertyId);
+    $stmt->bind_param("i", $propertyIdInt);
     if (!$stmt->execute()) {
-        echo json_encode(["error" => "Execute failed: " . $stmt->error]);
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
         exit();
     }
 
     $result = $stmt->get_result();
     echo json_encode([
         "status" => "success",
-        "received_id" => $propertyId,
+        "received_id" => $propertyIdInt,
         "count" => $result->num_rows,
         "data" => $result->fetch_all(MYSQLI_ASSOC)
     ]);
     $stmt->close();
+    $conn->close();
     exit();
 }
 
-$stmt = $conn->prepare("SELECT * FROM huskyrentlens_property WHERE propertyId = ?");
+// Get one property by ID
+$propertyIdInt = (int)$propertyId;
+$stmt = $conn->prepare(
+    "SELECT
+        id AS propertyId,
+        id,
+        name,
+        name AS propertyName,
+        image_url,
+        image_url AS images,
+        price,
+        price AS cost,
+        address,
+        phone,
+        description,
+        created_at,
+        0 AS distanceFromMTU
+     FROM test_property
+     WHERE id = ?"
+);
+
 if (!$stmt) {
-    echo json_encode(["error" => "Prepare failed: " . $conn->error]);
+    echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
     exit();
 }
 
-$stmt->bind_param("s", $propertyId);
+$stmt->bind_param("i", $propertyIdInt);
 if (!$stmt->execute()) {
-    echo json_encode(["error" => "Execute failed: " . $stmt->error]);
+    echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+    $stmt->close();
     exit();
 }
 
 $result = $stmt->get_result();
 echo json_encode([
     "status" => "success",
-    "received_id" => $propertyId,
+    "received_id" => $propertyIdInt,
     "count" => $result->num_rows,
     "data" => $result->fetch_all(MYSQLI_ASSOC)
 ]);
-$stmt->close();
 
+$stmt->close();
 $conn->close();

@@ -7,8 +7,46 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
 
-include_once __DIR__ . '/../../server_backend/collectSet.php';
-require_once __DIR__ . '/../../server_backend/vendor/autoload.php';
+// Support both deployment layouts for private bootstrap and Composer vendor path.
+$bootstrapCandidates = [
+    __DIR__ . '/../../server_backend/collectSet.php',
+    __DIR__ . '/../server_backend/collectSet.php'
+];
+
+$bootstrapLoaded = false;
+foreach ($bootstrapCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $bootstrapLoaded = true;
+        break;
+    }
+}
+
+if (!$bootstrapLoaded || !isset($conn)) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Database bootstrap not found"]);
+    exit();
+}
+
+$autoloadCandidates = [
+    __DIR__ . '/../../server_backend/vendor/autoload.php',
+    __DIR__ . '/../server_backend/vendor/autoload.php'
+];
+
+$autoloadLoaded = false;
+foreach ($autoloadCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $autoloadLoaded = true;
+        break;
+    }
+}
+
+if (!$autoloadLoaded) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "JWT autoload not found"]);
+    exit();
+}
 
 use Firebase\JWT\JWT;
 
