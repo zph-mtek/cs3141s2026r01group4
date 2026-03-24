@@ -9,7 +9,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once __DIR__ . '/server_backend/connect.php';
+// Support both deployment layouts:
+// 1) private server_backend at project root
+// 2) legacy backend bridge include
+$bootstrapCandidates = [
+    __DIR__ . '/server_backend/connect.php',
+    __DIR__ . '/../server_backend/connect.php',
+    __DIR__ . '/backend/collectSet.php'
+];
+
+$bootstrapLoaded = false;
+foreach ($bootstrapCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $bootstrapLoaded = true;
+        break;
+    }
+}
+
+if (!$bootstrapLoaded) {
+    http_response_code(500);
+    echo json_encode([
+        "error" => "Database bootstrap not found",
+        "checked" => [
+            "server_backend/connect.php",
+            "../server_backend/connect.php",
+            "backend/collectSet.php"
+        ]
+    ]);
+    exit();
+}
 $rawBody = file_get_contents('php://input');
 $input = json_decode($rawBody, true);
 if (!is_array($input)) {

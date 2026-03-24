@@ -11,10 +11,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-include_once __DIR__ . '/../../server_backend/collectSet.php';
+// Support both deployment layouts for private DB bootstrap.
+$bootstrapCandidates = [
+    __DIR__ . '/../../server_backend/collectSet.php',
+    __DIR__ . '/../server_backend/collectSet.php',
+    __DIR__ . '/collectSet.php'
+];
 
-// Fetch all property rows.
-$stmt = $conn->prepare("SELECT * FROM test_property");
+$bootstrapLoaded = false;
+foreach ($bootstrapCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        include_once $candidate;
+        $bootstrapLoaded = true;
+        break;
+    }
+}
+
+if (!$bootstrapLoaded || !isset($conn)) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Database bootstrap not found"]);
+    exit();
+}
+
+// Fetch all property rows from current active table.
+// Aliases keep compatibility with frontend fields used in cards/details.
+$stmt = $conn->prepare(
+    "SELECT
+        id AS propertyId,
+        id,
+        name,
+        name AS propertyName,
+        image_url,
+        image_url AS images,
+        price,
+        price AS cost,
+        address,
+        phone,
+        description,
+        created_at,
+        0 AS distanceFromMTU
+     FROM test_property"
+);
 $stmt->execute();
 $result = $stmt->get_result();
 $data = $result->fetch_all(MYSQLI_ASSOC);
