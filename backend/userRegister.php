@@ -161,72 +161,83 @@ $email = strtolower(trim($input['email'] ?? ''));
 $password = $input['password'] ?? '';
 $role = $input['role'] ?? 'MTU_student';
 
-if (!$firstName || !$lastName || !$email || !$password) {
-    echo json_encode(["status" => "error", "message" => "All fields required"]);
+
+if($role !== 'MTU_student' && $role !== 'Landlord'){
+    echo json_encode(["status" => "error", "message" => "Invalid role"]);
     exit();
 }
 
-if ($role === 'MTU_student' && !preg_match('/^[\w.%+-]+@mtu\.edu$/i', $email)) {
-    echo json_encode(["status" => "error", "message" => "Must use @mtu.edu email"]);
-    exit();
-}
+else{
 
-// Prevent duplicate accounts.
-$checkStmt = $conn->prepare("SELECT userId FROM huskyrentlens_users WHERE email = ?");
-if (!$checkStmt) {
-    echo json_encode(["status" => "error", "message" => "Database error"]);
-    exit();
-}
 
-$checkStmt->bind_param("s", $email);
-$checkStmt->execute();
-if ($checkStmt->get_result()->num_rows > 0) {
-    echo json_encode(["status" => "error", "message" => "Email already registered"]);
-    exit();
-}
-
-// Create the user account.
-$passwordHash = password_hash($password, PASSWORD_DEFAULT);
-$isVerified = ($role === 'MTU_student') ? 0 : 1;
-$insertStmt = $conn->prepare("INSERT INTO huskyrentlens_users (firstName, lastName, email, password, role, is_verified) VALUES (?, ?, ?, ?, ?, ?)");
-if (!$insertStmt) {
-    echo json_encode(["status" => "error", "message" => "Database error"]);
-    exit();
-}
-
-$insertStmt->bind_param("sssssi", $firstName, $lastName, $email, $passwordHash, $role, $isVerified);
-if (!$insertStmt->execute()) {
-    echo json_encode(["status" => "error", "message" => "Registration failed"]);
-    exit();
-}
-
-$userId = $conn->insert_id;
-
-// MTU students require OTP verification.
-if ($role === 'MTU_student') {
-    $otp = random_int(100000, 999999);
-    $otpHash = password_hash((string)$otp, PASSWORD_DEFAULT);
-    $expiresAt = (new DateTime('+5 minutes'))->format('Y-m-d H:i:s');
-
-    $otpStmt = $conn->prepare("INSERT INTO huskyrentlens_otps (userId, otpHash, expiresAt, attempts, createdAt) VALUES (?, ?, ?, 0, NOW())");
-    if (!$otpStmt) {
+    if (!$firstName || !$lastName || !$email || !$password) {
+        echo json_encode(["status" => "error", "message" => "All fields required"]);
+        exit();
+    }
+    
+    if ($role === 'MTU_student' && !preg_match('/^[\w.%+-]+@mtu\.edu$/i', $email)) {
+        echo json_encode(["status" => "error", "message" => "Must use @mtu.edu email"]);
+        exit();
+    }
+    
+    // Prevent duplicate accounts.
+    $checkStmt = $conn->prepare("SELECT userId FROM huskyrentlens_users WHERE email = ?");
+    if (!$checkStmt) {
         echo json_encode(["status" => "error", "message" => "Database error"]);
         exit();
     }
-
-    $otpStmt->bind_param("iss", $userId, $otpHash, $expiresAt);
-    if (!$otpStmt->execute()) {
+    
+    $checkStmt->bind_param("s", $email);
+    $checkStmt->execute();
+    if ($checkStmt->get_result()->num_rows > 0) {
+        echo json_encode(["status" => "error", "message" => "Email already registered"]);
+        exit();
+    }
+    
+    // Create the user account.
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    $isVerified = ($role === 'MTU_student') ? 0 : 1;
+    $insertStmt = $conn->prepare("INSERT INTO huskyrentlens_users (firstName, lastName, email, password, role, is_verified) VALUES (?, ?, ?, ?, ?, ?)");
+    if (!$insertStmt) {
         echo json_encode(["status" => "error", "message" => "Database error"]);
         exit();
     }
-
-    $emailSubject = 'HuskyRentLens verification code';
-    $emailBody = "Your verification code: $otp\nExpires in 5 minutes.";
-    if (sendSMTPEmail($email, $emailSubject, $emailBody)) {
-        echo json_encode(["status" => "otp_required", "message" => "Verification email sent", "userId" => $userId]);
+    
+    $insertStmt->bind_param("sssssi", $firstName, $lastName, $email, $passwordHash, $role, $isVerified);
+    if (!$insertStmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Registration failed"]);
+        exit();
+    }
+    
+    $userId = $conn->insert_id;
+    
+    // MTU students require OTP verification.
+    if ($role === 'MTU_student') {
+        $otp = random_int(100000, 999999);
+        $otpHash = password_hash((string)$otp, PASSWORD_DEFAULT);
+        $expiresAt = (new DateTime('+5 minutes'))->format('Y-m-d H:i:s');
+    
+        $otpStmt = $conn->prepare("INSERT INTO huskyrentlens_otps (userId, otpHash, expiresAt, attempts, createdAt) VALUES (?, ?, ?, 0, NOW())");
+        if (!$otpStmt) {
+            echo json_encode(["status" => "error", "message" => "Database error"]);
+            exit();
+        }
+    
+        $otpStmt->bind_param("iss", $userId, $otpHash, $expiresAt);
+        if (!$otpStmt->execute()) {
+            echo json_encode(["status" => "error", "message" => "Database error"]);
+            exit();
+        }
+    
+        $emailSubject = 'HuskyRentLens verification code';
+        $emailBody = "Your verification code: $otp\nExpires in 5 minutes.";
+        if (sendSMTPEmail($email, $emailSubject, $emailBody)) {
+            echo json_encode(["status" => "otp_required", "message" => "Verification email sent", "userId" => $userId]);
+        } else {
+            echo json_encode(["status" => "otp_required", "message" => "Unable to send verification code, please try again", "userId" => $userId]);
+        }
     } else {
-        echo json_encode(["status" => "otp_required", "message" => "Unable to send verification code, please try again", "userId" => $userId]);
+        echo json_encode(["status" => "success", "message" => "Registration complete", "userId" => $userId]);
     }
-} else {
-    echo json_encode(["status" => "success", "message" => "Registration complete", "userId" => $userId]);
 }
+
