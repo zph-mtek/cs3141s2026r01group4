@@ -161,15 +161,16 @@ $email = strtolower(trim($input['email'] ?? ''));
 $password = $input['password'] ?? '';
 $role = $input['role'] ?? 'MTU_student';
 
+$phoneNumber = trim($input['phoneNumber'] ?? '');
+
 
 if($role !== 'MTU_student' && $role !== 'Landlord'){
     echo json_encode(["status" => "error", "message" => "Invalid role"]);
     exit();
 }
 
+
 else{
-
-
     if (!$firstName || !$lastName || !$email || !$password) {
         echo json_encode(["status" => "error", "message" => "All fields required"]);
         exit();
@@ -179,9 +180,12 @@ else{
         echo json_encode(["status" => "error", "message" => "Must use @mtu.edu email"]);
         exit();
     }
+
+    //change table based on the role
+    $tableName = ($role === 'Landlord') ? 'huskyrentlens_landlords' : 'huskyrentlens_users';
     
     // Prevent duplicate accounts.
-    $checkStmt = $conn->prepare("SELECT userId FROM huskyrentlens_users WHERE email = ?");
+    $checkStmt = $conn->prepare("SELECT userId FROM {$tableName} WHERE email = ?");
     if (!$checkStmt) {
         echo json_encode(["status" => "error", "message" => "Database error"]);
         exit();
@@ -195,19 +199,41 @@ else{
     }
     
     // Create the user account.
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    $isVerified = ($role === 'MTU_student') ? 0 : 1;
-    $insertStmt = $conn->prepare("INSERT INTO huskyrentlens_users (firstName, lastName, email, password, role, is_verified) VALUES (?, ?, ?, ?, ?, ?)");
-    if (!$insertStmt) {
-        echo json_encode(["status" => "error", "message" => "Database error"]);
-        exit();
+
+
+    //create mtu student account
+    if($role === 'Landlord'){
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $isVerified = 1;
+        $insertStmt = $conn->prepare("INSERT INTO huskyrentlens_landlords (firstName, lastName, phone, email, password, role, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        if (!$insertStmt) {
+            echo json_encode(["status" => "error", "message" => "Database error"]);
+            exit();
+        }
+        
+        $insertStmt->bind_param("ssssssi", $firstName, $lastName, $email, $phoneNumber,$passwordHash, $role, $isVerified);
+        if (!$insertStmt->execute()) {
+            echo json_encode(["status" => "error", "message" => "Registration failed"]);
+            exit();
+        }
     }
-    
-    $insertStmt->bind_param("sssssi", $firstName, $lastName, $email, $passwordHash, $role, $isVerified);
-    if (!$insertStmt->execute()) {
-        echo json_encode(["status" => "error", "message" => "Registration failed"]);
-        exit();
+
+    else{
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $isVerified = 0;
+        $insertStmt = $conn->prepare("INSERT INTO huskyrentlens_users (firstName, lastName, email, password, role, is_verified) VALUES (?, ?, ?, ?, ?, ?)");
+        if (!$insertStmt) {
+            echo json_encode(["status" => "error", "message" => "Database error"]);
+            exit();
+        }
+        
+        $insertStmt->bind_param("sssssi", $firstName, $lastName, $email, $passwordHash, $role, $isVerified);
+        if (!$insertStmt->execute()) {
+            echo json_encode(["status" => "error", "message" => "Registration failed"]);
+            exit();
+        }
     }
+
     
     $userId = $conn->insert_id;
     
