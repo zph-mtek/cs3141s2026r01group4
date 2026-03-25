@@ -37,13 +37,13 @@ const Navbar = () => {
     }
 
     return (
-        <div className='flex w-full pb-20 relative pb-30'>
+        <div className='flex w-full pb-8 relative'>
             <Link to={"/"} className='z-20'>
-                <img src={logoImage} className='w-30 h-auto absolute top-3 left-10' alt="" />
+                <img src={logoImage} className='w-20 h-auto absolute top-2 left-6' alt="" />
             </Link>
 
-            <div className={`flex w-full justify-center bg-white absolute h-auto pb-30 pt-40 md:static md:flex md:justify-end md:pr-10 md:py-6 md:pt-10 ${menuToggle === 'close' ? 'hidden md:flex' : 'flex'}`}>
-                <ul className='flex flex-col items-center text-2xl font-bold text-center gap-12 md:flex-row md:gap-10 md:text-lg'>
+            <div className={`flex w-full justify-center bg-white absolute h-auto pb-20 pt-20 md:static md:flex md:justify-end md:pr-8 md:py-4 md:pt-6 ${menuToggle === 'close' ? 'hidden md:flex' : 'flex'}`}>
+                <ul className='flex flex-col items-center text-xl font-bold text-center gap-8 md:flex-row md:gap-7 md:text-base'>
                     <li className="cursor-pointer" name="find" onClick={toggleMenu}><Link to={"/properties"}>Find properties</Link></li>
                     <li className="cursor-pointer" name="about" onClick={toggleMenu}><Link to={"/about"}>About</Link></li>
 
@@ -56,11 +56,11 @@ const Navbar = () => {
                     )}
 
                     {user && (
-                    <Link to={"/profile"}><FaRegUserCircle className='cursor-pointer text-2xl'></FaRegUserCircle></Link>
+                    <Link to={"/profile"}><FaRegUserCircle className='cursor-pointer text-lg md:text-xl'></FaRegUserCircle></Link>
                     )}
 
                     {user && (
-                    <Link to={"/"}><MdLogout onClick={logOutHandler} className='text-2xl'/></Link>
+                    <Link to={"/"}><MdLogout onClick={logOutHandler} className='text-lg md:text-xl'/></Link>
                     )}
                     
                 </ul>
@@ -68,9 +68,9 @@ const Navbar = () => {
 
 
 
-            <div className='absolute top-10 right-5 z-30 md:hidden'>
+            <div className='absolute top-6 right-5 z-30 md:hidden'>
                 <button onClick={toggleMenu}>
-                    {menuToggle === 'close' ? <RxHamburgerMenu className='cursor-pointer text-4xl md:hidden' /> : <GrClose className='cursor-pointer text-4xl md:hidden' />}
+                    {menuToggle === 'close' ? <RxHamburgerMenu className='cursor-pointer text-3xl md:hidden' /> : <GrClose className='cursor-pointer text-3xl md:hidden' />}
                 </button>
             </div>
         </div>
