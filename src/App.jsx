@@ -12,6 +12,8 @@ import StudentSignup from './pages/StudentSignup'
 import LandlordSignup from './pages/LandlordSignup'
 import AddReview from './pages/AddReview'
 import Profile from './pages/Profile'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import Guidelines from './pages/Guidelines'
 
 const App = () => {
   const location = useLocation();
@@ -31,6 +33,8 @@ const App = () => {
         <Route path='/add' element={<AddProperties/>}/>
         <Route path='/addreview' element={<AddReview/>}/>
         <Route path='/profile' element={<Profile/>}/>
+        <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
+        <Route path='/guidelines' element={<Guidelines/>}/>
       </Routes>
     </div>
   )

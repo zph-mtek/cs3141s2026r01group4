@@ -1,0 +1,57 @@
+/* ── About page animations & custom styles ── */
+
+/* fade-in on scroll (JS toggles .visible) */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* stagger children inside a .stagger-group */
+.stagger-group .fade-up:nth-child(1) { transition-delay: 0s; }
+.stagger-group .fade-up:nth-child(2) { transition-delay: 0.12s; }
+.stagger-group .fade-up:nth-child(3) { transition-delay: 0.24s; }
+.stagger-group .fade-up:nth-child(4) { transition-delay: 0.36s; }
+.stagger-group .fade-up:nth-child(5) { transition-delay: 0.48s; }
+.stagger-group .fade-up:nth-child(6) { transition-delay: 0.60s; }
+
+/* subtle floating animation for the hero icon */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.float-anim {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* gradient text helper */
+.gradient-text {
+  background: linear-gradient(135deg, #facc15, #f59e0b, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* card hover lift */
+.card-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* timeline connector */
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #facc15;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px #facc15;
+  flex-shrink: 0;
+}
