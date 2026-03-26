@@ -63,8 +63,11 @@ $data = json_decode($json, true);
 $email = $data['email'] ?? '';
 $password = $data['password'] ?? '';
 
+//decide which table to use 
+$tableName = preg_match('/^[\w.%+-]+@mtu\.edu$/i', $email) ? 'huskyrentlens_users' : 'huskyrentlens_landlords';
+
 // Load user account by email.
-$stmt = $conn->prepare("SELECT userId, firstName, lastName, email, password, role, is_verified FROM huskyrentlens_users WHERE email = ?");
+$stmt = $conn->prepare("SELECT userId, firstName, lastName, email, password, role, is_verified FROM {$tableName} WHERE email = ?");
 if (!$stmt) {
     echo json_encode(["status" => "error", "message" => "Database error"]);
     exit();
@@ -73,6 +76,15 @@ if (!$stmt) {
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
+
+//if the user not found check other table prob change this later
+
+if ($result->num_rows === 0 && $tableName === 'huskyrentlens_users') {
+    $stmt = $conn->prepare("SELECT userId, firstName, lastName, email, password, role, is_verified FROM huskyrentlens_landlords WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+}
 
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
