@@ -161,7 +161,7 @@ $email = strtolower(trim($input['email'] ?? ''));
 $password = $input['password'] ?? '';
 $role = $input['role'] ?? 'MTU_student';
 
-$phoneNumber = trim($input['phoneNumber'] ?? '');
+$phoneNumber = trim($input['phone'] ?? '');
 
 
 if($role !== 'MTU_student' && $role !== 'Landlord'){
@@ -211,7 +211,7 @@ else{
             exit();
         }
         
-        $insertStmt->bind_param("ssssssi", $firstName, $lastName, $email, $phoneNumber,$passwordHash, $role, $isVerified);
+        $insertStmt->bind_param("ssssssi", $firstName, $lastName, $phoneNumber, $email, $passwordHash, $role, $isVerified);
         if (!$insertStmt->execute()) {
             echo json_encode(["status" => "error", "message" => "Registration failed"]);
             exit();
