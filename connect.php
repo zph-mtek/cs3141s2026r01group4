@@ -58,21 +58,7 @@ if ($propertyId === null || $propertyId === '') {
 // List all properties
 if ((string)$propertyId === '-1') {
     $stmt = $conn->prepare(
-        "SELECT
-            id AS propertyId,
-            id,
-            name,
-            name AS propertyName,
-            image_url,
-            image_url AS images,
-            price,
-            price AS cost,
-            address,
-            phone,
-            description,
-            created_at,
-            0 AS distanceFromMTU
-         FROM test_property"
+        "SELECT * FROM huskyrentlens_property"
     );
 
     if (!$stmt) {
