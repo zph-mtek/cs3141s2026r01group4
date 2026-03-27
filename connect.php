@@ -116,21 +116,7 @@ if ($allRentals === 'yes') {
 // Get one property by ID
 $propertyIdInt = (int)$propertyId;
 $stmt = $conn->prepare(
-    "SELECT
-        id AS propertyId,
-        id,
-        name,
-        name AS propertyName,
-        image_url,
-        image_url AS images,
-        price,
-        price AS cost,
-        address,
-        phone,
-        description,
-        created_at,
-        0 AS distanceFromMTU
-     FROM test_property
+    "SELECT * FROM huskyrentlens_property
      WHERE id = ?"
 );
 
