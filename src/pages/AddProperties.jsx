@@ -26,9 +26,14 @@ const AddProperties = () => {
 return (
   <div className='pt-25 space-y-5'>
     {user && user.role === 'Landlord' ? (
-      <div className='flex justify-center'>
-        <p className='text-2xl font-extrabold'>test</p>
+      <div>
+        
       </div>
+
+
+
+
+
     ) : (
       <div>
         <h1 className='text-2xl flex justify-center font-semibold'>

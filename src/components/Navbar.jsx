@@ -52,7 +52,7 @@ const Navbar = () => {
                     )}
 
                     {(!user || user.role === 'Landlord') && (
-                        <li className="cursor-pointer" name="add" onClick={toggleMenu}><Link to={"/add"}>Add properties</Link></li>
+                        <li className="cursor-pointer" name="add" onClick={toggleMenu}><Link to={"/manage"}>Manage properties</Link></li>
                     )}
 
                     {user && (

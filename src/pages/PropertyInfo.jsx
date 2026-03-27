@@ -8,6 +8,8 @@ import { LuHeater } from "react-icons/lu";
 import { CgGym } from "react-icons/cg";
 import pfp from "../assets/catpfp.jpg"
 import { Link } from 'react-router-dom';
+import StarRating from '../components/StarRating.jsx';
+
 
 import MapComponents from '../components/MapCom';
 
@@ -154,12 +156,11 @@ const PropertyInfo = () => {
             {/* Been a tenant? Leave a review to help fellow Huskies. */}
             {/* "Lived here before? Share your experience to help future Huskies!" */}
             {/* "Help future Huskies find their next home. Share your review!" */}
-          <Link to={"/addreview"}>
-            <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
-              <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
-            </div>
-          </Link>
-
+            <Link to={'/addreview/id'}>            
+              <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
+                <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
+              </div>  
+            </Link>
         </div>
       </div>
 

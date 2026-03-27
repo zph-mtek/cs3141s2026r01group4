@@ -1,11 +1,12 @@
 import React from 'react'
+import StarRating from '../components/StarRating'
 
 const AddReview = () => {
   return (
     <div className='flex text-center justify-center'>
-        <p className='text-2xl'>
-        add property
-        </p>
+      <div>
+        <StarRating/>
+      </div>
     </div>
   )
 }
