@@ -2,7 +2,7 @@
 import React from 'react';
 import axios from 'axios';
 
-export const Database = async (jsonData) => {
+export const Database = async (apiURL,jsonData) => {
     console.log('Function is running...');
 
     // Abort controller if request takes too long
@@ -29,7 +29,7 @@ export const Database = async (jsonData) => {
     }
 
     try { // try the request
-        const dbResponse = await axios.post("https://huskyrentlens.cs.mtu.edu/connect.php",jsonData,config);
+        const dbResponse = await axios.post(apiURL,jsonData,config);
         return dbResponse;
     } catch (error) {
         if (axios.isCancel(error)) {
