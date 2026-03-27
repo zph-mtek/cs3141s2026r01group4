@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import addressIcon from "../assets/maps-and-flags.png";
 import { CiCircleChevLeft, CiCircleChevRight} from "react-icons/ci";
 import { GoDotFill } from "react-icons/go";
@@ -7,13 +7,11 @@ import { MdOutlineSoupKitchen, MdOutlineLocalLaundryService, MdOutlineShower } f
 import { LuHeater } from "react-icons/lu";
 import { CgGym } from "react-icons/cg";
 import pfp from "../assets/catpfp.jpg"
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating.jsx';
-
+import { Database } from '../Architect/Architect.jsx'
 
 import MapComponents from '../components/MapCom';
-
-
 
 const PropertyInfo = () => {
 
@@ -64,6 +62,13 @@ const PropertyInfo = () => {
   const goToSlides =(slideIndex) => {
     setCurrentIndex(slideIndex)
   }
+
+  //-- Test grab property information
+  const [ propInfo, setPropInfo ] =  useState({});
+
+  useEffect(() => {
+    
+  },[]);
 
   return (
     <div className='grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
