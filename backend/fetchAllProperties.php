@@ -37,20 +37,7 @@ if (!$bootstrapLoaded || !isset($conn)) {
 // Aliases keep compatibility with frontend fields used in cards/details.
 $stmt = $conn->prepare(
     "SELECT
-        id AS propertyId,
-        id,
-        name,
-        name AS propertyName,
-        image_url,
-        image_url AS images,
-        price,
-        price AS cost,
-        address,
-        phone,
-        description,
-        created_at,
-        0 AS distanceFromMTU
-     FROM test_property"
+        * from huskyrentlens_property"
 );
 $stmt->execute();
 $result = $stmt->get_result();
