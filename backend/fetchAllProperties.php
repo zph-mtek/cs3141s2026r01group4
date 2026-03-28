@@ -36,7 +36,7 @@ if (!$bootstrapLoaded || !isset($conn)) {
 // Fetch all property rows from current active table.
 // Aliases keep compatibility with frontend fields used in cards/details.
 $stmt = $conn->prepare(
-    "SELECT * MIN(r.price) AS lowest_price
+    "SELECT p.*, MIN(r.price) AS lowest_price
     FROM huskyrentlens_property p 
     LEFT JOIN huskyrentlens_rental r ON p.propertyId = r.propertyId
     GROUP BY p.propertyId"
