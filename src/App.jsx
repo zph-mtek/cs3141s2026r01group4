@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, useLocation} from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -29,7 +29,7 @@ const App = () => {
         <Route path='/signup/landlord' element={<LandlordSignup/>}/>
         <Route path='/about' element={<About/>}/>
         <Route path='/properties' element={<Properties/>}/>
-        <Route path='/properties/id' element={<PropertyInfo/>}/>
+        <Route path='/properties/:propertyId' element={<PropertyInfo/>}/>
         <Route path='/add' element={<AddProperties/>}/>
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
