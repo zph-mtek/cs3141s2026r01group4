@@ -117,7 +117,7 @@ if ($allRentals === 'yes') {
 $propertyIdInt = (int)$propertyId;
 $stmt = $conn->prepare(
     "SELECT * FROM huskyrentlens_property
-     WHERE id = ?"
+     WHERE propertyId = ?"
 );
 
 if (!$stmt) {
