@@ -16,7 +16,7 @@ const PropertyCard = (data) => {
     const fetchPropertyRentals = async () => {
       console.log("Database connection is is running...");
 
-      const getData = await Database({
+      const getData = await Database('https://huskyrentlens.cs.mtu.edu/connect.php',{
         propertyId: propertyInfo.propertyId,
         allRentals: "yes"
       });
@@ -63,7 +63,7 @@ const PropertyCard = (data) => {
   },[]);
 
   return (
-    <Link to={"/properties/id "}> {/* Put the id of the propery here to make link dynamic */}
+    <Link to={`/properties/${propertyInfo.propertyId}`}> {/* Put the id of the propery here to make link dynamic */}
             
           <div className='flex flex-col rounded-2xl h-110 2xl:h-100 bg-white overflow-hidden cursor-pointer hover:bg-amber-200 transform transition duration-300 group'>
             <div className='p-5'>
@@ -112,7 +112,7 @@ const Properties = () => {
     const fetchAllProperties = async () => {
       console.log("Database connection is is running...");
 
-      const propertyData = await Database({
+      const propertyData = await Database('https://huskyrentlens.cs.mtu.edu/connect.php',{
         propertyId : -1
       });
 
