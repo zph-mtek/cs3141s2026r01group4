@@ -35,12 +35,23 @@ if (!$bootstrapLoaded || !isset($conn)) {
 
 // Fetch all property rows from current active table.
 // Aliases keep compatibility with frontend fields used in cards/details.
-$stmt = $conn->prepare(
-    "SELECT p.*, MIN(r.cost) AS lowest_price
+$sql = "
+    SELECT p.*, r_min.lowest_price
     FROM huskyrentlens_property p 
-    LEFT JOIN huskyrentlens_rental r ON p.propertyId = r.propertyId
-    GROUP BY p.propertyId"
-);
+    LEFT JOIN (
+        SELECT propertyId, MIN(cost) AS lowest_price 
+        FROM huskyrentlens_rental 
+        GROUP BY propertyId
+    ) r_min ON p.propertyId = r_min.propertyId
+";
+
+// $stmt = $conn->prepare(
+//     "SELECT p.*, MIN(r.cost) AS lowest_price
+//     FROM huskyrentlens_property p 
+//     LEFT JOIN huskyrentlens_rental r ON p.propertyId = r.propertyId
+//     GROUP BY p.propertyId"
+// );
+$stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
 $data = $result->fetch_all(MYSQLI_ASSOC);
