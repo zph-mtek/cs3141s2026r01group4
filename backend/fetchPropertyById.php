@@ -56,12 +56,18 @@ $stmt4->bind_param("i", $id);
 $stmt4->execute();
 $reviewsData = $stmt4->get_result()->fetch_all(MYSQLI_ASSOC);
 
+$stmt5 = $conn->prepare("SELECT amenityName FROM huskyrentlens_property_amenities WHERE propertyId = ?");
+$stmt5->bind_param("i", $id);
+$stmt5->execute();
+$amenitiesData = $stmt5->get_result()->fetch_all(MYSQLI_ASSOC);
+
 echo json_encode([
     "status" => "success",
     "property" => $propertyData,
     "rentals" => $rentalsData,
     "images" => $imagesData,
-    "reviews" => $reviewsData
+    "reviews" => $reviewsData,
+    "amenities" => $amenitiesData
 ]);
 
 
