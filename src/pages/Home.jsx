@@ -67,7 +67,7 @@ const Home = () => {
                                             {property.name}
                                         </h2>
                                         <p className="text-2xl md:text-3xl font-bold mt-2 md:mt-0">
-                                            From 0<span className="text-sm md:text-lg font-medium">/month</span>
+                                            From {property.lowest_price}<span className="text-sm md:text-lg font-medium">/month</span>
                                         </p>
                                     </div>
 
