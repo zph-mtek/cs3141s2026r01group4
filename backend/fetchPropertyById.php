@@ -36,7 +36,25 @@ if (!$bootstrapLoaded || !isset($conn)) {
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-$id = $data['ID'] ?? '';
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+$stmt = $conn->prepare("SELECT * FROM huskyrentlens_property WHERE propertyId = ?");
+
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$propertyData = $stmt->get_result();
+
+$stmt2 = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ? ORDER BY cost ASC");
+$stmt2->bind_param("i", $id);
+$stmt2->execute();
+$rentalsData = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+
+echo json_encode([
+    "status" => "success",
+    "property" => $propertyData,
+    "rentals" => $rentalsData
+]);
+
 
 if (isset($conn)) {
     $conn->close();
