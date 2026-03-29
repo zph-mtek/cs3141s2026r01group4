@@ -33,9 +33,6 @@ if (!$bootstrapLoaded || !isset($conn)) {
     exit();
 }
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 $stmt = $conn->prepare("SELECT * FROM huskyrentlens_property WHERE propertyId = ?");
@@ -49,10 +46,16 @@ $stmt2->bind_param("i", $id);
 $stmt2->execute();
 $rentalsData = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
 
+$stmt3 = $conn->prepare("SELECT * FROM huskyrentlens_property_image WHERE propertyId = ?");
+$stmt3->bind_param("i", $id);
+$stmt3->execute();
+$imagesData = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
+
 echo json_encode([
     "status" => "success",
     "property" => $propertyData,
-    "rentals" => $rentalsData
+    "rentals" => $rentalsData,
+    "images" => $imagesData
 ]);
 
 
