@@ -26,14 +26,16 @@ const PropertyInfo = () => {
         const fetchData = async () => {
             try {
                 const response = await getPropertyById(propertyId);
-                setProperties(response.data);
+                setProperties(response);
+
+                console.log("バックエンドから届いたデータ:", response);
             } catch (error) {
                 console.error("Failed to fetch properties");
             }
         };
 
         fetchData();
-    }, []);
+    }, [propertyId]);
 
 
     const slidePhotos = [
