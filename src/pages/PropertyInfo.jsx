@@ -26,6 +26,7 @@ const PropertyInfo = () => {
   const [rentals, setRentals] = useState([]);
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
   const [modalStatus, setModalStatus] = useState(false);
+  const [slidePhotos, setSlidePhotos] = useState([]);
   
   useEffect(()=>{
     console.log(modalStatus)
@@ -69,6 +70,7 @@ const PropertyInfo = () => {
                 const response = await getPropertyById(propertyId);
                 setProperties(response.property);
                 setRentals(response.rentals)
+                setSlidePhotos(response.images)
 
                 console.log("バックエンドから届いたデータ:", response);
             } catch (error) {
@@ -78,19 +80,6 @@ const PropertyInfo = () => {
 
         fetchData();
     }, [propertyId]);
-
-
-    const slidePhotos = [
-        {
-            url: 'https://res.cloudinary.com/dxhogizsr/image/upload/v1773440484/herm-iceland-4524112_1920_liwlzf.jpg'
-        },
-        {
-            url: 'https://res.cloudinary.com/dxhogizsr/image/upload/v1773440479/jarmoluk-apartment-2094661_1920_ql47qw.jpg'
-        },
-        {
-            url: 'https://res.cloudinary.com/dxhogizsr/image/upload/v1773440473/jarmoluk-apartment-2094645_1920_okls0r.jpg'
-        },
-    ];
 
     const features = [
         { name: 'wifi', icon: <IoWifi /> },
@@ -130,7 +119,17 @@ const PropertyInfo = () => {
         <div className='grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
             {/* image section */}
             <div className='max-w-[1000px] h-[600px] w-full m-auto px-4 flex flex-col'>
-                <div onClick={toggleModal} style={{ backgroundImage: `url(${slidePhotos[currentIndex].url})` }} className='w-full h-full rounded-2xl bg-center bg-cover duration-300'></div>
+                {slidePhotos.length > 0 ? (
+                    <div 
+                        onClick={toggleModal} 
+                        style={{ backgroundImage: `url(${slidePhotos[currentIndex].imageUrl})` }} 
+                        className='w-full h-full rounded-2xl bg-center bg-cover duration-300 cursor-pointer'
+                    ></div>
+                ) : (
+                    <div className="w-full h-full rounded-2xl bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                        Loading images...
+                    </div>
+                )}
 
                 <div className='flex justify-center items-center py-4 gap-8'>
                     <CiCircleChevLeft
@@ -144,7 +143,7 @@ const PropertyInfo = () => {
                 </div>
 
                 {modalStatus && (
-                <ImageModal toggleModal={toggleModal}/>
+                <ImageModal toggleModal={toggleModal} photos={slidePhotos}/>
                  )}
 
             </div>
