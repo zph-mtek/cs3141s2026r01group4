@@ -42,7 +42,7 @@ $stmt = $conn->prepare("SELECT * FROM huskyrentlens_property WHERE propertyId = 
 
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$propertyData = $stmt->get_result();
+$propertyData = $stmt->get_result()->fetch_assoc();
 
 $stmt2 = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ? ORDER BY cost ASC");
 $stmt2->bind_param("i", $id);
