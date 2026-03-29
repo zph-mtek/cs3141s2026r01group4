@@ -10,6 +10,7 @@ import pfp from "../assets/catpfp.jpg"
 import { Link, useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating.jsx';
 import MapComponents from '../components/MapCom';
+import { getPropertyById } from '../API/getPropertyById.js';
 
 const PropertyInfo = () => {
 
@@ -28,8 +29,6 @@ const PropertyInfo = () => {
                 setProperties(response.data);
             } catch (error) {
                 console.error("Failed to fetch properties");
-            } finally {
-                setIsLoading(false);
             }
         };
 
