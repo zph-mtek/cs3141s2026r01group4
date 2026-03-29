@@ -12,6 +12,7 @@ import StarRating from '../components/StarRating.jsx';
 import MapComponents from '../components/MapCom';
 import { getPropertyById } from '../API/getPropertyById.js';
 import ImageModal from '../components/ImageModal.jsx';
+import { amenityIcon } from '../assets/amenityIcons.jsx';
 
 const PropertyInfo = () => {
 
@@ -28,10 +29,25 @@ const PropertyInfo = () => {
   const [modalStatus, setModalStatus] = useState(false);
   const [slidePhotos, setSlidePhotos] = useState([]);
   const [reviews, setReviews] = useState([]);
-  
+  const [amenities, setAmenities] = useState([]);
+  const [propertyRating, setPropertyRating] = useState('N/A')
+
+  //calculate rating
   useEffect(()=>{
-    console.log(modalStatus)    
-  }, [modalStatus])
+    if(reviews.length > 0){
+        let total = 0
+
+        reviews.forEach((review)=>{
+            total += Number(review.rating)
+        })
+
+        const average = (total / reviews.length).toFixed(1);
+        setPropertyRating(average);
+    }
+    else{
+        setPropertyRating('N/A');
+    }
+  }, [reviews])
 
   useEffect(() => {
         const fetchCoordinates = async () => {
@@ -60,11 +76,6 @@ const PropertyInfo = () => {
         fetchCoordinates();
     }, [properties.address]);
 
-  //test
-    useEffect(() => {
-        console.log("現在開いている物件のIDは:", propertyId);
-    }, [propertyId]);
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -73,8 +84,7 @@ const PropertyInfo = () => {
                 setRentals(response.rentals)
                 setSlidePhotos(response.images)
                 setReviews(response.reviews)
-
-                console.log("バックエンドから届いたデータ:", response);
+                setAmenities(response.amenities)
             } catch (error) {
                 console.error("Failed to fetch properties");
             }
@@ -159,7 +169,14 @@ const PropertyInfo = () => {
                             {properties.name}
                         </h1>
                         <p className='flex items-center text-lg leading-none'>
-                            ⭐⭐⭐⭐⭐ <span className='ml-1 font-bold'>5</span>
+                            {propertyRating !== 'N/A' ? (
+                                <>
+                                    {"⭐".repeat(Math.round(propertyRating))}
+                                    <span className='ml-1 font-bold'>{propertyRating}</span>
+                                </>
+                            ) : (
+                                <span className='text-gray-400 text-sm'>No reviews yet</span>
+                            )}
                         </p>
                     </div>
 
@@ -187,10 +204,16 @@ const PropertyInfo = () => {
                     </div>
 
                     <div className='grid grid-cols-3 text-center pb-8 gap-3'>
-                        {features.map((feature, i)=>(
+                        {/* {features.map((feature, i)=>(
                             <div key={i} className='flex items-center justify-center gap-2 leading-none'>
                                 <span className='text-xl'>{feature.icon}</span>
                                 <span className='text-sm'>{feature.name}</span>
+                            </div>
+                        ))} */}
+                        {amenities && amenities.map((amenity, i)=>(
+                            <div key={i} className='flex items-center justify-center gap-2 leading-none'>
+                                <span className='text-xl'>{amenityIcon[amenity.amenityName] || DefaultIcon}</span>
+                                <span className='text-sm'>{amenity.amenityName}</span>
                             </div>
                         ))}
                     </div>
@@ -200,7 +223,7 @@ const PropertyInfo = () => {
                             <div key={i} className='border border-gray-200 rounded-xl p-5 bg-white shadow-sm'>
                                 <div className='flex justify-between items-center'>
                                         <p className='font-bold text-lg'>Bedroom: {rental.bedroomCt}</p>
-                                        <p className='font-bold text-yellow-500'>{rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
+                                        <p className='font-bold text-yellow-500'>$ {rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
                                 </div>
                                 <p className='font-bold text-lg'>In room bathroom: {rental.bathroomCt}</p>
                                 <p className='text-sm text-gray-500 mt-1'>{rental.description }</p>
