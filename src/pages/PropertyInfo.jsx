@@ -11,11 +11,52 @@ import { Link, useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating.jsx';
 import MapComponents from '../components/MapCom';
 import { getPropertyById } from '../API/getPropertyById.js';
+import ImageModal from '../components/ImageModal.jsx';
 
 const PropertyInfo = () => {
 
+  const toggleModal = () => {
+    setModalStatus(!modalStatus)
+  }
+
+  
+  
   const { propertyId } = useParams();
   const [properties, setProperties] = useState([]);
+  const [rentals, setRentals] = useState([]);
+  const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+  const [modalStatus, setModalStatus] = useState(false);
+  
+  useEffect(()=>{
+    console.log(modalStatus)
+  }, [modalStatus])
+
+  useEffect(() => {
+        const fetchCoordinates = async () => {
+            if (!properties.address) return;
+
+            try {
+                const encodedAddress = encodeURIComponent(properties.address);
+                
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}`);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+
+                    setCoordinates({
+                        lat: parseFloat(data[0].lat),
+                        lng: parseFloat(data[0].lon)
+                    });
+                } else {
+                    console.log("coordinate not found");
+                }
+            } catch (error) {
+                console.error("error finding coordinate:", error);
+            }
+        };
+
+        fetchCoordinates();
+    }, [properties.address]);
 
   //test
     useEffect(() => {
@@ -26,7 +67,8 @@ const PropertyInfo = () => {
         const fetchData = async () => {
             try {
                 const response = await getPropertyById(propertyId);
-                setProperties(response);
+                setProperties(response.property);
+                setRentals(response.rentals)
 
                 console.log("バックエンドから届いたデータ:", response);
             } catch (error) {
@@ -86,24 +128,25 @@ const PropertyInfo = () => {
 
     return (
         <div className='grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
-
             {/* image section */}
-            <div className='max-w-[1000px] h-[500px] w-full m-auto px-4 relative group'>
-                <div style={{backgroundImage: `url(${slidePhotos[currentIndex].url})`}} className='w-full h-full rounded-2xl bg-center bg-cover duration-300'>
-                    {/* left */}
-                    <div className='hidden group-hover:block absolute top-[50%] translate-x-0 -translate-y-[50%] left-5 bg-white/30 text-2xl rounded-full p-2 cursor-pointer'>
-                        <CiCircleChevLeft onClick={prevSlide} size={50}/>
-                    </div>
-                    {/* right */}
-                    <div className='hidden group-hover:block absolute top-[50%] translate-x-0 -translate-y-[50%] right-5 bg-white/30 text-2xl rounded-full p-2 cursor-pointer'>
-                        <CiCircleChevRight onClick={nextSlide} size={50}/>
-                    </div>
+            <div className='max-w-[1000px] h-[600px] w-full m-auto px-4 flex flex-col'>
+                <div onClick={toggleModal} style={{ backgroundImage: `url(${slidePhotos[currentIndex].url})` }} className='w-full h-full rounded-2xl bg-center bg-cover duration-300'></div>
+
+                <div className='flex justify-center items-center py-4 gap-8'>
+                    <CiCircleChevLeft
+                        onClick={prevSlide}
+                        size={50}
+                        className='cursor-pointer text-black hover:text-gray-500 transition-colors'/>
+                    <CiCircleChevRight
+                        onClick={nextSlide}
+                        size={50}
+                        className='cursor-pointer text-black hover:text-gray-500 transition-colors'/>
                 </div>
-                <div className='flex top-4 justify-center py-2'>
-                    {slidePhotos.map((slide, slideIndex) => (
-                        <div key={slideIndex} onClick={(()=>goToSlides(slideIndex))} className={`text-xl ${currentIndex === slideIndex ? 'text-yellow-400' : 'text-black'} cursor-pointer`}><GoDotFill /></div>
-                    ))}
-                </div>
+
+                {modalStatus && (
+                <ImageModal toggleModal={toggleModal}/>
+                 )}
+
             </div>
 
 
@@ -112,21 +155,29 @@ const PropertyInfo = () => {
                 <div className='flex flex-col bg-white h-full rounded-2xl shadow-xl p-8'>
                     <div className='flex flex-col md:flex-row justify-between items-center pb-5'>
                         <h1 className='text-4xl pb-5 md:pb-0 font-extrabold leading-none text-gray-900'>
-                            Husky Heights
+                            {properties.name}
                         </h1>
                         <p className='flex items-center text-lg leading-none'>
                             ⭐⭐⭐⭐⭐ <span className='ml-1 font-bold'>5</span>
                         </p>
                     </div>
 
-                    <p className='pb-10'><span className='text-3xl font-bold'>$700</span>/month</p>
+                    <p className='pb-10'>
+                        {rentals.length > 0 ? (
+                            <>
+                                From <span className='text-3xl font-bold'>${rentals[0].cost}</span>/month
+                            </>
+                        ) : (
+                            <span className='text-3xl font-bold text-gray-400'>Loading price...</span>
+                        )}
+                    </p>
 
                     <div className='flex pb-1'>
                         <img className='h-5' src={addressIcon} alt="" />
-                        <p>1801 Townsend Dr, Houghton, MI 49931</p>
+                        <p>{properties.address}</p>
                     </div>
                     <p className='pb-1 text-blue-600 font-bold'>
-                        10 min away from campus (walk)
+                        {properties.distanceFromMTU} min walk to campus
                     </p>
 
                     {/* line */}
@@ -144,13 +195,14 @@ const PropertyInfo = () => {
                     </div>
 
                     <div className='space-y-4 pb-10'>
-                        {roomTypes.map((room, i) => (
+                        {rentals.map((rental, i) => (
                             <div key={i} className='border border-gray-200 rounded-xl p-5 bg-white shadow-sm'>
                                 <div className='flex justify-between items-center'>
-                                    <p className='font-bold text-lg'>{room.type}</p>
-                                    <p className='font-bold text-yellow-500'>{room.price}<span className='text-gray-500 font-normal'>/mo</span></p>
+                                        <p className='font-bold text-lg'>Bedroom: {rental.bedroomCt}</p>
+                                        <p className='font-bold text-yellow-500'>{rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
                                 </div>
-                                <p className='text-sm text-gray-500 mt-1'>{room.feat}</p>
+                                <p className='font-bold text-lg'>In room bathroom: {rental.bathroomCt}</p>
+                                <p className='text-sm text-gray-500 mt-1'>{rental.description }</p>
                             </div>
                         ))}
                     </div>
@@ -161,14 +213,18 @@ const PropertyInfo = () => {
 
                     <div className='pb-7'>
                         <p>
-                            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                            Facere maiores magnam aliquam vel dolor non hic assumenda alias porro.
-                            Maiores sit porro at magni aliquam dolore voluptatibus inventore non perspiciatis.
+                            {properties.description}
                         </p>
                     </div>
 
                     <div className='pb-10'>
-                        <MapComponents/>
+                        {coordinates.lat && coordinates.lng ? (
+                            <MapComponents lat={coordinates.lat} lng={coordinates.lng} />
+                        ) : (
+                            <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-2xl text-gray-500 font-bold">
+                                Loading Map...
+                            </div>
+                        )}
                     </div>
 
                     <Link to={'/addreview/1'}>            
@@ -180,7 +236,6 @@ const PropertyInfo = () => {
             </div>
 
 
-            {/* review section (ハードコードのmapに戻したよ) */}
             <div className='h-full p-5 flex flex-col'>
                 <div className='pb-5'>
                     <p className='text-2xl font-bold'>Reviews From Huskies</p>

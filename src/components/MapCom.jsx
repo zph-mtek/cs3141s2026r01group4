@@ -6,7 +6,7 @@ import pingIcon from "../assets/pin.png";
 
 
 
-const MapCom = () => {
+const MapCom = (props) => {
 
   const markers = [
     {
@@ -14,8 +14,8 @@ const MapCom = () => {
       popUp: "Michigan Technological University"
     },
     {
-      geocode: [47.1225498, -88.5666933],
-      popUp: "Random apartment"
+      geocode: [props.lat, props.lng],
+      popUp: "apartment"
     }
   ]
 
@@ -30,9 +30,8 @@ const MapCom = () => {
   });
 
 return (
-    // 親要素に必ず高さを指定すること（例：h-[400px]）
     <div className='h-[400px] w-full rounded-2xl overflow-hidden'>
-      <MapContainer center={[47.121, -88.5694]} zoom={13} className='h-full w-full'>
+      <MapContainer center={[props.lat, props.lng]} zoom={14} className='h-full w-full'>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
