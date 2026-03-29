@@ -27,9 +27,10 @@ const PropertyInfo = () => {
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
   const [modalStatus, setModalStatus] = useState(false);
   const [slidePhotos, setSlidePhotos] = useState([]);
+  const [reviews, setReviews] = useState([]);
   
   useEffect(()=>{
-    console.log(modalStatus)
+    console.log(modalStatus)    
   }, [modalStatus])
 
   useEffect(() => {
@@ -71,6 +72,7 @@ const PropertyInfo = () => {
                 setProperties(response.property);
                 setRentals(response.rentals)
                 setSlidePhotos(response.images)
+                setReviews(response.reviews)
 
                 console.log("バックエンドから届いたデータ:", response);
             } catch (error) {
@@ -116,9 +118,9 @@ const PropertyInfo = () => {
 
 
     return (
-        <div className='grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
+        <div className='grid grid-cols-1 xl:grid-rows-[auto_1fr] xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
             {/* image section */}
-            <div className='max-w-[1000px] h-[600px] w-full m-auto px-4 flex flex-col'>
+            <div className='max-w-[1000px] h-[600px] w-full mx-auto px-4 flex flex-col'>
                 {slidePhotos.length > 0 ? (
                     <div 
                         onClick={toggleModal} 
@@ -241,23 +243,31 @@ const PropertyInfo = () => {
                 </div>
 
                 <div className='grid grid-cols-1 2xl:grid-cols-[1fr_1fr] gap-5'>
-                    {[1, 2, 3, 4, 5, 6].map((index) => (
-                        <div key={index} className='border-2 shadow-xl p-3 rounded-2xl'>
+                    {reviews.length > 0 ? (
+                        reviews.map((review, i) => (
+                        <div key={i} className='border-2 shadow-xl p-3 rounded-2xl h-fit'>
                             <div className='flex flex-col md:flex-row items-center text-center md:text-left'>
                                 <div>
                                     <img src={pfp} className='rounded-full border-3 border-amber-400 h-10 w-10 xl:h-15 xl:w-15 shrink-0 object-cover' alt="" />
                                 </div>
                                 <div className='mt-3 md:mt-0 md:pl-5'>
-                                    <p>Jane doe</p>
-                                    <p className='tracking-tighter'>Sep 2025  ~  Jan 2026</p>
+                                    <p>{review.name}</p>
+                                    <p className='tracking-tighter'>{review.startDate}  ~  {review.endDate}</p>
                                 </div>
                                 <div className='mt-2 text-center md:mt-0 md:pl-5 md:ml-auto'>
-                                    <p>⭐⭐⭐⭐⭐5</p>
+                                    {/* <p>⭐⭐⭐⭐⭐{review.rating}</p> */}
+                                    {"⭐".repeat(review.rating)}
+                                    <span className="ml-1 font-bold">{review.rating}</span>
                                 </div>
                             </div>
-                            <p className='mt-4 text-gray-700'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eligendi et similique vero accusantium repudiandae sed magni aperiam maxime, consectetur placeat? Ratione adipisci earum iste alias, ea non est ipsa expedita!</p>
+                            <p className='mt-4 text-gray-700'>{review.review}</p>
                         </div>
-                    ))}
+                    ))
+                    ) : (
+                    <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
+                        There is no review on this property yet :(
+                    </div>
+                    )}
                 </div>
             </div>
         </div>
