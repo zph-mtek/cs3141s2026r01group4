@@ -51,11 +51,17 @@ $stmt3->bind_param("i", $id);
 $stmt3->execute();
 $imagesData = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
 
+$stmt4 = $conn->prepare("SELECT * FROM huskyrentlens_reviews WHERE propertyId = ?");
+$stmt4->bind_param("i", $id);
+$stmt4->execute();
+$reviewsData = $stmt4->get_result()->fetch_all(MYSQLI_ASSOC);
+
 echo json_encode([
     "status" => "success",
     "property" => $propertyData,
     "rentals" => $rentalsData,
-    "images" => $imagesData
+    "images" => $imagesData,
+    "reviews" => $reviewsData
 ]);
 
 
