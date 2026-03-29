@@ -14,11 +14,27 @@ import MapComponents from '../components/MapCom';
 const PropertyInfo = () => {
 
   const { propertyId } = useParams();
+  const [properties, setProperties] = useState([]);
 
   //test
     useEffect(() => {
         console.log("現在開いている物件のIDは:", propertyId);
     }, [propertyId]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await getPropertyById(propertyId);
+                setProperties(response.data);
+            } catch (error) {
+                console.error("Failed to fetch properties");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
 
     const slidePhotos = [
