@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import logoImage from "../assets/husyrentlens.png";
+import logoImage from "../assets/huskyrentlens.png";
 import { Link } from 'react-router-dom';
 import { RxHamburgerMenu } from "react-icons/rx";
 import { GrClose } from "react-icons/gr";
