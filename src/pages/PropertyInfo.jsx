@@ -10,12 +10,9 @@ import ImageModal from '../components/ImageModal.jsx';
 import { amenityIcon } from '../assets/amenityIcons.jsx';
 
 const PropertyInfo = () => {
-
   const toggleModal = () => {
     setModalStatus(!modalStatus)
   }
-
-  
   
   const { propertyId } = useParams();
   const [properties, setProperties] = useState([]);
@@ -76,10 +73,11 @@ const PropertyInfo = () => {
             try {
                 const response = await getPropertyById(propertyId);
                 setProperties(response.property);
-                setRentals(response.rentals)
-                setSlidePhotos(response.images)
-                setReviews(response.reviews)
-                setAmenities(response.amenities)
+                setRentals(response.rentals);
+                setSlidePhotos(response.images);
+                setReviews(response.reviews);
+                setAmenities(response.amenities);
+
             } catch (error) {
                 console.error("Failed to fetch properties");
             }
@@ -110,8 +108,6 @@ const PropertyInfo = () => {
     const goToSlides =(slideIndex) => {
         setCurrentIndex(slideIndex)
     }
-
-
 
     return (
         <div className='grid grid-cols-1 xl:grid-rows-[auto_1fr] xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
@@ -237,7 +233,7 @@ const PropertyInfo = () => {
                         )}
                     </div>
 
-                    <Link to={'/addreview/1'}>            
+                    <Link to={`/addreview/${properties.propertyId}`}>            
                         <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
                             <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
                         </div>  

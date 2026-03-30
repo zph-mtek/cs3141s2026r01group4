@@ -1,23 +1,29 @@
 import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
+
+//-- Components
+import Navbar from './components/Navbar';
+import StarRating from './components/StarRating';
+
+//-- Pages
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import About from './pages/About'
 import Properties from './pages/Properties'
 import PropertyInfo from './pages/PropertyInfo'
-import Navbar from './components/Navbar'
 import AddProperties from './pages/AddProperties'
 import StudentSignup from './pages/StudentSignup'
 import LandlordSignup from './pages/LandlordSignup'
 import Profile from './pages/Profile'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import Guidelines from './pages/Guidelines'
-import StarRating from './components/StarRating'
+import AddReview from './pages/AddReview.jsx';
 
 const App = () => {
   const location = useLocation();
-  const navActive = (path) => location.pathname === path
+  const navActive = (path) => location.pathname === path;
+
   return (
     <div>
       {navActive('/login') ? '':<Navbar/>}
@@ -34,7 +40,7 @@ const App = () => {
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
         <Route path='/guidelines' element={<Guidelines/>}/>
-        <Route path='/addreview/:propertyId/:rentalId' element={<StarRating/>}/> {/* Corresponds to rentalId and propertyId */}
+        <Route path='/addreview/:propertyId' element={<AddReview/>}/> {/* Corresponds to rentalId and propertyId */}
       </Routes>
     </div>
   )

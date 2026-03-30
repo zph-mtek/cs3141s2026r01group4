@@ -1,5 +1,4 @@
-import React, { Fragment } from 'react';
-import DatePicker from "react-datepicker";
+import React, { Fragment, useState } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 
 const DatePicker = () => {
@@ -45,7 +44,7 @@ const DatePicker = () => {
                 </div>
             </div>
         </Fragment>
-        )
+    )
 }
 
 export default DatePicker
