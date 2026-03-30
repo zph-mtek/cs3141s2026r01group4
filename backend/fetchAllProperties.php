@@ -54,25 +54,27 @@ $sql = "
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
-$data = $result->fetch_all(MYSQLI_ASSOC);
+$properties = $result->fetch_all(MYSQLI_ASSOC);
 
-$stmt2 = $conn->prepare("SELECT * FROM huskyrentlens_property_image WHERE propertyId = ?");
-$stmt2->bind_param("i", $id);
-$stmt2->execute();
-$imagesData = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+foreach ($properties as &$property) {
 
-$stmt3 = $conn->prepare("SELECT * FROM huskyrentlens_reviews WHERE propertyId = ?");
-$stmt3->bind_param("i", $id);
-$stmt3->execute();
-$reviewsData = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
+    $currentId = $property['propertyId'];
 
+    $stmtImg = $conn->prepare("SELECT * FROM huskyrentlens_property_image WHERE propertyId = ?");
+    $stmtImg->bind_param("i", $currentId);
+    $stmtImg->execute();
+    $property['images'] = $stmtImg->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    $stmtRev = $conn->prepare("SELECT * FROM huskyrentlens_reviews WHERE propertyId = ?");
+    $stmtRev->bind_param("i", $currentId);
+    $stmtRev->execute();
+    $property['reviews'] = $stmtRev->get_result()->fetch_all(MYSQLI_ASSOC);
+}
 
 
 echo json_encode([
     "status" => "success",
-    "data" => $data,
-    "images" => $imagesData,
-    "reviews" => $reviewsData
+    "data" => $properties
 ]);
 
 if (isset($conn)) {
