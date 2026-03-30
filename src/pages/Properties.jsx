@@ -10,6 +10,7 @@ const PropertyCard = (data) => {
   const propertyInfo = data.propInfo;
   const mainImage = (propertyInfo.images == (null || undefined) ? "" : (propertyInfo.images.split(',')[0]) ); // exfiltrate the primary image from the string
   const [costRange, updateCostRange ] = useState({min:0,max:0});
+  const [mainPhoto, setmainPhoto] = useState([]);
 
   //-- Use this API to fetch all of the properties that exist once, when the page loads
   useEffect(()=>{
