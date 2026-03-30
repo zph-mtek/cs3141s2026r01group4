@@ -1,11 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import addressIcon from "../assets/maps-and-flags.png";
 import { CiCircleChevLeft, CiCircleChevRight} from "react-icons/ci";
-import { GoDotFill } from "react-icons/go";
-import { IoWifi } from "react-icons/io5";
-import { MdOutlineSoupKitchen, MdOutlineLocalLaundryService, MdOutlineShower } from "react-icons/md";
-import { LuHeater } from "react-icons/lu";
-import { CgGym } from "react-icons/cg";
 import pfp from "../assets/catpfp.jpg"
 import { Link, useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating.jsx';
@@ -92,15 +87,6 @@ const PropertyInfo = () => {
 
         fetchData();
     }, [propertyId]);
-
-    const features = [
-        { name: 'wifi', icon: <IoWifi /> },
-        { name: 'kitchen', icon: <MdOutlineSoupKitchen />},
-        { name: 'laundry', icon: <MdOutlineLocalLaundryService />},
-        { name: 'AC', icon: <LuHeater />},
-        { name: 'gym', icon: <CgGym />},
-        { name: 'shower', icon: <MdOutlineShower />},
-    ];
 
     const roomTypes = [
         { type: "Studio", price: "$650", feat: "Perfect for single student" },
