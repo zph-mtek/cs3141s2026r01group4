@@ -26,11 +26,9 @@ const AddReview = () => {
           </div>  
 
           <p>Testing</p>
-          {/*
             <StarRating />
             <DatePicker />
             <ReviewTextBox />
-          */}
         </div>
       </div>
     </div>
