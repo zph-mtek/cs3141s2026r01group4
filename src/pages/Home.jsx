@@ -23,7 +23,10 @@ const Home = () => {
     }, []);
 
     useEffect(()=>{
-        console.log(properties)
+        if (properties.length > 0) {
+            console.log(properties)
+            console.log(properties[0].images[0]);
+        }
     }, [properties])
 
     if (isLoading) {
@@ -57,7 +60,7 @@ const Home = () => {
                             >
                                 {/* image */}
                                 <div className="w-full md:w-64 h-48 rounded-xl flex items-center justify-center text-white text-2xl">
-                                    <img src={property.images} className='w-full object-cover h-full rounded-xl' alt="" />
+                                    <img className='w-full object-cover h-full rounded-xl' alt="" />
                                 </div>
 
                                 {/* info text*/}
