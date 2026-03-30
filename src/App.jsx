@@ -34,7 +34,7 @@ const App = () => {
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
         <Route path='/guidelines' element={<Guidelines/>}/>
-        <Route path='/addreview/id' element={<StarRating/>}/>
+        <Route path='/addreview/:propertyId/:rentalId' element={<StarRating/>}/> {/* Corresponds to rentalId and propertyId */}
       </Routes>
     </div>
   )
