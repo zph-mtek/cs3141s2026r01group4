@@ -43,7 +43,7 @@ const AddReview = () => {
           </div> 
 
           <StarRating />
-
+          <DatePicker />
           <ReviewTextBox />
         </div>
       </div>
