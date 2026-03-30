@@ -1,13 +1,13 @@
 <?php
 // Zack Horsch
 // This file allows us to automate git pull on the server when we push to the main branch on github
-// This is the only file the public can see.
 
-$private_path = __DIR__ . '/../server_backend/deploy_logic.php';
+$logic_path = '/itss/home/huskyrentlens/server_backend/deploy_logic.php';
 
-if (file_exists($private_path)) {
-    require_once($private_path);
+if (file_exists($logic_path)) {
+    require_once($logic_path);
 } else {
+    // If you see this, the path above is wrong or the file is missing
     header("HTTP/1.1 404 Not Found");
-    die("Deployment engine offline.");
+    die("Deployment engine not found at: " . $logic_path);
 }
