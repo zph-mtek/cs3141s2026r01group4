@@ -7,7 +7,7 @@ import StarRating from '../components/StarRating.jsx';
 import MapComponents from '../components/MapCom';
 import { getPropertyById } from '../API/getPropertyById.js';
 import ImageModal from '../components/ImageModal.jsx';
-import { amenityIcon } from '../assets/amenityIcons.jsx';
+import { amenityIcon } from '../components/amenityIcons.jsx';
 
 const PropertyInfo = () => {
   const toggleModal = () => {

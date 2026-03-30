@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import logoImage from "../assets/huskyrentlens.png";
+import logoImage from "../assets/huskkyrentlens.png"
 import googleImage from "../assets/google.png";
 import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
+
+  //const logoImage = "";
+  //const googleImage = "";
+
+  console.log(new URL('../assets/huskyrentlens.png', import.meta.url).href);
+
+  console.log(logoImage);
 
   const navigate = useNavigate();
   const API_BASE_URL = 'https://huskyrentlens.cs.mtu.edu';
