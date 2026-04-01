@@ -47,7 +47,7 @@ if (!is_array($input)) {
 // Get needed things for inserting the comment
 $propertyId = $input['propertyId'] ?? $_POST['propertyId'] ?? $_GET['propertyId'] ?? null;
 $rentalId = $input['rentalId'] ?? $_POST['rentalId'] ?? $_GET['rentalId'] ?? null;
-$commentDesc = $input['$commentDesc'] ?? $_POST['$commentDesc'] ?? $_GET['$commentDesc'] ?? null;
+$commentDesc = $input['commentDesc'] ?? $_POST['commentDesc'] ?? $_GET['ccommentDesc'] ?? null;
 $userId = $input['userId'] ?? $_POST['userId'] ?? $_GET['userId'] ?? null;
 
 //-- NULL CHECKING
