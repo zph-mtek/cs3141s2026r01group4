@@ -44,6 +44,8 @@ $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['comme
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
 $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
 
+error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
+
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
@@ -56,9 +58,12 @@ if ( ($propertyId === null || $propertyId === '')
     exit();
 }
 
+// Make an integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
 $userIdInt   = (int)$userId;
+
+// Prepare a statement
 $stmt = $conn->prepare(
     "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId) VALUES (?, ?, ?,?)"
 );
