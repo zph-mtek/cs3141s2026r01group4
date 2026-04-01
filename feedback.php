@@ -1,7 +1,16 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
-
-// 1. Check DB connection
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+// Support both layouts:
+// 1) project_root/server_backend/connect.php
+// 2) one level above
+// 3) backend bridge file
 $bootstrapCandidates = [
     __DIR__ . '/server_backend/connect.php',
     __DIR__ . '/../server_backend/connect.php',
@@ -15,50 +24,133 @@ foreach ($bootstrapCandidates as $candidate) {
         break;
     }
 }
-
 if (!$bootstrapLoaded || !isset($conn)) {
-    die(json_encode(["step" => "FAILED", "reason" => "No DB connection"]));
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Database bootstrap not found"
+    ]);
+    exit();
 }
-echo json_encode(["step" => "1 - DB connected"]) . "\n";
-
-// 2. Check input parsing
+// Read JSON body (fallback to POST/GET)
 $rawBody = file_get_contents('php://input');
 $input = json_decode($rawBody, true);
-echo json_encode(["step" => "2 - raw input", "body" => $rawBody, "parsed" => $input]) . "\n";
-
-// 3. Check field extraction
-$propertyId  = $input['propertyId']  ?? $_POST['propertyId']  ?? null;
-$rentalId    = $input['rentalId']    ?? $_POST['rentalId']    ?? null;
-$commentDesc = $input['commentDesc'] ?? $_POST['commentDesc'] ?? null;
-$userId      = $input['userId']      ?? $_POST['userId']      ?? null;
-echo json_encode(["step" => "3 - fields", "propertyId" => $propertyId, "rentalId" => $rentalId, "commentDesc" => $commentDesc, "userId" => $userId]) . "\n";
-
-// 4. Check null gate
-if ($propertyId === null || $propertyId === ''
- || $rentalId   === null || $rentalId   === ''
- || $commentDesc === null || $commentDesc === ''
- || $userId     === null || $userId     === '') {
-    die(json_encode(["step" => "FAILED", "reason" => "Null check failed", "propertyId" => $propertyId, "rentalId" => $rentalId, "commentDesc" => $commentDesc, "userId" => $userId]));
+if (!is_array($input)) {
+    $input = [];
 }
-echo json_encode(["step" => "4 - null check passed"]) . "\n";
-
-// 5. Check prepare  <-- also verify your exact table name here
-$stmt = $conn->prepare("INSERT INTO huskyrentlens_comment (propertyId, rentalId, userId, commentDesc) VALUES (?,?,?,?)");
-if (!$stmt) {
-    die(json_encode(["step" => "FAILED", "reason" => "Prepare failed", "error" => $conn->error]));
+$propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
+$allRentals   = $input['allRentals']   ?? $_POST['allRentals']   ?? $_GET['allRentals']   ?? null;
+$commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['commentDesc']  ?? null;
+$rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
+$userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
+if ($propertyId === null || $propertyId === '') {
+    echo json_encode([
+        "status" => "error",
+        "message" => "No propertyId detected"
+    ]);
+    exit();
 }
-echo json_encode(["step" => "5 - prepare ok"]) . "\n";
-
-// 6. Check bind + execute
+// Insert a comment for a rental
+if ($commentDesc !== null && $rentalId !== null && $userId !== null) {
+    $rentalIdInt = (int)$rentalId;
+    $userIdInt   = (int)$userId;
+    $stmt = $conn->prepare(
+        "INSERT INTO huskyrentlens_comment (commentDesc, rentalId, userId) VALUES (?, ?, ?)"
+    );
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+    $stmt->bind_param("sii", $commentDesc, $rentalIdInt, $userIdInt);
+    if (!$stmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
+        exit();
+    }
+    echo json_encode([
+        "status"      => "success",
+        "message"     => "Comment inserted successfully",
+        "commentId"   => $conn->insert_id,
+        "rentalId"    => $rentalIdInt,
+        "userId"      => $userIdInt,
+        "commentDesc" => $commentDesc
+    ]);
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+// List all properties
+if ((string)$propertyId === '-1') {
+    $stmt = $conn->prepare(
+        "SELECT * FROM huskyrentlens_property"
+    );
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+    if (!$stmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
+        exit();
+    }
+    $result = $stmt->get_result();
+    echo json_encode([
+        "status"      => "success",
+        "received_id" => $propertyId,
+        "count"       => $result->num_rows,
+        "data"        => $result->fetch_all(MYSQLI_ASSOC)
+    ]);
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+// Get all rentals for one property
+if ($allRentals === 'yes') {
+    $propertyIdInt = (int)$propertyId;
+    $stmt = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ?");
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+    $stmt->bind_param("i", $propertyIdInt);
+    if (!$stmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
+        exit();
+    }
+    $result = $stmt->get_result();
+    echo json_encode([
+        "status"      => "success",
+        "received_id" => $propertyIdInt,
+        "count"       => $result->num_rows,
+        "data"        => $result->fetch_all(MYSQLI_ASSOC)
+    ]);
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+// Get one property by ID
 $propertyIdInt = (int)$propertyId;
-$rentalIdInt   = (int)$rentalId;
-$userIdInt     = (int)$userId;
-$stmt->bind_param("iiis", $propertyIdInt, $rentalIdInt, $userIdInt, $commentDesc);
-if (!$stmt->execute()) {
-    die(json_encode(["step" => "FAILED", "reason" => "Execute failed", "error" => $stmt->error]));
+$stmt = $conn->prepare(
+    "SELECT * FROM huskyrentlens_property
+     WHERE propertyId = ?"
+);
+if (!$stmt) {
+    echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+    exit();
 }
-echo json_encode(["step" => "6 - execute ok", "insert_id" => $stmt->insert_id]) . "\n";
-
+$stmt->bind_param("i", $propertyIdInt);
+if (!$stmt->execute()) {
+    echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+    $stmt->close();
+    exit();
+}
+$result = $stmt->get_result();
+echo json_encode([
+    "status"      => "success",
+    "received_id" => $propertyIdInt,
+    "count"       => $result->num_rows,
+    "data"        => $result->fetch_all(MYSQLI_ASSOC)
+]);
 $stmt->close();
 $conn->close();
-?>
