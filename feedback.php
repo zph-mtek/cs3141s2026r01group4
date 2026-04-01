@@ -1,24 +1,12 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Support both layouts:
-// 1) project_root/server_backend/connect.php
-// 2) one level above
-// 3) backend bridge file
+// 1. Check DB connection
 $bootstrapCandidates = [
     __DIR__ . '/server_backend/connect.php',
     __DIR__ . '/../server_backend/connect.php',
     __DIR__ . '/backend/collectSet.php'
 ];
-
 $bootstrapLoaded = false;
 foreach ($bootstrapCandidates as $candidate) {
     if (is_readable($candidate)) {
@@ -29,74 +17,48 @@ foreach ($bootstrapCandidates as $candidate) {
 }
 
 if (!$bootstrapLoaded || !isset($conn)) {
-    http_response_code(500);
-    echo json_encode([
-        "status" => "error",
-        "message" => "Database bootstrap not found"
-    ]);
-    exit();
+    die(json_encode(["step" => "FAILED", "reason" => "No DB connection"]));
 }
+echo json_encode(["step" => "1 - DB connected"]) . "\n";
 
-// Read JSON body (fallback to POST/GET)
+// 2. Check input parsing
 $rawBody = file_get_contents('php://input');
 $input = json_decode($rawBody, true);
-if (!is_array($input)) {
-    $input = [];
+echo json_encode(["step" => "2 - raw input", "body" => $rawBody, "parsed" => $input]) . "\n";
+
+// 3. Check field extraction
+$propertyId  = $input['propertyId']  ?? $_POST['propertyId']  ?? null;
+$rentalId    = $input['rentalId']    ?? $_POST['rentalId']    ?? null;
+$commentDesc = $input['commentDesc'] ?? $_POST['commentDesc'] ?? null;
+$userId      = $input['userId']      ?? $_POST['userId']      ?? null;
+echo json_encode(["step" => "3 - fields", "propertyId" => $propertyId, "rentalId" => $rentalId, "commentDesc" => $commentDesc, "userId" => $userId]) . "\n";
+
+// 4. Check null gate
+if ($propertyId === null || $propertyId === ''
+ || $rentalId   === null || $rentalId   === ''
+ || $commentDesc === null || $commentDesc === ''
+ || $userId     === null || $userId     === '') {
+    die(json_encode(["step" => "FAILED", "reason" => "Null check failed", "propertyId" => $propertyId, "rentalId" => $rentalId, "commentDesc" => $commentDesc, "userId" => $userId]));
 }
+echo json_encode(["step" => "4 - null check passed"]) . "\n";
 
-// Get needed things for inserting the comment
-$propertyId = $input['propertyId'] ?? $_POST['propertyId'] ?? $_GET['propertyId'] ?? null;
-$rentalId = $input['rentalId'] ?? $_POST['rentalId'] ?? $_GET['rentalId'] ?? null;
-$commentDesc = $input['commentDesc'] ?? $_POST['commentDesc'] ?? $_GET['ccommentDesc'] ?? null;
-$userId = $input['userId'] ?? $_POST['userId'] ?? $_GET['userId'] ?? null;
-
-//-- NULL CHECKING
-if (($propertyId === null || $propertyId === '')
-       || ($commentDesc === null || $commentDesc === '')
-        || ($rentalId === null || $rentalId === '')
-    || ($userId === null || $userId === '')
-   ) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "No propertyId detected"
-    ]);
-    exit();
-}
-
-// Escalate propertyId and rentalId to integer
-$propertyIdInt = (int)$propertyId;
-$rentalIdInt = (int)$rentalId;
-$userIdInt = (int)$userId;
-
-// Prepare the statement
-$stmt = $conn->prepare(
-    "insert into huskyrentlens_comments (propertyId,rentalId,userId,commentDesc)
-        values (?,?,?,?)"
-);
-
+// 5. Check prepare  <-- also verify your exact table name here
+$stmt = $conn->prepare("INSERT INTO huskyrentlens_comment (propertyId, rentalId, userId, commentDesc) VALUES (?,?,?,?)");
 if (!$stmt) {
-    echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
-    exit();
+    die(json_encode(["step" => "FAILED", "reason" => "Prepare failed", "error" => $conn->error]));
 }
+echo json_encode(["step" => "5 - prepare ok"]) . "\n";
 
-//-- Bind parameters into database
+// 6. Check bind + execute
+$propertyIdInt = (int)$propertyId;
+$rentalIdInt   = (int)$rentalId;
+$userIdInt     = (int)$userId;
 $stmt->bind_param("iiis", $propertyIdInt, $rentalIdInt, $userIdInt, $commentDesc);
-
-//-- Execute statement
 if (!$stmt->execute()) {
-    echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
-    $stmt->close();
-    exit();
+    die(json_encode(["step" => "FAILED", "reason" => "Execute failed", "error" => $stmt->error]));
 }
-
-//-- Was successful?
-$newId = $stmt->insert_id;
-echo json_encode([
-    "status"     => "success",
-    "insert_id"  => $newId
-]);
+echo json_encode(["step" => "6 - execute ok", "insert_id" => $stmt->insert_id]) . "\n";
 
 $stmt->close();
 $conn->close();
-
 ?>
