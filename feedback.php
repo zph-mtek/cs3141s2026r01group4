@@ -39,13 +39,14 @@ if (!is_array($input)) {
     $input = [];
 }
 
-$propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null
+$propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
 $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['commentDesc']  ?? null;
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
 $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
 
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
+// Ensure that these are not null
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
@@ -91,5 +92,5 @@ echo json_encode([
 
 $stmt->close();
 $conn->close();
-// exit();
+exit();
 ?>
