@@ -38,119 +38,53 @@ $input = json_decode($rawBody, true);
 if (!is_array($input)) {
     $input = [];
 }
-$propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
-$allRentals   = $input['allRentals']   ?? $_POST['allRentals']   ?? $_GET['allRentals']   ?? null;
+
+$propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null
 $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['commentDesc']  ?? null;
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
 $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
-if ($propertyId === null || $propertyId === '') {
+
+if ( ($propertyId === null || $propertyId === '')
+    || ($rentalId === null || $rentalId === '' )
+    || ($userId === null || $userId === '')
+    || $commentDesc === null || $commentDesc === '' ) {
+    
     echo json_encode([
         "status" => "error",
-        "message" => "No propertyId detected"
+        "message" => "Misconfigured property"
     ]);
     exit();
 }
-// Insert a comment for a rental
-if ($commentDesc !== null && $rentalId !== null && $userId !== null) {
-    $rentalIdInt = (int)$rentalId;
-    $userIdInt   = (int)$userId;
-    $stmt = $conn->prepare(
-        "INSERT INTO huskyrentlens_comment (commentDesc, rentalId, userId) VALUES (?, ?, ?)"
-    );
-    if (!$stmt) {
-        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
-        exit();
-    }
-    $stmt->bind_param("sii", $commentDesc, $rentalIdInt, $userIdInt);
-    if (!$stmt->execute()) {
-        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
-        $stmt->close();
-        exit();
-    }
-    echo json_encode([
-        "status"      => "success",
-        "message"     => "Comment inserted successfully",
-        "commentId"   => $conn->insert_id,
-        "rentalId"    => $rentalIdInt,
-        "userId"      => $userIdInt,
-        "commentDesc" => $commentDesc
-    ]);
-    $stmt->close();
-    $conn->close();
-    exit();
-}
-// List all properties
-if ((string)$propertyId === '-1') {
-    $stmt = $conn->prepare(
-        "SELECT * FROM huskyrentlens_property"
-    );
-    if (!$stmt) {
-        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
-        exit();
-    }
-    if (!$stmt->execute()) {
-        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
-        $stmt->close();
-        exit();
-    }
-    $result = $stmt->get_result();
-    echo json_encode([
-        "status"      => "success",
-        "received_id" => $propertyId,
-        "count"       => $result->num_rows,
-        "data"        => $result->fetch_all(MYSQLI_ASSOC)
-    ]);
-    $stmt->close();
-    $conn->close();
-    exit();
-}
-// Get all rentals for one property
-if ($allRentals === 'yes') {
-    $propertyIdInt = (int)$propertyId;
-    $stmt = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ?");
-    if (!$stmt) {
-        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
-        exit();
-    }
-    $stmt->bind_param("i", $propertyIdInt);
-    if (!$stmt->execute()) {
-        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
-        $stmt->close();
-        exit();
-    }
-    $result = $stmt->get_result();
-    echo json_encode([
-        "status"      => "success",
-        "received_id" => $propertyIdInt,
-        "count"       => $result->num_rows,
-        "data"        => $result->fetch_all(MYSQLI_ASSOC)
-    ]);
-    $stmt->close();
-    $conn->close();
-    exit();
-}
-// Get one property by ID
+
 $propertyIdInt = (int)$propertyId;
+$rentalIdInt = (int)$rentalId;
+$userIdInt   = (int)$userId;
 $stmt = $conn->prepare(
-    "SELECT * FROM huskyrentlens_property
-     WHERE propertyId = ?"
+    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId) VALUES (?, ?, ?,?)"
 );
+
 if (!$stmt) {
     echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
     exit();
 }
-$stmt->bind_param("i", $propertyIdInt);
+
+$stmt->bind_param("siii", $commentDesc, $rentalIdInt, $userIdInt, $propertyId);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
     exit();
 }
-$result = $stmt->get_result();
+
 echo json_encode([
     "status"      => "success",
-    "received_id" => $propertyIdInt,
-    "count"       => $result->num_rows,
-    "data"        => $result->fetch_all(MYSQLI_ASSOC)
+    "message"     => "Comment inserted successfully",
+    "commentId"   => $conn->insert_id,
+    "rentalId"    => $rentalIdInt,
+    "userId"      => $userIdInt,
+    "commentDesc" => $commentDesc
 ]);
+
 $stmt->close();
 $conn->close();
+// exit();
+?>
