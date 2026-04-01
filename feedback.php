@@ -43,6 +43,7 @@ $propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['prope
 $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['commentDesc']  ?? null;
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
 $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
+$starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
 
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
@@ -50,7 +51,8 @@ error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
-    || $commentDesc === null || $commentDesc === '' ) {
+    || $commentDesc === null || $commentDesc === '' 
+    || $starCt === null || $commentDesc === '') {
     
     echo json_encode([
         "status" => "error",
@@ -63,10 +65,11 @@ if ( ($propertyId === null || $propertyId === '')
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
 $userIdInt   = (int)$userId;
+$stars       = (int)$starCt;
 
 // Prepare a statement
 $stmt = $conn->prepare(
-    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId) VALUES (?, ?, ?,?)"
+    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars) VALUES (?, ?, ?,?,?)"
 );
 
 if (!$stmt) {
@@ -87,7 +90,8 @@ echo json_encode([
     "commentId"   => $conn->insert_id,
     "rentalId"    => $rentalIdInt,
     "userId"      => $userIdInt,
-    "commentDesc" => $commentDesc
+    "commentDesc" => $commentDesc,
+    "stars" => $stars
 ]);
 
 $stmt->close();
