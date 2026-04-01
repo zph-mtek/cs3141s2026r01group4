@@ -66,7 +66,7 @@ if (($propertyId === null || $propertyId === '')
 // Escalate propertyId and rentalId to integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
-$userId = (int)$userId;
+$userIdInt = (int)$userId;
 
 // Prepare the statement
 $stmt = $conn->prepare(
@@ -81,8 +81,8 @@ if (!$stmt) {
 
 //-- Bind parameters into database
 $stmt->bind_param("i", $propertyIdInt);
-$stmt->bind_param("i",$rentalId);
-$stmt->bind_param("i",$userId);
+$stmt->bind_param("i",$rentalIdInt);
+$stmt->bind_param("i",$userIdInt);
 $stmt->bind_param("s",$commentDesc);
 
 //-- Execute statement
