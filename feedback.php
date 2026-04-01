@@ -44,21 +44,18 @@ if (!is_array($input)) {
     $input = [];
 }
 
+// Get needed things for inserting the comment
 $propertyId = $input['propertyId'] ?? $_POST['propertyId'] ?? $_GET['propertyId'] ?? null;
 $rentalId = $input['rentalId'] ?? $_POST['rentalId'] ?? $_GET['rentalId'] ?? null;
 $commentDesc = $input['rentalId'] ?? $_POST['rentalId'] ?? $_GET['rentalId'] ?? null;
+$userId = $input['userId'] ?? $_POST['userId'] ?? $_GET['userId'] ?? null;
 
-// Null checking for propertyId
-if ($propertyId === null || $propertyId === '') {
-    echo json_encode([
-        "status" => "error",
-        "message" => "No propertyId detected"
-    ]);
-    exit();
-}
-
-// Null checking for rental Id
-if ($rentalId === null || $rentalId === '') {
+//-- NULL CHECKING
+if (($propertyId === null || $propertyId === '')
+       || ($commentDesc === null || $commentDesc === '')
+        || ($rentalId === null || $rentalId === '')
+    || ($userId === null || $userId === '')
+   ) {
     echo json_encode([
         "status" => "error",
         "message" => "No propertyId detected"
@@ -69,20 +66,26 @@ if ($rentalId === null || $rentalId === '') {
 // Escalate propertyId and rentalId to integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
+$userId = (int)$userId;
 
 // Prepare the statement
 $stmt = $conn->prepare(
-    "SELECT * FROM huskyrentlens_property
-     WHERE propertyId = ?"
+    "insert into huskyrentlens_comment (propertyId,rentalId,userId,commentDesc)
+        values (?,?,?,?)"
 );
 
-/*
 if (!$stmt) {
     echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
     exit();
 }
 
+//-- Bind parameters into database
 $stmt->bind_param("i", $propertyIdInt);
+$stmt->bind_param("i",$rentalId);
+$stmt->bind_param("i",$userId);
+$stmt->bind_param("s",$commentDesc);
+
+//-- Execute statement
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
@@ -99,6 +102,5 @@ echo json_encode([
 
 $stmt->close();
 $conn->close();
-*/
 
 ?>
