@@ -77,7 +77,7 @@ if (!$stmt) {
     exit();
 }
 
-$stmt->bind_param("siii", $commentDesc, $rentalIdInt, $userIdInt, $propertyId);
+$stmt->bind_param("siiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
