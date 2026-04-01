@@ -47,7 +47,7 @@ if (!is_array($input)) {
 // Get needed things for inserting the comment
 $propertyId = $input['propertyId'] ?? $_POST['propertyId'] ?? $_GET['propertyId'] ?? null;
 $rentalId = $input['rentalId'] ?? $_POST['rentalId'] ?? $_GET['rentalId'] ?? null;
-$commentDesc = $input['rentalId'] ?? $_POST['rentalId'] ?? $_GET['rentalId'] ?? null;
+$commentDesc = $input['$commentDesc'] ?? $_POST['$commentDesc'] ?? $_GET['$commentDesc'] ?? null;
 $userId = $input['userId'] ?? $_POST['userId'] ?? $_GET['userId'] ?? null;
 
 //-- NULL CHECKING
@@ -80,10 +80,7 @@ if (!$stmt) {
 }
 
 //-- Bind parameters into database
-$stmt->bind_param("i", $propertyIdInt);
-$stmt->bind_param("i",$rentalIdInt);
-$stmt->bind_param("i",$userIdInt);
-$stmt->bind_param("s",$commentDesc);
+$stmt->bind_param("iiis", $propertyIdInt, $rentalIdInt, $userIdInt, $commentDesc);
 
 //-- Execute statement
 if (!$stmt->execute()) {
@@ -92,12 +89,11 @@ if (!$stmt->execute()) {
     exit();
 }
 
-$result = $stmt->get_result();
+//-- Was successful?
+$newId = $stmt->insert_id;
 echo json_encode([
-    "status" => "success",
-    "received_id" => $propertyIdInt,
-    "count" => $result->num_rows,
-    "data" => $result->fetch_all(MYSQLI_ASSOC)
+    "status"     => "success",
+    "insert_id"  => $newId
 ]);
 
 $stmt->close();
