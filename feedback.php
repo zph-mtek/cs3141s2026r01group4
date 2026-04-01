@@ -70,7 +70,7 @@ $userIdInt = (int)$userId;
 
 // Prepare the statement
 $stmt = $conn->prepare(
-    "insert into huskyrentlens_comment (propertyId,rentalId,userId,commentDesc)
+    "insert into huskyrentlens_comments (propertyId,rentalId,userId,commentDesc)
         values (?,?,?,?)"
 );
 
