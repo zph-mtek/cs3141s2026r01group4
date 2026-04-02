@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Fragment } from 'react'
 import axios from 'axios'
 import logoImage from "../assets/huskyrentlens.png"
 import googleImage from "../assets/google.png";
 import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import StatusMessageBox from '../components/StatusMessage';
 
 const Login = () => {
 
@@ -215,9 +216,9 @@ const Login = () => {
             <h2 className='text-2xl font-bold text-center text-yellow-900'>{step === 'login' ? 'Sign In' : 'Verify Email'}</h2>
             
             {statusMessage && (
-              <div className={`p-3 rounded-lg text-sm text-center ${getStatusColor()}`}>
-                {statusMessage}
-              </div>
+              <Fragment>
+                <StatusMessageBox text={statusMessage} color={getStatusColor} />
+              </Fragment>
             )}
 
             {step === 'login' ? (
