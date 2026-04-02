@@ -23,7 +23,6 @@ export const Database = async (apiURL,jsonData) => {
     //-- Specifies what data we want to retrieve,
     if (jsonData == null) {
         jsonData = {
-            "reqType" : "property",
             "propertyId" : 0
         }
     }
