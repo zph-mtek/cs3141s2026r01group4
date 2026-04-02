@@ -4,81 +4,97 @@
   import ReviewTextBox from '../components/ReviewTextBox';
   import { useParams } from 'react-router-dom';
   import { Database } from '../Architect/Architect';
+  import StatusMessageBox from '../components/StatusMessage';
 import { comment } from 'postcss';
 
-  const RentalIdPicker = ({ propertyId, options }) => {
+import { jwtDecode } from "jwt-decode";
 
-      return (
-          <Fragment>
-              <p>
-                <select name="pets" id="rentalSelect">
-                    <option value="">--Please choose an option--</option>
-                    {
-                        options.map((rentalInfo) => {
+const RentalIdPicker = ({ propertyId, options }) => {
 
-                          return  (
-                              <Fragment>
-                                <option value={rentalInfo.rentalId}>
-                                    {rentalInfo.bathroomCt} bed,
-                                    {rentalInfo.bedroomCt} bath</option>
-                              </Fragment>
-                            )
-                        })
-                    }
-                </select>
-              </p>
-          </Fragment>
-      )
+    return (
+        <Fragment>
+            <p>
+              <select name="pets" id="rentalSelect">
+                  <option value="">--Please choose an option--</option>
+                  {
+                      options.map((rentalInfo) => {
+
+                        return  (
+                            <Fragment>
+                              <option value={rentalInfo.rentalId}>
+                                  {rentalInfo.bathroomCt} bed,
+                                  {rentalInfo.bedroomCt} bath</option>
+                            </Fragment>
+                          )
+                      })
+                  }
+              </select>
+            </p>
+        </Fragment>
+    )
+}
+
+//-- When press submit button
+const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText) => {
+  console.log(propertyId, rentalId, commentText);
+
+  if (
+      propertyId === null || rentalId === null || commentText === null
+    || propertyId < 0 || rentalId < 0 || commentText === "") {
+      return -1;
   }
 
-  //-- When press submit button
-  const onAddReviewPress = (propertyId, rentalId,reviewStars,commentText) => {
-    console.log(propertyId, rentalId, commentText);
+  console.log("Get past this...");
 
-    if (
-        propertyId === null || rentalId === null || commentText === null
-      || propertyId < 0 || rentalId < 0 || commentText === "") {
-        return -1;
-    }
+  const addFeedback = async () => {
+        const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
+          propertyId: propertyId,
+          rentalId: rentalId,
+          commentDesc: commentText,
+          userId: 24,
+          stars: reviewStars
+        });
 
-    console.log("Get past this...");
-
-    const addFeedback = async () => {
-          const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
-            propertyId: propertyId,
-            rentalId: rentalId,
-            commentDesc: commentText,
-            userId: 24,
-            stars: reviewStars
-          });
-
-          if (feedbackData != null) {
-            console.log(feedbackData);
-          }
+        if (feedbackData != null) {
+          console.log(feedbackData);
         }
+      }
 
-    addFeedback();
+  addFeedback();
 
-    return 0; // success
-  }
+  return 0; // success
+}
 
-  //-- Adding the review to the codebase
-  const AddReview = () => {
-    const { propertyId } = useParams();
-    const [ propertyInfo, setPropertyInfo ] = useState({});
-    const [ rentalId, setRentalId ] = useState(0);
-    const [ rentalsForThisProperty, setPropertyRentalInfo ] = useState([]);
+//-- Adding the review to the codebase
+const AddReview = () => {
+  const { propertyId } = useParams();
+  const [ propertyInfo, setPropertyInfo ] = useState({});
+  const [ rentalId, setRentalId ] = useState(0);
+  const [ rentalsForThisProperty, setPropertyRentalInfo ] = useState([]);
+  const [ statusMsg, setStatusMessage ] = useState(<Fragment></Fragment>);
+  let isLoading = 0; // comment upload debounce
   
-    useEffect(()=>{
-      console.log("Updated=>");
-      console.log(rentalsForThisProperty);
-    },[rentalsForThisProperty]);
+  //-- Grabbed this from NavBar.jsx
+  const [user,setUser] = useState(null);
+  
+  //-- Ask if we are logged in
+  useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+          try {
+              const decoded = jwtDecode(token);
+              setUser(decoded.data);
+          } catch (error) {
+              console.error("Invalid token", error);
+              localStorage.removeItem('token');
+          }
+      }
+  }, []);
 
-    console.log("PropertyId: "+propertyId);
-
-    //-- Get the property Information
-    useEffect(() => {
-      const fetchPropertyInfo = async () => {
+  //-- Get the property Information
+  useEffect(() => {
+    if (user && user.role != "Landlord"){ // only fetch data if we logged in
+        const fetchPropertyInfo = async () => {
         const propertyData = await Database('https://huskyrentlens.cs.mtu.edu/connect.php',{
           propertyId: propertyId,
         });
@@ -101,11 +117,16 @@ import { comment } from 'postcss';
       };
 
       fetchPropertyInfo();
-    }, []);
+    }
+  }, [user]); // run once we set the user property
 
-    return (
-      <Fragment>
-        <div className='flex text-center justify-center'>
+  return (
+    <Fragment>
+      {/* Only display page contents if this user is logged in */}
+      {user && user!='Landlord' ?
+        (
+          <Fragment>
+            <div className='flex text-center justify-center'>
         <div>
           <div className='max-w-2xl mx-auto pt-20 px-4'>
             <div>
@@ -128,6 +149,8 @@ import { comment } from 'postcss';
                   options={rentalsForThisProperty}
                     />
 
+                {statusMsg ? statusMsg : null}
+
                 <StarRating />
                 <DatePicker />
                 <ReviewTextBox />
@@ -140,17 +163,36 @@ import { comment } from 'postcss';
                     const commentText = document.getElementById("reviewText");
                     const starRating = document.getElementById("reviewStars");
 
+                    // Don't allow comments to double submit while one comment is already uploading to server...
+                    if (isLoading != 0) { 
+                      setStatusMessage(<StatusMessageBox messageType='warning' text='Feedback upload in progress...' />);  
+                      return;
+                    }
+
+                    // Ensure we have info needed to make a comment
                     if (rentalPick && commentText && starRating &&
                       rentalPick.value != "" && commentText.value != "" && starRating != ""
                     ){
+                      isLoading = 1;
                       console.log("Star Rating:"+starRating.value);
 
                       //-- Add a comment with the text element
-                      onAddReviewPress(
+                      console.log(user.userId);
+                      
+                      if (onAddReviewPress(
+                        user.userId,
                         propertyInfo.propertyId,
                         parseInt(rentalPick.value),
                         parseInt(starRating.value),
-                        commentText.value);
+                        commentText.value) == -1){
+                          setStatusMessage(<StatusMessageBox messageType='fail' text='Comment operation failed...' />);
+                          isLoading = 0;
+                        } else {
+                          setStatusMessage(<StatusMessageBox messageType='success' text='Comment uploaded successfully...'/>)
+                          isLoading = 0;
+                        }
+                    } else { // for some reason, we could not get all of the fields and their values...
+                      setStatusMessage(<StatusMessageBox messageType='warning' text='Please fill out all of the text fields' />);
                     }
                   }}>
                     Post Review
@@ -161,8 +203,14 @@ import { comment } from 'postcss';
           </div>
         </div>
       </div>
-      </Fragment>
-    )
-  }
+        </Fragment>
+      ) : (
+        <Fragment>
+          <p>You do not meet the access requirements needed to view this page!</p>
+        </Fragment>
+      )}
+    </Fragment>
+  )
+}
 
-  export default AddReview
+export default AddReview
