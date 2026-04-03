@@ -8,6 +8,30 @@ import MapComponents from '../components/MapCom';
 import { getPropertyById } from '../API/getPropertyById.js';
 import ImageModal from '../components/ImageModal.jsx';
 import { amenityIcon } from '../components/amenityIcons.jsx';
+import { Database } from '../Architect/Architect.jsx';
+import { Comment, comment } from 'postcss';
+
+const CommentCard = ({ commentInfo, cardKey }) => {
+    return (
+        <div key={cardKey} className='border-2 shadow-xl p-3 rounded-2xl h-fit'>
+            <div className='flex flex-col md:flex-row items-center text-center md:text-left'>
+                <div>
+                    <img src={pfp} className='rounded-full border-3 border-amber-400 h-10 w-10 xl:h-15 xl:w-15 shrink-0 object-cover' alt="" />
+                </div>
+                <div className='mt-3 md:mt-0 md:pl-5'>
+                    <p>{commentInfo.userId}</p>
+                    {/* <p className='tracking-tighter'>{commentInfo}  ~  {review.endDate}</p> */}
+                </div>
+                <div className='mt-2 text-center md:mt-0 md:pl-5 md:ml-auto'>
+                    {"⭐".repeat(commentInfo.stars)}
+                    <span className="ml-1 font-bold">{comment.stars}</span>
+                </div>
+            </div>
+            <p className='mt-4 text-gray-700'><b>RentalId:</b>{comment.rentalId}</p>
+            <p>{commentInfo.commentDesc}</p>
+        </div>
+    )
+}
 
 const PropertyInfo = () => {
   const toggleModal = () => {
@@ -23,6 +47,29 @@ const PropertyInfo = () => {
   const [reviews, setReviews] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [propertyRating, setPropertyRating] = useState('N/A')
+  const [propertyComments, setPropertyComments] = useState([]);
+
+
+  // Get property comments
+  useEffect(()=>{
+
+    if (propertyId != null && propertyId != '') {
+        console.log(`FETCHING COMMENTS WITH PROPERTYID: ${propertyId}`);
+        const fetchComments = async () => {
+            const getCommentData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
+                propertyId: parseInt(propertyId),
+                getReviews: 'yes'
+            });
+
+            if (getCommentData != null) {
+                console.log(getCommentData.data.data);
+                setPropertyComments(getCommentData.data.data);
+            }
+        }
+
+        fetchComments();
+    }
+  },[propertyId]);
 
   //calculate rating
   useEffect(()=>{
@@ -249,29 +296,19 @@ const PropertyInfo = () => {
 
                 <div className='grid grid-cols-1 2xl:grid-cols-[1fr_1fr] gap-5'>
                     {reviews.length > 0 ? (
-                        reviews.map((review, i) => (
-                        <div key={i} className='border-2 shadow-xl p-3 rounded-2xl h-fit'>
-                            <div className='flex flex-col md:flex-row items-center text-center md:text-left'>
-                                <div>
-                                    <img src={pfp} className='rounded-full border-3 border-amber-400 h-10 w-10 xl:h-15 xl:w-15 shrink-0 object-cover' alt="" />
-                                </div>
-                                <div className='mt-3 md:mt-0 md:pl-5'>
-                                    <p>{review.name}</p>
-                                    <p className='tracking-tighter'>{review.startDate}  ~  {review.endDate}</p>
-                                </div>
-                                <div className='mt-2 text-center md:mt-0 md:pl-5 md:ml-auto'>
-                                    {/* <p>⭐⭐⭐⭐⭐{review.rating}</p> */}
-                                    {"⭐".repeat(review.rating)}
-                                    <span className="ml-1 font-bold">{review.rating}</span>
-                                </div>
-                            </div>
-                            <p className='mt-4 text-gray-700'>{review.review}</p>
-                        </div>
+
+
+                        propertyComments.map((thisComment,i) => (
+                        <Fragment>
+                            <CommentCard commentInfo = {thisComment} cardKey = {i} />
+                        </Fragment>
                     ))
                     ) : (
-                    <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
-                        There is no review on this property yet :(
+                    <Fragment>
+                        <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
+                        <p>There is no review on this property yet :(</p>
                     </div>
+                    </Fragment>
                     )}
                 </div>
             </div>
