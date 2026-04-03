@@ -49,21 +49,10 @@ $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
 //-- INFORMATION FOR GETTING ALL FEEDBACK FOR A PROPERTY
-if (($getReviews === null || $getReviews === '')
-    || ($rentalId === null || $rentalId === '' )
-    || ($userId === null || $userId === '')
-    || $commentDesc === null || $commentDesc === '' 
-    || $starCt === null || $commentDesc === '')
-   ) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Misconfigured property"
-    ]);
-    exit();
-}
-
 if ($getReviews !== 'yes'){
     // Prepare a statement
+    $propertyIdInt = (int)$propertyId;
+    
     $stmt = $conn->prepare(
         "select * from huskyrentlens_comments where propertyId = ?"
     );
@@ -75,7 +64,7 @@ if ($getReviews !== 'yes'){
     }
     
     // Bind parameters
-    $stmt->bind_param("siiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars);   
+    $stmt->bind_param("i", $propertyIdInt);   
 
     // Attempt to execute statement
     if (!$stmt->execute()) {
@@ -96,6 +85,12 @@ if ($getReviews !== 'yes'){
     // Close connection
     $stmt->close();
     $conn->close();
+    exit();
+} else if ($getReviews !== null) { // we have something for getReviews
+     echo json_encode([
+        "status" => "error",
+        "message" => "Misconfigured property"
+    ]);
     exit();
 }
 
