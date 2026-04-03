@@ -49,7 +49,7 @@ $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
 //-- INFORMATION FOR GETTING ALL FEEDBACK FOR A PROPERTY
-if ($getReviews !== 'yes'){
+if ($getReviews === 'yes'){
     // Prepare a statement
     $propertyIdInt = (int)$propertyId;
     
