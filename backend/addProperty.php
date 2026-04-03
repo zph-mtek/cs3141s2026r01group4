@@ -38,35 +38,43 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $city = $_POST['city'] ?? '';
     $distance = $_POST['distance'] ?? '';
     $description = $_POST['description'] ?? '';
+    $walkDistance = $_POST['walkDistance'] ?? '';
+
+    //test
+    $landlordId = 1;
 
     $amenities = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
     $roomsInfo = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
 
     $propertyImages = $_FILES['propertyImages'] ?? null;
 
+    //set to database
 
-    $testResponse = [
-            "status" => "success",
-            "message" => "to php data ok",
-            "received_text" => [
-                "name" => $name,
-                "address" => $address,
-                "room_count" => count($roomsInfo) 
-            ],
-            "received_files" => [
-                "property_images" => isset($_FILES['propertyImages']) ? "public place image ok" : "no public place image",
-                "all_files_raw_data" => $_FILES 
-            ]
-        ];
+    $sqlProperty = "INSERT INTO huskyrentlens_property (name, city, description, distanceFromMTU, address, walkDistance, landlordId) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    echo json_encode($testResponse);
+    $stmt = $conn->prepare($sqlProperty);
 
-    if (isset($conn)) {
-        $conn->close();
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "SQL error: " . $conn->error]);
+    exit();
+
     }
 
-    exit();
+    $stmt->bind_param("ssssssi", $name, $city, $description, $distance, $address, $walkDistance, $landlordId);
+
+    if ($stmt->execute()) {
+        $newPropertyId = $conn->insert_id;
+    
+        echo json_encode(["status" => "success", "message" => "added property ID is: " . $newPropertyId]);
+        exit();
+    } else {
+        echo json_encode(["status" => "error", "message" => "failed to add property: " . $stmt->error]);
+        exit();
+    }
 }
+
+
+
 
 echo json_encode(["status" => "error", "message" => "Invalid Request Method"]);
 
