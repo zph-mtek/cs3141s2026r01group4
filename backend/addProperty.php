@@ -71,7 +71,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $amenityList = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
 
         if (!empty($amenityList)) {
-            $sqlAmenity = "INSERT INTO huskyrentlens_amenity (amenityName, propertyId) VALUES (?, ?)";
+            $sqlAmenity = "INSERT INTO huskyrentlens_property_amenities (amenityName, propertyId) VALUES (?, ?)";
             $stmtA = $conn->prepare($sqlAmenity);
 
             if ($stmtA) {
