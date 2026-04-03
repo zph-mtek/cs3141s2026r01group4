@@ -28,6 +28,7 @@ foreach ($bootstrapCandidates as $candidate) {
     }
 }
 
+
 if (!$bootstrapLoaded || !isset($conn)) {
     http_response_code(500);
     echo json_encode(["status" => "error", "message" => "Database bootstrap not found"]);
