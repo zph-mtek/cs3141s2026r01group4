@@ -215,6 +215,12 @@ const AddProperties = () => {
   onChange={(e) => setPropertyInfo({ ...propertyInfo, name: e.target.value })} name="name" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
               </div>
 
+                            <div>
+                <label className="block text-sm font-medium text-gray-700">City</label>
+                <input type="text" value={propertyInfo.city} 
+  onChange={(e) => setPropertyInfo({ ...propertyInfo, city: e.target.value })} name="city" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Houghton' />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">Distance from campus</label>
                 <input type="text" value={propertyInfo.distance} 
@@ -264,7 +270,8 @@ const AddProperties = () => {
             {/* Property description section */}
             <div className='pb-20'>
               <label className="text-xl font-bold text-gray-900 mb-8 pb-4">Description</label>
-              <textarea name="" id="propertyDescription" placeholder="Property description..." className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2 "></textarea>
+              <textarea value={propertyInfo.description} 
+  onChange={(e) => setPropertyInfo({ ...propertyInfo, description: e.target.value })} name="description" id="propertyDescription" placeholder="Property description..." className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2 "></textarea>
             </div>
 
             {/* Section for adding property picture */}
