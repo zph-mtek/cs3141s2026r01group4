@@ -44,9 +44,63 @@ $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['comme
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
 $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
+$getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
 
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
+//-- INFORMATION FOR GETTING ALL FEEDBACK FOR A PROPERTY
+if (($getReviews === null || $getReviews === '')
+    || ($rentalId === null || $rentalId === '' )
+    || ($userId === null || $userId === '')
+    || $commentDesc === null || $commentDesc === '' 
+    || $starCt === null || $commentDesc === '')
+   ) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Misconfigured property"
+    ]);
+    exit();
+}
+
+if ($getReviews !== 'yes'){
+    // Prepare a statement
+    $stmt = $conn->prepare(
+        "select * from huskyrentlens_comments where propertyId = ?"
+    );
+    
+    // Statement error handling
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+    
+    // Bind parameters
+    $stmt->bind_param("siiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars);   
+
+    // Attempt to execute statement
+    if (!$stmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
+        exit();
+    }
+
+    // Get results from queryy
+    $result = $stmt->get_result();
+    echo json_encode([
+        "status" => "success",
+        "received_id" => $propertyIdInt,
+        "count" => $result->num_rows,
+        "data" => $result->fetch_all(MYSQLI_ASSOC)
+    ]);
+
+    // Close connection
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
+
+//-- ALL INFORMATION FOR GIVING FEEDBACK
 // Ensure that these are not null
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
