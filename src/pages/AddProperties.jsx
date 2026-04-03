@@ -18,6 +18,7 @@ const AddProperties = () => {
     formData.append("city", propertyInfo.city)
     formData.append("distance", propertyInfo.distance)
     formData.append("description", propertyInfo.description)
+    formData.append("walkDistance", propertyInfo.walkDistance)
     formData.append("amenities", JSON.stringify(propertyInfo.amenities))
 
     propertyInfo.images.forEach((imgObj) => {
