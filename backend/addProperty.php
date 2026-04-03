@@ -49,36 +49,47 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $propertyImages = $_FILES['propertyImages'] ?? null;
 
     //set to database
-
     $sqlProperty = "INSERT INTO huskyrentlens_property (name, city, description, distanceFromMTU, address, walkDistance, landlordId) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sqlProperty);
 
     if (!$stmt) {
         echo json_encode(["status" => "error", "message" => "SQL error: " . $conn->error]);
-    exit();
-
+        exit();
     }
 
     $stmt->bind_param("ssssssi", $name, $city, $description, $distance, $address, $walkDistance, $landlordId);
 
     if ($stmt->execute()) {
         $newPropertyId = $conn->insert_id;
-    
-        echo json_encode(["status" => "success", "message" => "added property ID is: " . $newPropertyId]);
+        $stmt->close(); 
+
+        $amenityList = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
+
+        if (!empty($amenityList)) {
+            $sqlAmenity = "INSERT INTO huskyrentlens_amenity (amenityName, propertyId) VALUES (?, ?)";
+            $stmtA = $conn->prepare($sqlAmenity);
+
+            if ($stmtA) {
+                foreach ($amenityList as $amenity) {
+                    $stmtA->bind_param("si", $amenity, $newPropertyId);
+                    $stmtA->execute();
+                }
+                $stmtA->close();
+            }
+        }
+
+        echo json_encode([
+            "status" => "success", 
+            "message" => "Property and " . count($amenityList) . " amenities saved!",
+            "propertyId" => $newPropertyId
+        ]);
         exit();
+
     } else {
         echo json_encode(["status" => "error", "message" => "failed to add property: " . $stmt->error]);
         exit();
     }
 }
 
-
-
-
-echo json_encode(["status" => "error", "message" => "Invalid Request Method"]);
-
-if (isset($conn)) {
-    $conn->close();
-}
 ?>
