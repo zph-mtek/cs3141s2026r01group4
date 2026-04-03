@@ -71,6 +71,38 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         echo json_encode(["status" => "error", "message" => "failed to add property: " . $stmt->error]);
         exit();
     }
+
+
+    //added amenities
+    if ($stmt->execute()) {
+        $newPropertyId = $conn->insert_id;
+        $stmt->close(); 
+        
+        $amenityList = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
+
+        if (!empty($amenityList)) {
+            $sqlAmenity = "INSERT INTO huskyrentlens_property_amenities (propertyId, amenityName) VALUES (?, ?)";
+            $stmtA = $conn->prepare($sqlAmenity);
+
+            if ($stmtA) {
+                foreach ($amenityList as $amenity) {
+                    $stmtA->bind_param("is", $newPropertyId, $amenity);
+                    $stmtA->execute();
+                }
+                $stmtA->close();
+            }
+        }
+
+        echo json_encode([
+            "status" => "success", 
+            "message" => "properties and amenities(" . count($amenityList) . "amenities) saved",
+            "propertyId" => $newPropertyId
+        ]);
+        exit();
+
+    } else {
+
+    }
 }
 
 
