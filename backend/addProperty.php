@@ -126,7 +126,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
         if (!empty($roomsInfo)) {
 
-            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, roomName, bedroomCt, bathroomCt, cost, description) VALUES (?, ?, ?, ?, ?)";
+            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, roomName, bedroomCt, bathroomCt, cost, description) VALUES (?, ?, ?, ?, ?, ?)";
             $stmtRoom = $conn->prepare($sqlRoom);
 
             $sqlRoomImage = "INSERT INTO huskyrentlens_rental_image (rentalId, image_url) VALUES (?, ?)";
