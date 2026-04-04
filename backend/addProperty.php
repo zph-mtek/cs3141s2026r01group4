@@ -124,17 +124,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $savedRoomCount = 0;
         if (!empty($roomsInfo)) {
 
-            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, roomName, bedroomCt, bathroomCt, cost) VALUES (?, ?, ?, ?, ?)";
+            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, bedroomCt, bathroomCt, cost) VALUES (?, ?, ?, ?)";
             $stmtRoom = $conn->prepare($sqlRoom);
 
             if($stmtRoom){
                 foreach ($roomsInfo as $room){
-                    $roomName = $room['name'] ?? '';
                     $bedroomCt = intval($room['bedrooms'] ?? 1);
                     $bathroomCt = intval($room['bathrooms'] ?? 1);
                     $cost = intval($room['rent'] ?? 0);
 
-                    $stmtRoom->bind_param("isiii", $newPropertyId, $roomName, $bedroomCt, $bathroomCt, $cost);
+                    $stmtRoom->bind_param("iiii", $newPropertyId, $bedroomCt, $bathroomCt, $cost);
 
                     if ($stmtRoom->execute()) {
                         $newRentalId = $conn->insert_id;
