@@ -119,13 +119,39 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             }
 
         }
+
+        //save each file
+        $savedRoomCount = 0;
+        if (!empty($roomsInfo)) {
+
+            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, roomName, bedroomCt, bathroomCt, cost) VALUES (?, ?, ?, ?, ?)";
+            $stmtRoom = $conn->prepare($sqlRoom);
+
+            if($stmtRoom){
+                foreach ($roomsInfo as $room){
+                    $roomName = $room['name'] ?? '';
+                    $bedroomCt = intval($room['bedrooms'] ?? 1);
+                    $bathroomCt = intval($room['bathrooms'] ?? 1);
+                    $cost = intval($room['rent'] ?? 0);
+
+                    $stmtRoom->bind_param("isiii", $newPropertyId, $roomName, $bedroomCt, $bathroomCt, $cost);
+
+                    if ($stmtRoom->execute()) {
+                        $newRentalId = $conn->insert_id;
+                        $savedRoomCount++;
+                    }
+                    $stmtRoom->close();
+                }
+            }
+        }
+
         echo json_encode([
             "status" => "success", 
-            "message" => "Property, " . count($amenityList) . " amenities, and " . $savedImageCount . " shared images saved!",
+            "message" => "Property, " . count($amenityList) . " amenities, " . $savedImageCount . " shared images, and " . $savedRoomCount . " rooms saved!",
             "propertyId" => $newPropertyId
         ]);
         exit();
-        
+
     } else {
         echo json_encode(["status" => "error", "message" => "failed to add property: " . $stmt->error]);
         exit();
