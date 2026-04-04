@@ -30,7 +30,8 @@ const AddProperties = () => {
       name: room.name,
       bedrooms: room.bedrooms,
       bathrooms: room.bathrooms,
-      rent: room.rent
+      rent: room.rent,
+      description: room.description
     }));
 
     formData.append("roomsInfo", JSON.stringify(cleanRoomsData));
@@ -145,6 +146,16 @@ const AddProperties = () => {
     }
   }
 
+  const handleRoomChange = (roomId, field, value) => {
+    const updatedRooms = rooms.map(room => {
+      if (room.id === roomId) {
+        return { ...room, [field]: value };
+      }
+      return room;
+    });
+    setRooms(updatedRooms);
+  };
+
   //function to remove rooms
   const removeRoomHandler = (roomIdToRemove) => {
     const updatedRooms = rooms.filter(room => room.id !== roomIdToRemove)
@@ -212,32 +223,32 @@ const AddProperties = () => {
               {/* each input field */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Property Name</label>
-                <input type="text" value={propertyInfo.name} 
-  onChange={(e) => setPropertyInfo({ ...propertyInfo, name: e.target.value })} name="name" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
+                <input type="text" value={propertyInfo.name}
+                  onChange={(e) => setPropertyInfo({ ...propertyInfo, name: e.target.value })} name="name" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
               </div>
 
-                            <div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700">City</label>
-                <input type="text" value={propertyInfo.city} 
-  onChange={(e) => setPropertyInfo({ ...propertyInfo, city: e.target.value })} name="city" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Houghton' />
+                <input type="text" value={propertyInfo.city}
+                  onChange={(e) => setPropertyInfo({ ...propertyInfo, city: e.target.value })} name="city" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Houghton' />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Distance from campus</label>
-                <input type="text" value={propertyInfo.distance} 
-  onChange={(e) => setPropertyInfo({ ...propertyInfo, distance: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='0.5mile' />
+                <input type="text" value={propertyInfo.distance}
+                  onChange={(e) => setPropertyInfo({ ...propertyInfo, distance: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='0.5mile' />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Address</label>
-                <input type="text" value={propertyInfo.address} 
-  onChange={(e) => setPropertyInfo({ ...propertyInfo, address: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1801 Townsend Drive' />
+                <input type="text" value={propertyInfo.address}
+                  onChange={(e) => setPropertyInfo({ ...propertyInfo, address: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1801 Townsend Drive' />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Distance from campus on foot</label>
-                <input type="text" value={propertyInfo.walkDistance} 
-  onChange={(e) => setPropertyInfo({ ...propertyInfo, walkDistance: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='15 minues walk' />
+                <input type="text" value={propertyInfo.walkDistance}
+                  onChange={(e) => setPropertyInfo({ ...propertyInfo, walkDistance: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='15 minues walk' />
               </div>
             </div>
           </section>
@@ -271,8 +282,8 @@ const AddProperties = () => {
             {/* Property description section */}
             <div className='pb-20'>
               <label className="text-xl font-bold text-gray-900 mb-8 pb-4">Description</label>
-              <textarea value={propertyInfo.description} 
-  onChange={(e) => setPropertyInfo({ ...propertyInfo, description: e.target.value })} name="description" id="propertyDescription" placeholder="Property description..." className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2 "></textarea>
+              <textarea value={propertyInfo.description}
+                onChange={(e) => setPropertyInfo({ ...propertyInfo, description: e.target.value })} name="description" id="propertyDescription" placeholder="Property description..." className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2 "></textarea>
             </div>
 
             {/* Section for adding property picture */}
@@ -311,24 +322,45 @@ const AddProperties = () => {
                         <p className='text-xl pb-10 font-bold'>Room {index + 1}</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pb-10">
                           <div className='lg:col-span-2'>
-                            <label className="block text-sm font-medium text-gray-700">Property Name</label>
-                            <input type="text" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
+                            <label className="block text-sm font-medium text-gray-700">Room Name</label>
+                            <input value={room.name}
+                              onChange={(e) => handleRoomChange(room.id, 'name', e.target.value)} type="text" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
                           </div>
 
                           <div className='lg:col-span-2'>
                             <label className="block text-sm font-medium text-gray-700">Number of bedroom</label>
-                            <input type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1' />
+                            <input value={room.bedrooms}
+                              onChange={(e) => handleRoomChange(room.id, 'bedrooms', e.target.value)} type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1' />
                           </div>
 
                           <div className='lg:col-span-2'>
                             <label className="block text-sm font-medium text-gray-700">Price</label>
-                            <input type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='900' />
+                            <input value={room.rent}
+                              onChange={(e) => handleRoomChange(room.id, 'rent', e.target.value)} type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='900' />
                           </div>
 
                           <div className='lg:col-span-2'>
                             <label className="block text-sm font-medium text-gray-700">Number of bathroom</label>
-                            <input type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1' />
+                            <input value={room.bathrooms}
+                              onChange={(e) => handleRoomChange(room.id, 'bathrooms', e.target.value)} type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1' />
                           </div>
+                        </div>
+
+                        {/* add description */}
+                        <div className="pb-10">
+                          <label className="block text-sm font-medium text-gray-700">Room Description</label>
+                          <textarea
+                            value={room.description}
+                            onChange={(e) => {
+                              const updatedRooms = rooms.map(r => {
+                                if (r.id === room.id) return { ...r, description: e.target.value };
+                                return r;
+                              });
+                              setRooms(updatedRooms);
+                            }}
+                            className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2   "
+                            placeholder="Describe this room..."
+                          ></textarea>
                         </div>
 
                         {/* section to add imges for room */}
