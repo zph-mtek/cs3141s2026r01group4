@@ -122,32 +122,64 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
         //save each file
         $savedRoomCount = 0;
+        $savedRoomImageCount = 0;
+
         if (!empty($roomsInfo)) {
 
-            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, bedroomCt, bathroomCt, cost, description) VALUES (?, ?, ?, ?, ?)";
+            $sqlRoom = "INSERT INTO huskyrentlens_rental (propertyId, roomName, bedroomCt, bathroomCt, cost, description) VALUES (?, ?, ?, ?, ?)";
             $stmtRoom = $conn->prepare($sqlRoom);
 
-            if($stmtRoom){
+            $sqlRoomImage = "INSERT INTO huskyrentlens_rental_image (rentalId, image_url) VALUES (?, ?)";
+            $stmtRoomImage = $conn->prepare($sqlRoomImage);
+
+            if($stmtRoom && $stmtRoomImage){
                 foreach ($roomsInfo as $room){
+                    $roomName = $room['name'] ?? '';
                     $bedroomCt = intval($room['bedrooms'] ?? 1);
                     $bathroomCt = intval($room['bathrooms'] ?? 1);
                     $cost = intval($room['rent'] ?? 0);
                     $roomDesc = $room['description'] ?? ''; 
-                    $stmtRoom->bind_param("iiiis", $newPropertyId, $bedroomCt, $bathroomCt, $cost, $roomDesc);
+                    $stmtRoom->bind_param("isiiis", $newPropertyId, $roomName, $bedroomCt, $bathroomCt, $cost, $roomDesc);
 
                     if ($stmtRoom->execute()) {
                         $newRentalId = $conn->insert_id;
                         $savedRoomCount++;
+
+                        $roomTempId = $room['id'];
+                        $fileKey = "roomImages_" . $roomTempId;
+
+                        if (isset($_FILES[$fileKey]) && is_array($_FILES[$fileKey]['name'])) {
+                            $roomImgCount = count($_FILES[$fileKey]['name']);
+
+                            for ($j = 0; $j < $roomImgCount; $j++) {
+                                if ($_FILES[$fileKey]['error'][$j] === 0) {
+                                    $tmpPath = $_FILES[$fileKey]['tmp_name'][$j];
+                                    $origName = $_FILES[$fileKey]['name'][$j];
+                                
+                                    $newName = uniqid() . '_room_' . basename($origName);
+                                    $destPath = $uploadDir . $newName;
+
+                                    if (move_uploaded_file($tmpPath, $destPath)) {
+                                        $imageUrlForDB = 'uploads/' . $newName;
+                                        
+                                        $stmtRoomImage->bind_param("is", $newRentalId, $imageUrlForDB);
+                                        $stmtRoomImage->execute();
+                                        $savedRoomImageCount++;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 
                 $stmtRoom->close();
+                $stmtRoomImage->close();
             }
         }
 
         echo json_encode([
             "status" => "success", 
-            "message" => "Property, " . count($amenityList) . " amenities, " . $savedImageCount . " shared images, and " . $savedRoomCount . " rooms saved!",
+            "message" => "Property, " . count($amenityList) . " amenities, " . $savedImageCount . " shared images, " . $savedRoomCount . " rooms, and " . $savedRoomImageCount . " room images saved!",
             "propertyId" => $newPropertyId
         ]);
         exit();
