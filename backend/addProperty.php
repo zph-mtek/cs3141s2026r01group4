@@ -83,13 +83,49 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             }
         }
 
+        //save images
+        $savedImageCount = 0;
+
+        if (isset($_FILES['propertyImages']) && is_array($_FILES['propertyImages']['name'])){
+            $uploadDir = __DIR__ . '/uploads/';
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true); 
+            }
+
+            $sqlImage = "INSERT INTO huskyrentlens_property_image (propertyId, imageUrl) VALUES (?, ?)";
+            $stmtImg = $conn->prepare($sqlImage);
+
+            if($stmtImg){
+                $imageCount = count($_FILES['propertyImages']['name']);
+                for ($i = 0; $i < $imageCount; $i++) {
+                    if ($_FILES['propertyImages']['error'][$i] === 0) {   
+                        $tmpFilePath = $_FILES['propertyImages']['tmp_name'][$i];
+                        $originalName = $_FILES['propertyImages']['name'][$i];
+
+                        $newFileName = uniqid() . '_' . basename($originalName);
+                        $destFilePath = $uploadDir . $newFileName;
+
+                        if (move_uploaded_file($tmpFilePath, $destFilePath)) {
+                            $imageUrlForDB = 'uploads/' . $newFileName; 
+                            
+                            $stmtImg->bind_param("is", $newPropertyId, $imageUrlForDB);
+                            $stmtImg->execute();
+                            $savedImageCount++;
+                        }
+                    }
+                }
+                 $stmtImg->close();
+            }
+
+        }
         echo json_encode([
             "status" => "success", 
-            "message" => "Property and " . count($amenityList) . " amenities saved!",
+            "message" => "Property, " . count($amenityList) . " amenities, and " . $savedImageCount . " shared images saved!",
             "propertyId" => $newPropertyId
         ]);
         exit();
-
+        
     } else {
         echo json_encode(["status" => "error", "message" => "failed to add property: " . $stmt->error]);
         exit();
