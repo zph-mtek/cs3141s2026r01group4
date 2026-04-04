@@ -64,11 +64,23 @@ foreach ($properties as &$property) {
     $stmtImg->bind_param("i", $currentId);
     $stmtImg->execute();
     $property['images'] = $stmtImg->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmtImg->close();
 
     $stmtRev = $conn->prepare("SELECT * FROM huskyrentlens_reviews WHERE propertyId = ?");
     $stmtRev->bind_param("i", $currentId);
     $stmtRev->execute();
     $property['reviews'] = $stmtRev->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmtRev->close();
+
+
+    // room data
+    $stmtRoom = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ?");
+    $stmtRoom->bind_param("i", $currentId);
+    $stmtRoom->execute();
+    $rooms = $stmtRoom->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmtRoom->close();
+
+    $property['rooms'] = $rooms;
 }
 
 
