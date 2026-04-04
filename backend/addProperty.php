@@ -139,8 +139,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                         $newRentalId = $conn->insert_id;
                         $savedRoomCount++;
                     }
-                    $stmtRoom->close();
                 }
+                
+                $stmtRoom->close();
             }
         }
 
