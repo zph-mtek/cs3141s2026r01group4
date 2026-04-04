@@ -133,7 +133,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                     $bathroomCt = intval($room['bathrooms'] ?? 1);
                     $cost = intval($room['rent'] ?? 0);
                     $roomDesc = $room['description'] ?? ''; 
-                    $stmtRoom->bind_param("iiiis", $newPropertyId, $bedroomCt, $bathroomCt, $cost);
+                    $stmtRoom->bind_param("iiiis", $newPropertyId, $bedroomCt, $bathroomCt, $cost, $roomDesc);
 
                     if ($stmtRoom->execute()) {
                         $newRentalId = $conn->insert_id;
