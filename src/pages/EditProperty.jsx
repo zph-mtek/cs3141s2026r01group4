@@ -29,42 +29,40 @@ const EditProperty = () => {
             const result = await getPropertyById(propertyId);
             console.log("取得したデータ(全体):", result);
 
-            // 🚨 ログの構造に合わせて、中身の 'property' オブジェクトを取り出す
+            // 🚨 データの階層を確実に指定
             const rawData = result.data || result;
-            const propertyBox = rawData.property; // 👈 ここがポイント！
+            const propertyBox = rawData.property;
 
             if (propertyBox) {
-              // 1. 基本情報のセット
-              setPropertyInfo({
+              const newInfo = {
                 name: propertyBox.name || '',
                 address: propertyBox.address || '',
                 city: propertyBox.city || '',
                 distance: propertyBox.distanceFromMTU || '',
                 walkDistance: propertyBox.walkDistance || '',
-                // アメニティは [{amenityName: 'wifi'}, ...] を ['wifi', ...] に変換
-                amenities: rawData.amenities ? rawData.amenities.map(a => a.amenityName) : [],
+                amenities: Array.isArray(rawData.amenities) ? rawData.amenities.map(a => a.amenityName) : [],
                 description: propertyBox.description || '',
-                images: rawData.images || []
-              });
+                images: Array.isArray(rawData.images) ? rawData.images : []
+              };
+              setPropertyInfo(newInfo); 
 
-              // 2. 部屋情報（ログでは 'rentals' という名前になっています）
-              if (rawData.rentals && rawData.rentals.length > 0) {
+              if (Array.isArray(rawData.rentals) && rawData.rentals.length > 0) {
                 const formattedRooms = rawData.rentals.map(room => ({
-                  id: room.rentalId || Date.now(),
-                  name: room.roomName || '', // ログに roomName があれば
+                  id: room.rentalId, 
+                  name: room.roomName || '',
                   bedrooms: room.bedroomCt || 1,
                   bathrooms: room.bathroomCt || 1,
                   rent: room.cost || '',
                   description: room.description || '',
-                  images: room.images || []
+                  images: Array.isArray(room.images) ? room.images : []
                 }));
-                setRooms(formattedRooms);
+                setRooms(formattedRooms); 
               }
             }
           } catch (apiError) {
             console.error("failed to fetch data:", apiError);
           }
-        };
+        }
         fetchPropertyData();
       }
 
