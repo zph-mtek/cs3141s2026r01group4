@@ -125,7 +125,7 @@ foreach ($properties as &$property) {
 
     foreach ($rooms as &$room) {
         $rentalId = $room['rentalId'];
-        $stmtRoomImg = $conn->prepare("SELECT * FROM huskyrentlens_rental_image WHERE rentalId = ?");
+        $stmtRoomImg = $conn->prepare("SELECT rentalId, image_url AS imageUrl FROM huskyrentlens_rental_image WHERE rentalId = ?");
         $stmtRoomImg->bind_param("i", $rentalId);
         $stmtRoomImg->execute();
         $room['images'] = $stmtRoomImg->get_result()->fetch_all(MYSQLI_ASSOC);
