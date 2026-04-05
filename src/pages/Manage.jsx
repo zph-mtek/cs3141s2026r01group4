@@ -30,6 +30,7 @@ const Manage = () => {
           const response = await getPropertyiesByLandlordId();
           setPropertyData(response.data); 
           console.log("My Properties:", response.data); 
+          console.log("reponse:", response);
         }catch(error){
           console.log("error fetching property", error)
         }
