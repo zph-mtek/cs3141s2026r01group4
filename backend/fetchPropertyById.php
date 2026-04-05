@@ -1,5 +1,6 @@
 <?php
-// Public endpoint: returns all properties used by the frontend map/listing pages.
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -11,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Support both deployment layouts for private DB bootstrap.
 $bootstrapCandidates = [
     __DIR__ . '/../../server_backend/collectSet.php',
     __DIR__ . '/../server_backend/collectSet.php',
@@ -33,43 +33,60 @@ if (!$bootstrapLoaded || !isset($conn)) {
     exit();
 }
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$propertyId = $_GET['id'] ?? null;
+if (!$propertyId) {
+    echo json_encode(["status" => "error", "message" => "No property ID provided"]);
+    exit();
+}
 
 $stmt = $conn->prepare("SELECT * FROM huskyrentlens_property WHERE propertyId = ?");
-
-$stmt->bind_param("i", $id);
+$stmt->bind_param("i", $propertyId);
 $stmt->execute();
 $propertyData = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
-$stmt2 = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ? ORDER BY cost ASC");
-$stmt2->bind_param("i", $id);
-$stmt2->execute();
-$rentalsData = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+if (!$propertyData) {
+    echo json_encode(["status" => "error", "message" => "Property not found"]);
+    exit();
+}
 
-$stmt3 = $conn->prepare("SELECT * FROM huskyrentlens_property_image WHERE propertyId = ?");
-$stmt3->bind_param("i", $id);
-$stmt3->execute();
-$imagesData = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtImg = $conn->prepare("SELECT imageId, propertyId, imageUrl FROM huskyrentlens_property_image WHERE propertyId = ?");
+$stmtImg->bind_param("i", $propertyId);
+$stmtImg->execute();
+$propertyImages = $stmtImg->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtImg->close();
 
-$stmt4 = $conn->prepare("SELECT * FROM huskyrentlens_reviews WHERE propertyId = ?");
-$stmt4->bind_param("i", $id);
-$stmt4->execute();
-$reviewsData = $stmt4->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtAmenity = $conn->prepare("SELECT amenityName FROM huskyrentlens_property_amenities WHERE propertyId = ?");
+$stmtAmenity->bind_param("i", $propertyId);
+$stmtAmenity->execute();
+$resAmenity = $stmtAmenity->get_result()->fetch_all(MYSQLI_ASSOC);
+$amenitiesList = array_column($resAmenity, 'amenityName');
+$stmtAmenity->close();
 
-$stmt5 = $conn->prepare("SELECT amenityName FROM huskyrentlens_property_amenities WHERE propertyId = ?");
-$stmt5->bind_param("i", $id);
-$stmt5->execute();
-$amenitiesData = $stmt5->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtRoom = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ?");
+$stmtRoom->bind_param("i", $propertyId);
+$stmtRoom->execute();
+$rentals = $stmtRoom->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtRoom->close();
+
+foreach ($rentals as &$room) {
+    $rentalId = $room['rentalId'];
+    $stmtRoomImg = $conn->prepare("SELECT rentalId, image_url AS imageUrl FROM huskyrentlens_rental_image WHERE rentalId = ?");
+    $stmtRoomImg->bind_param("i", $rentalId);
+    $stmtRoomImg->execute();
+    $room['images'] = $stmtRoomImg->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmtRoomImg->close();
+}
 
 echo json_encode([
     "status" => "success",
-    "property" => $propertyData,
-    "rentals" => $rentalsData,
-    "images" => $imagesData,
-    "reviews" => $reviewsData,
-    "amenities" => $amenitiesData
+    "data" => [
+        "property" => $propertyData, 
+        "images" => $propertyImages,  
+        "amenities" => $amenitiesList, 
+        "rentals" => $rentals         
+    ]
 ]);
-
 
 if (isset($conn)) {
     $conn->close();
