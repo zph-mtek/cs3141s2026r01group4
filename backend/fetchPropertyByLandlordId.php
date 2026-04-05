@@ -71,7 +71,8 @@ if (!$authHeader) {
 $token = str_replace('Bearer ', '', $authHeader);
 
 try {
-    $envPath = __DIR__ . '/../../.trash/keys/.env';
+    
+    $envPath = __DIR__ . '/../../keys/.env';
     $envData = parse_ini_file($envPath);
     $secret_key = $envData['JWT_SECRET'];
     
