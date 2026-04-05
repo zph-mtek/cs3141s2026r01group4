@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Support both deployment layouts for private DB bootstrap.
 $bootstrapCandidates = [
     __DIR__ . '/../../server_backend/collectSet.php',
     __DIR__ . '/../server_backend/collectSet.php',
@@ -28,13 +27,70 @@ foreach ($bootstrapCandidates as $candidate) {
     }
 }
 
-
 if (!$bootstrapLoaded || !isset($conn)) {
     http_response_code(500);
     echo json_encode(["status" => "error", "message" => "Database bootstrap not found"]);
     exit();
 }
 
+$autoloadCandidates = [
+    __DIR__ . '/../../server_backend/vendor/autoload.php',
+    __DIR__ . '/../server_backend/vendor/autoload.php'
+];
+
+$autoloadLoaded = false;
+foreach ($autoloadCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $autoloadLoaded = true;
+        break;
+    }
+}
+
+if (!$autoloadLoaded) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "JWT autoload not found"]);
+    exit();
+}
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+$headers = apache_request_headers();
+$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+if (!$authHeader && isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+}
+
+if (!$authHeader) {
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "no token"]);
+    exit();
+}
+
+$token = str_replace('Bearer ', '', $authHeader);
+
+try {
+    $envPath = __DIR__ . '/../../keys/.env';
+    $envData = parse_ini_file($envPath);
+    $secret_key = $envData['JWT_SECRET'];
+    
+    $decoded = JWT::decode($token, new Key($secret_key, 'HS256'));
+
+    $landlordId = $decoded->data->id;
+    $role = $decoded->data->role;
+
+    if ($role !== 'Landlord') {
+        http_response_code(403);
+        echo json_encode(["status" => "error", "message" => "not authorized"]);
+        exit();
+    }
+
+} catch (Exception $e) {
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "token invalid: " . $e->getMessage()]);
+    exit();
+}
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $name = $_POST['name'] ?? '';
@@ -43,9 +99,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $distance = $_POST['distance'] ?? '';
     $description = $_POST['description'] ?? '';
     $walkDistance = $_POST['walkDistance'] ?? '';
-
-    //test
-    $landlordId = 1;
 
     $amenities = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
     $roomsInfo = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
@@ -117,7 +170,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                 }
                  $stmtImg->close();
             }
-
         }
 
         //save each file
@@ -189,5 +241,4 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         exit();
     }
 }
-
 ?>
