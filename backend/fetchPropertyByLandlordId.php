@@ -1,6 +1,5 @@
 <?php
-// Public endpoint: returns all properties used by the frontend map/listing pages.
-
+session_start();
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -11,17 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Support both deployment layouts for private DB bootstrap.
 $bootstrapCandidates = [
     __DIR__ . '/../../server_backend/collectSet.php',
-    __DIR__ . '/../server_backend/collectSet.php',
-    __DIR__ . '/collectSet.php'
+    __DIR__ . '/../server_backend/collectSet.php'
 ];
 
 $bootstrapLoaded = false;
 foreach ($bootstrapCandidates as $candidate) {
     if (is_readable($candidate)) {
-        include_once $candidate;
+        require_once $candidate;
         $bootstrapLoaded = true;
         break;
     }
@@ -33,18 +30,68 @@ if (!$bootstrapLoaded || !isset($conn)) {
     exit();
 }
 
+$autoloadCandidates = [
+    __DIR__ . '/../../server_backend/vendor/autoload.php',
+    __DIR__ . '/../server_backend/vendor/autoload.php'
+];
 
-$landlordId = isset($_GET['landlordId']) ? intval($_GET['landlordId']) : 0;
+$autoloadLoaded = false;
+foreach ($autoloadCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $autoloadLoaded = true;
+        break;
+    }
+}
 
-if ($landlordId <= 0) {
-    echo json_encode(["status" => "error", "message" => "Missing or invalid landlordId"]);
+if (!$autoloadLoaded) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "JWT autoload not found"]);
+    exit();
+}
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+
+$headers = apache_request_headers();
+$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+
+if (!$authHeader) {
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "no token"]);
+    exit();
+}
+
+$token = str_replace('Bearer ', '', $authHeader);
+
+try {
+    $envPath = __DIR__ . '/../../.trash/keys/.env';
+    $envData = parse_ini_file($envPath);
+    $secret_key = $envData['JWT_SECRET'];
+    
+    $decoded = JWT::decode($token, new Key($secret_key, 'HS256'));
+
+    $landlordId = $decoded->data->id;
+    $role = $decoded->data->role;
+    if ($role !== 'Landlord') {
+        http_response_code(403);
+        echo json_encode(["status" => "error", "message" => "not authorized"]);
+        exit();
+    }
+
+} catch (Exception $e) {
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "token invalid: " . $e->getMessage()]);
     exit();
 }
 
 $sql = "SELECT * FROM huskyrentlens_property WHERE landlordId = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $landlordId);
+$stmt->bind_param("i", $landlordId); 
 $stmt->execute();
 $result = $stmt->get_result();
 $properties = $result->fetch_all(MYSQLI_ASSOC);
