@@ -1,101 +1,45 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import addressIcon from "../assets/maps-and-flags.png";
 import { Link } from 'react-router-dom';
-import { Database } from '../Architect/Architect.jsx'
+import { getAllProperties } from '../API/getAllProperties'; 
 
-//-- Will make it more easily repeatable
-const PropertyCard = (data) => {
-  console.log("IN THE PROPERTY CARD"+JSON.stringify(data));
 
-  const propertyInfo = data.propInfo;
-  const mainImage = (propertyInfo.images == (null || undefined) ? "" : (propertyInfo.images.split(',')[0]) ); // exfiltrate the primary image from the string
-  const [costRange, updateCostRange ] = useState({min:0,max:0});
-  const [mainPhoto, setmainPhoto] = useState([]);
-
-  //-- Use this API to fetch all of the properties that exist once, when the page loads
-  useEffect(()=>{
-    const fetchPropertyRentals = async () => {
-      console.log("Database connection is is running...");
-
-      const getData = await Database('https://huskyrentlens.cs.mtu.edu/connect.php',{
-        propertyId: propertyInfo.propertyId,
-        allRentals: "yes"
-      });
-
-      if (getData != null) {
-        const rentalData = getData.data.data;
-
-        //-- Determine range of cost for rentals for the property
-        let lowestPrice;
-        let highestPrice;
-
-        console.log(rentalData);
-        Object.keys(rentalData).map((index,dummyKey) => {
-          const thisRentalInfo = rentalData[index];
-
-          // Determine the average rating for this property's rentals
-          //nts: Do later
-
-          // Determine the range of cost for this property's rentals
-          if (lowestPrice == null) {
-            lowestPrice = thisRentalInfo.cost
-          } else {
-            if (thisRentalInfo.cost < lowestPrice) {
-              lowestPrice = thisRentalInfo.cost
-            } else if (thisRentalInfo.cost > lowestPrice) {
-              if (highestPrice == null || thisRentalInfo.cost > highestPrice) { // if we don't have a highest price yet or it is higher than the higest price...
-                highestPrice = thisRentalInfo.cost
-              }
-            }
-          }
-
-          if (highestPrice == null) {
-            highestPrice = thisRentalInfo.cost
-          }
-
-          // Now display them as a range
-          updateCostRange({min: lowestPrice, max: highestPrice});
-        });
-      }
-    }
-    
-    fetchPropertyRentals();
-
-  },[]);
+const PropertyCard = ({ propInfo }) => {
+  const mainImage = propInfo.images && propInfo.images.length > 0 
+    ? `https://huskyrentlens.cs.mtu.edu/backend/${propInfo.images[0].imageUrl}` 
+    : '';
 
   return (
-    <Link to={`/properties/${propertyInfo.propertyId}`}> {/* Put the id of the propery here to make link dynamic */}
-            
+    <Link to={`/properties/${propInfo.propertyId}`}> 
+          
           <div className='flex flex-col rounded-2xl h-110 2xl:h-100 bg-white overflow-hidden cursor-pointer hover:bg-amber-200 transform transition duration-300 group'>
             <div className='p-5'>
               <img className='h-55 w-full object-cover rounded-2xl '
                   src={mainImage}
-              alt="" />
+              alt={propInfo.name} />
             </div>
 
             <div className='px-5 flex'>
               <div className='w-full'>
 
                 <div className='flex justify-between'>
-                  <p className='font-extrabold text-2xl'>{propertyInfo.name}</p>
-                  <p className=''><
-                    span className='text-yellow-400 text-3xl font-semibold group-hover:text-black transform transition duration-300'>
-                      {`${costRange.min} - ${costRange.max}`}
+                  <p className='font-extrabold text-2xl'>{propInfo.name}</p>
+                  <p className=''>
+                    from
+                    <span className='text-yellow-400 text-3xl font-semibold group-hover:text-black transform transition duration-300'>
+                      ${propInfo.lowest_price || '---'}
                     </span>
                     /month
                   </p>
                 </div>
 
-                <p>⭐⭐⭐⭐⭐ 5</p>
-
-
                 <div className='flex items-center'>
                   <img className='h-5' src={addressIcon} alt="" />
-                  <p className='text-gray-600 pb-2 pt-2'>{propertyInfo.address}</p>
+                  <p className='text-gray-600 pb-2 pt-2'>{propInfo.address}</p>
                 </div>
 
                 <div className='bg-yellow-300 inline-block rounded-xl px-2 py-1'>
-                  <p className='text-sm'>{propertyInfo.distanceFromMTU} minutes from campus</p>
+                  <p className='text-sm'>{propInfo.distanceFromMTU} miles from campus</p>
                 </div>
               </div>
             </div>
@@ -106,27 +50,23 @@ const PropertyCard = (data) => {
 }
 
 const Properties = () => {
-  const [ availableProperties, updateProperties ] = useState({});
+  const [ availableProperties, updateProperties ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(true);
   
-  //-- Use this API to fetch all of the properties that exist once, when the page loads
-  useEffect(()=>{
+  useEffect(() => {
     const fetchAllProperties = async () => {
-      console.log("Database connection is is running...");
-
-      const propertyData = await Database('https://huskyrentlens.cs.mtu.edu/connect.php',{
-        propertyId : -1
-      });
-
-      // If the data did not return null, update our information storage to the page
-      if (propertyData != null) {
-        updateProperties(propertyData.data.data);
+      try {
+        const response = await getAllProperties();
+        updateProperties(response.data);
+      } catch (error) {
+        console.error("Failed to fetch properties", error);
+      } finally {
+        setIsLoading(false);
       }
-      
     }
     
     fetchAllProperties();
-
-  },[]);
+  }, []);
 
   return (
     <div className='flex flex-col'>
@@ -141,33 +81,22 @@ const Properties = () => {
         
       </div>
 
-      {
-        console.log("Available properties: "+JSON.stringify(availableProperties))
-      }
-
       {/* div for properties card */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 bg-gray-100 px-10 py-10'>
-        { availableProperties ? 
-          // @SOLEIL ECTOR
-          Object.keys(availableProperties).map((propertyId) => {
-            const thisPropertyInfo = availableProperties[propertyId];
-            console.log("The info for this property: "+JSON.stringify(thisPropertyInfo));
-
-            // Return the propertycard image
-            return (
-              <Fragment key={propertyId}>
-                {
-                thisPropertyInfo == null ? null : <PropertyCard propInfo={thisPropertyInfo} />}
-              </Fragment>
-            )
-          })
-        
-        : (<p>Loading!</p>) // Displays if there are no properties returned by the API
-         }
+        { isLoading ? (
+          <p className="text-center font-bold text-xl col-span-full">Loading...</p>
+        ) : availableProperties && availableProperties.length > 0 ? (
+          availableProperties.map((property) => (
+            <Fragment key={property.propertyId}>
+              <PropertyCard propInfo={property} />
+            </Fragment>
+          ))
+        ) : (
+          <p className="text-center font-bold text-xl col-span-full">No properties found :(</p>
+        )}
       </div>
     </div>
   );
 };
 
-
-export default Properties
+export default Properties;

@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import addressIcon from "../assets/maps-and-flags.png";
-import { CiCircleChevLeft, CiCircleChevRight} from "react-icons/ci";
+import { CiCircleChevLeft, CiCircleChevRight } from "react-icons/ci";
 import pfp from "../assets/catpfp.jpg"
 import { Link, useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating.jsx';
@@ -34,67 +34,67 @@ const CommentCard = ({ commentInfo, cardKey }) => {
 }
 
 const PropertyInfo = () => {
-  const toggleModal = () => {
-    setModalStatus(!modalStatus)
-  }
-  
-  const { propertyId } = useParams();
-  const [properties, setProperties] = useState([]);
-  const [rentals, setRentals] = useState([]);
-  const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
-  const [modalStatus, setModalStatus] = useState(false);
-  const [slidePhotos, setSlidePhotos] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [amenities, setAmenities] = useState([]);
-  const [propertyRating, setPropertyRating] = useState('N/A')
-  const [propertyComments, setPropertyComments] = useState([]);
+    const toggleModal = () => {
+        setModalStatus(!modalStatus)
+    }
+
+    const { propertyId } = useParams();
+    const [properties, setProperties] = useState([]);
+    const [rentals, setRentals] = useState([]);
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+    const [modalStatus, setModalStatus] = useState(false);
+    const [slidePhotos, setSlidePhotos] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [amenities, setAmenities] = useState([]);
+    const [propertyRating, setPropertyRating] = useState('N/A')
+    const [propertyComments, setPropertyComments] = useState([]);
 
 
-  // Get property comments
-  useEffect(()=>{
+    // Get property comments
+    useEffect(() => {
 
-    if (propertyId != null && propertyId != '') {
-        console.log(`FETCHING COMMENTS WITH PROPERTYID: ${propertyId}`);
-        const fetchComments = async () => {
-            const getCommentData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
-                propertyId: parseInt(propertyId),
-                getReviews: 'yes'
-            });
+        if (propertyId != null && propertyId != '') {
+            console.log(`FETCHING COMMENTS WITH PROPERTYID: ${propertyId}`);
+            const fetchComments = async () => {
+                const getCommentData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php', {
+                    propertyId: parseInt(propertyId),
+                    getReviews: 'yes'
+                });
 
-            if (getCommentData != null) {
-                console.log(getCommentData.data.data);
-                setPropertyComments(getCommentData.data.data);
+                if (getCommentData != null) {
+                    console.log(getCommentData.data.data);
+                    setPropertyComments(getCommentData.data.data);
+                }
             }
+
+            fetchComments();
         }
+    }, [propertyId]);
 
-        fetchComments();
-    }
-  },[propertyId]);
+    //calculate rating
+    useEffect(() => {
+        if (reviews.length > 0) {
+            let total = 0
 
-  //calculate rating
-  useEffect(()=>{
-    if(reviews.length > 0){
-        let total = 0
+            reviews.forEach((review) => {
+                total += Number(review.rating)
+            })
 
-        reviews.forEach((review)=>{
-            total += Number(review.rating)
-        })
+            const average = (total / reviews.length).toFixed(1);
+            setPropertyRating(average);
+        }
+        else {
+            setPropertyRating('N/A');
+        }
+    }, [reviews])
 
-        const average = (total / reviews.length).toFixed(1);
-        setPropertyRating(average);
-    }
-    else{
-        setPropertyRating('N/A');
-    }
-  }, [reviews])
-
-  useEffect(() => {
+    useEffect(() => {
         const fetchCoordinates = async () => {
             if (!properties.address) return;
 
             try {
                 const encodedAddress = encodeURIComponent(properties.address);
-                
+
                 const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}`);
                 const data = await response.json();
 
@@ -144,7 +144,7 @@ const PropertyInfo = () => {
         const isFirstSlide = currentIndex === 0
         const newIndex = isFirstSlide ? slidePhotos.length - 1 : currentIndex - 1;
         setCurrentIndex(newIndex);
-    }; 
+    };
 
     const nextSlide = () => {
         const isLastSlide = currentIndex === slidePhotos.length - 1
@@ -152,7 +152,7 @@ const PropertyInfo = () => {
         setCurrentIndex(newIndex);
     }
 
-    const goToSlides =(slideIndex) => {
+    const goToSlides = (slideIndex) => {
         setCurrentIndex(slideIndex)
     }
 
@@ -161,9 +161,9 @@ const PropertyInfo = () => {
             {/* image section */}
             <div className='max-w-[1000px] h-[600px] w-full mx-auto px-4 flex flex-col'>
                 {slidePhotos.length > 0 ? (
-                    <div 
-                        onClick={toggleModal} 
-                        style={{ backgroundImage: `url(${slidePhotos[currentIndex].imageUrl})` }} 
+                    <div
+                        onClick={toggleModal}
+                        style={{ backgroundImage: `url(https://huskyrentlens.cs.mtu.edu/backend/${slidePhotos[currentIndex].imageUrl})` }}
                         className='w-full h-full rounded-2xl bg-center bg-cover duration-300 cursor-pointer'
                     ></div>
                 ) : (
@@ -176,16 +176,16 @@ const PropertyInfo = () => {
                     <CiCircleChevLeft
                         onClick={prevSlide}
                         size={50}
-                        className='cursor-pointer text-black hover:text-gray-500 transition-colors'/>
+                        className='cursor-pointer text-black hover:text-gray-500 transition-colors' />
                     <CiCircleChevRight
                         onClick={nextSlide}
                         size={50}
-                        className='cursor-pointer text-black hover:text-gray-500 transition-colors'/>
+                        className='cursor-pointer text-black hover:text-gray-500 transition-colors' />
                 </div>
 
                 {modalStatus && (
-                <ImageModal toggleModal={toggleModal} photos={slidePhotos}/>
-                 )}
+                    <ImageModal toggleModal={toggleModal} photos={slidePhotos} />
+                )}
 
             </div>
 
@@ -224,7 +224,11 @@ const PropertyInfo = () => {
                         <p>{properties.address}</p>
                     </div>
                     <p className='pb-1 text-blue-600 font-bold'>
-                        {properties.distanceFromMTU} min walk to campus
+                        {properties.walkDistance} minutes walk to campus
+                    </p>
+
+                    <p className='pb-1 text-blue-600 font-bold'>
+                        {properties.distanceFromMTU} miles from campus
                     </p>
 
                     {/* line */}
@@ -239,7 +243,7 @@ const PropertyInfo = () => {
                                 <span className='text-sm'>{feature.name}</span>
                             </div>
                         ))} */}
-                        {amenities && amenities.map((amenity, i)=>(
+                        {amenities && amenities.map((amenity, i) => (
                             <div key={i} className='flex items-center justify-center gap-2 leading-none'>
                                 <span className='text-xl'>{amenityIcon[amenity.amenityName] || DefaultIcon}</span>
                                 <span className='text-sm'>{amenity.amenityName}</span>
@@ -251,11 +255,11 @@ const PropertyInfo = () => {
                         {rentals.map((rental, i) => (
                             <div key={i} className='border border-gray-200 rounded-xl p-5 bg-white shadow-sm'>
                                 <div className='flex justify-between items-center'>
-                                        <p className='font-bold text-lg'>Bedroom: {rental.bedroomCt}</p>
-                                        <p className='font-bold text-yellow-500'>$ {rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
+                                    <p className='font-bold text-lg'>Bedroom: {rental.bedroomCt}</p>
+                                    <p className='font-bold text-yellow-500'>$ {rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
                                 </div>
                                 <p className='font-bold text-lg'>In room bathroom: {rental.bathroomCt}</p>
-                                <p className='text-sm text-gray-500 mt-1'>{rental.description }</p>
+                                <p className='text-sm text-gray-500 mt-1'>{rental.description}</p>
                             </div>
                         ))}
                     </div>
@@ -280,10 +284,10 @@ const PropertyInfo = () => {
                         )}
                     </div>
 
-                    <Link to={`/addreview/${properties.propertyId}`}>            
+                    <Link to={`/addreview/${properties.propertyId}`}>
                         <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
                             <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
-                        </div>  
+                        </div>
                     </Link>
                 </div>
             </div>
@@ -298,17 +302,17 @@ const PropertyInfo = () => {
                     {reviews.length > 0 ? (
 
 
-                        propertyComments.map((thisComment,i) => (
-                        <Fragment>
-                            <CommentCard commentInfo = {thisComment} cardKey = {i} />
-                        </Fragment>
-                    ))
+                        propertyComments.map((thisComment, i) => (
+                            <Fragment>
+                                <CommentCard commentInfo={thisComment} cardKey={i} />
+                            </Fragment>
+                        ))
                     ) : (
-                    <Fragment>
-                        <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
-                        <p>There is no review on this property yet :(</p>
-                    </div>
-                    </Fragment>
+                        <Fragment>
+                            <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
+                                <p>There is no review on this property yet :(</p>
+                            </div>
+                        </Fragment>
                     )}
                 </div>
             </div>

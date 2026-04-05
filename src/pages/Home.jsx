@@ -11,21 +11,20 @@ const Home = () => {
         const fetchData = async () => {
             try {
                 const response = await getAllProperties();
-                setProperties(response.data); 
+                setProperties(response.data);
             } catch (error) {
                 console.error("Failed to fetch properties");
             } finally {
-                setIsLoading(false); 
+                setIsLoading(false);
             }
         };
 
         fetchData();
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         if (properties.length > 0) {
             console.log(properties)
-            console.log(properties[0].images[0]);
         }
     }, [properties])
 
@@ -34,9 +33,9 @@ const Home = () => {
     }
 
 
-        return (
+    return (
         <>
-            
+
             <div>
                 <div className="min-h-screen bg-white text-gray-900 flex flex-col">
                     {/* text section */}
@@ -60,7 +59,11 @@ const Home = () => {
                             >
                                 {/* image */}
                                 <div className="w-full md:w-64 h-48 rounded-xl flex items-center justify-center text-white text-2xl">
-                                    <img className='w-full object-cover h-full rounded-xl' alt="" />
+                                    <img
+                                        src={`https://huskyrentlens.cs.mtu.edu/backend/${property.images[0].imageUrl}`}
+                                        className='w-full h-full object-cover rounded-xl'
+                                        alt={property.name}
+                                    />
                                 </div>
 
                                 {/* info text*/}
@@ -95,11 +98,11 @@ const Home = () => {
 
                                 {/* desktop Button */}
                                 <Link to={`/properties/${property.propertyId}`}>
-                                <div className="hidden md:block md:ml-8">
-                                    <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl cursor-pointer">
-                                        See Property
-                                    </button>
-                                </div>
+                                    <div className="hidden md:block md:ml-8">
+                                        <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl cursor-pointer">
+                                            See Property
+                                        </button>
+                                    </div>
                                 </Link>
                             </div>
                         ))}
@@ -108,17 +111,17 @@ const Home = () => {
                     {/* footer */}
                     <div className="bg-yellow-400 mt-10 md:mt-16 py-6 md:py-8 text-center md:text-right md:pr-16">
                         <span className="text-lg md:text-2xl font-medium cursor-pointer">
-                                <Link to="/properties" className="text-lg md:text-2xl font-medium hover:underline">
-                                    See all properties --&gt;
-                                </Link>
+                            <Link to="/properties" className="text-lg md:text-2xl font-medium hover:underline">
+                                See all properties --&gt;
+                            </Link>
                         </span>
                     </div>
                     {/* NEW CUTE DISCLAIMER FOOTER */}
                     <footer className="bg-gray-50 text-gray-500 py-10 px-6 text-center text-sm md:text-base border-t border-gray-200 mt-auto">
                         <p className="max-w-3xl mx-auto leading-relaxed">
-                            🐾 <strong>HuskyRentLens</strong> is an independent student project built with love for the CS3141 Team Software Project course. 
+                            🐾 <strong>HuskyRentLens</strong> is an independent student project built with love for the CS3141 Team Software Project course.
                             <br className="hidden md:block" />
-                            We are not affiliated with, officially maintained by, or endorsed by Michigan Technological University (MTU). 
+                            We are not affiliated with, officially maintained by, or endorsed by Michigan Technological University (MTU).
                             Reviews and opinions expressed here belong solely to the students, not the school! 🎓
                         </p>
                         <div className="mt-5 space-x-6 font-medium">
@@ -127,11 +130,11 @@ const Home = () => {
                             <Link to="/guidelines" className="hover:text-yellow-500 transition-colors duration-200">Community Guidelines</Link>
                         </div>
                     </footer>
-                    
+
                 </div>
             </div>
         </>
-        )
-    }
+    )
+}
 
-    export default Home
+export default Home

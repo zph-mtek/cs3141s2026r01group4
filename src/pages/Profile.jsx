@@ -1,10 +1,36 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { jwtDecode } from "jwt-decode";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import pfp from "../assets/catpfp.jpg"
 
 const Profile = () => {
+
+    //kick out user if landlord
+    const navigate = useNavigate();
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const decodedToken = jwtDecode(token);
+
+            if (decodedToken.data.role !== 'MTU_student') {
+                navigate('/');
+            } else {
+
+            }
+
+        } catch (error) {
+            localStorage.removeItem('token');
+            navigate('/login');
+        }
+    }, [navigate]);
+
     const API_BASE_URL = 'https://huskyrentlens.cs.mtu.edu';
 
     const [user, setUser] = useState(null);
@@ -180,9 +206,9 @@ const Profile = () => {
     return (
         <div className='pt-30 md:pt-12 grid grid-cols-1 xl:grid-cols-[auto_auto] p-8 xl:p-16 gap-8 justify-center items-start'>
             <div className='md:sticky top-30 flex flex-col items-center justify-center shrink-0'>
-                <img src={pfp} alt="" className='rounded-full shrink-0 object-cover h-70 border-yellow-400 border-4'/>
+                <img src={pfp} alt="" className='rounded-full shrink-0 object-cover h-70 border-yellow-400 border-4' />
 
-                
+
                 <div className='flex flex-col justify-items-center items-center pt-5'>
                     <p className='font-bold text-2xl text-center'>{profileData.displayName}</p>
                     <p className='text-sm text-gray-500'>Joined: {profileData.joinedText}</p>

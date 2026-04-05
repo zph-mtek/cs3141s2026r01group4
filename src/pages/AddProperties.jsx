@@ -1,11 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 import { amenityIcon } from '../components/amenityIcons';
 import { FaRegTrashCan } from "react-icons/fa6";
 import { submitPropertyData } from '../API/sendPropertyData';
 
 const AddProperties = () => {
+
+  const navigate = useNavigate();
+
+  //useeffect to kick out if the user is not landlord
+  useEffect(() => {
+    const token = localStorage.getItem('token'); 
+
+    if (!token) {
+      navigate('/login'); 
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(token);
+
+      if (decodedToken.data.role !== 'Landlord') {
+        navigate('/'); 
+      } else {
+
+      }
+
+    } catch (error) {
+      localStorage.removeItem('token');
+      navigate('/login');
+    }
+  }, [navigate]);
 
   //function to send data to backend
   const handleSubmit = async (e) => {
@@ -282,7 +308,7 @@ const AddProperties = () => {
             {/* Property description section */}
             <div className='pb-20'>
               <label className="text-xl font-bold text-gray-900 mb-8 pb-4">Description</label>
-              <textarea value={propertyInfo.description}
+              <textarea value={propertyInfo.description} maxLength={1000}
                 onChange={(e) => setPropertyInfo({ ...propertyInfo, description: e.target.value })} name="description" id="propertyDescription" placeholder="Property description..." className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2 "></textarea>
             </div>
 

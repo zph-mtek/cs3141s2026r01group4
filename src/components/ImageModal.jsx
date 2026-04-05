@@ -18,7 +18,7 @@ const ImageModal = ({ toggleModal, photos }) => {
             <div>
                 {photos && photos.map((photo, index) => (
                     <div className='pb-7'>
-                        <img key={index} src={photo.imageUrl} alt={`Property ${index}`} className=''/>
+                        <img  key={index} src={`https://huskyrentlens.cs.mtu.edu/backend/${photo.imageUrl}`} alt={`Property ${index}`} className=''/>
                     </div>
                 ))}
             </div>
