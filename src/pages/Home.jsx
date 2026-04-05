@@ -58,12 +58,18 @@ const Home = () => {
                                 className="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm p-4 md:p-6 md:items-center"
                             >
                                 {/* image */}
-                                <div className="w-full md:w-64 h-48 rounded-xl flex items-center justify-center text-white text-2xl">
-                                    <img
-                                        src={`https://huskyrentlens.cs.mtu.edu/backend/${property.images[0].imageUrl}`}
-                                        className='w-full h-full object-cover rounded-xl'
-                                        alt={property.name}
-                                    />
+                                <div className="w-full md:w-64 h-48 rounded-xl flex items-center justify-center text-gray-400 bg-gray-200">
+                                    {property.images && property.images.length > 0 ? (
+                                        <img
+                                            src={`https://huskyrentlens.cs.mtu.edu/backend/${property.images[0].imageUrl}`}
+                                            className='w-full h-full object-cover rounded-xl'
+                                            alt={property.name}
+                                        />
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center w-full h-full rounded-xl">
+                                            <span className="text-base font-medium">No Image</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* info text*/}

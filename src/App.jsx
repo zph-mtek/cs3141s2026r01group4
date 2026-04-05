@@ -20,6 +20,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import Guidelines from './pages/Guidelines'
 import AddReview from './pages/AddReview.jsx';
 import Manage from './pages/Manage.jsx';
+import EditProperty from './pages/EditProperty.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -39,6 +40,7 @@ const App = () => {
         <Route path='/properties/:propertyId' element={<PropertyInfo/>}/>
         <Route path='/manage' element={<Manage/>}/>
         <Route path='/manage/add' element={<AddProperties/>}/>
+        <Route path='/manage/edit/:propertyId' element={<EditProperty/>}/>
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
         <Route path='/guidelines' element={<Guidelines/>}/>
