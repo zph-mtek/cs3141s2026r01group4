@@ -33,10 +33,56 @@ if (!$bootstrapLoaded || !isset($conn)) {
     exit();
 }
 
-// Fetch all property rows from current active table.
-// Aliases keep compatibility with frontend fields used in cards/details.
 
+$landlordId = isset($_GET['landlordId']) ? intval($_GET['landlordId']) : 0;
 
+if ($landlordId <= 0) {
+    echo json_encode(["status" => "error", "message" => "Missing or invalid landlordId"]);
+    exit();
+}
+
+$sql = "SELECT * FROM huskyrentlens_property WHERE landlordId = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $landlordId);
+$stmt->execute();
+$result = $stmt->get_result();
+$properties = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+foreach ($properties as &$property) {
+    $currentId = $property['propertyId'];
+
+    $stmtImg = $conn->prepare("SELECT * FROM huskyrentlens_property_image WHERE propertyId = ?");
+    $stmtImg->bind_param("i", $currentId);
+    $stmtImg->execute();
+    $property['images'] = $stmtImg->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmtImg->close();
+
+    $stmtAmenity = $conn->prepare("SELECT amenityName FROM huskyrentlens_property_amenities WHERE propertyId = ?");
+    $stmtAmenity->bind_param("i", $currentId);
+    $stmtAmenity->execute();
+    $resAmenity = $stmtAmenity->get_result()->fetch_all(MYSQLI_ASSOC);
+    $property['amenities'] = array_column($resAmenity, 'amenityName');
+    $stmtAmenity->close();
+
+    $stmtRoom = $conn->prepare("SELECT * FROM huskyrentlens_rental WHERE propertyId = ?");
+    $stmtRoom->bind_param("i", $currentId);
+    $stmtRoom->execute();
+    $rooms = $stmtRoom->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmtRoom->close();
+
+    foreach ($rooms as &$room) {
+        $rentalId = $room['rentalId'];
+        $stmtRoomImg = $conn->prepare("SELECT * FROM huskyrentlens_rental_image WHERE rentalId = ?");
+        $stmtRoomImg->bind_param("i", $rentalId);
+        $stmtRoomImg->execute();
+        $room['images'] = $stmtRoomImg->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmtRoomImg->close();
+    }
+    
+    $property['rooms'] = $rooms;
+}
 
 echo json_encode([
     "status" => "success",
