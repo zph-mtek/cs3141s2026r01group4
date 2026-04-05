@@ -27,9 +27,7 @@ const EditProperty = () => {
         const fetchPropertyData = async () => {
           try {
             const result = await getPropertyById(propertyId);
-            console.log("取得したデータ(全体):", result);
 
-            // 🚨 データの階層を確実に指定
             const rawData = result.data || result;
             const propertyBox = rawData.property;
 
@@ -40,15 +38,15 @@ const EditProperty = () => {
                 city: propertyBox.city || '',
                 distance: propertyBox.distanceFromMTU || '',
                 walkDistance: propertyBox.walkDistance || '',
-                amenities: Array.isArray(rawData.amenities) ? rawData.amenities.map(a => a.amenityName) : [],
+                amenities: Array.isArray(rawData.amenities) ? rawData.amenities.map(a => a.amenityName || a) : [],
                 description: propertyBox.description || '',
                 images: Array.isArray(rawData.images) ? rawData.images : []
               };
-              setPropertyInfo(newInfo); 
+              setPropertyInfo(newInfo);
 
               if (Array.isArray(rawData.rentals) && rawData.rentals.length > 0) {
                 const formattedRooms = rawData.rentals.map(room => ({
-                  id: room.rentalId, 
+                  id: room.rentalId,
                   name: room.roomName || '',
                   bedrooms: room.bedroomCt || 1,
                   bathrooms: room.bathroomCt || 1,
@@ -56,7 +54,7 @@ const EditProperty = () => {
                   description: room.description || '',
                   images: Array.isArray(room.images) ? room.images : []
                 }));
-                setRooms(formattedRooms); 
+                setRooms(formattedRooms);
               }
             }
           } catch (apiError) {
