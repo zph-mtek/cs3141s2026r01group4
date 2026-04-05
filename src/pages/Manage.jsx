@@ -34,6 +34,7 @@ const Manage = () => {
           console.log("error fetching property", error)
         }
       }
+      fetchMyProperties();
     }
   }, [user])
 
