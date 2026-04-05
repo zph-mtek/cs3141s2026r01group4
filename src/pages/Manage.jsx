@@ -18,6 +18,7 @@ const Manage = () => {
         setUser(decoded.data);
       } catch (error) {
         console.error("Invalid token", error);
+        console.log("401エラーの理由:", error.response?.data);
         localStorage.removeItem('token');
       }
     }
@@ -33,6 +34,7 @@ const Manage = () => {
           console.log("reponse:", response);
         }catch(error){
           console.log("error fetching property", error)
+          console.log("401エラーの理由:", error.response?.data);
         }
       }
       fetchMyProperties();
