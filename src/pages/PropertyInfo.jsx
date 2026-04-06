@@ -49,7 +49,6 @@ const PropertyInfo = () => {
 
   useEffect(()=>{
     if (propertyId != null && propertyId != '') {
-        console.log(`FETCHING COMMENTS WITH PROPERTYID: ${propertyId}`);
         const fetchComments = async () => {
             const getCommentData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
                 propertyId: parseInt(propertyId),

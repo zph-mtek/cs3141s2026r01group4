@@ -139,13 +139,12 @@ const EditProperty = () => {
     });
 
     try {
-      console.log("送信するFormData:", formData);
       await updatePropertyData(formData);
 
       alert('Information updated successfully!');
       navigate('/manage');
     } catch (error) {
-      console.error("更新エラー:", error);
+      console.error("error:", error);
       alert(error.message);
     }
   }

@@ -23,9 +23,8 @@ const NavLink = ({ to, label, isActive, onClick, icon }) => (
         </span>
         {/* Animated underline */}
         <span
-            className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full shadow-[0_0_8px_rgba(250,204,21,0.6)] transition-all duration-300 ease-out ${
-                isActive ? 'w-4/5 -translate-x-1/2 shadow-[0_0_12px_rgba(250,204,21,0.8)]' : 'w-0 -translate-x-1/2 group-hover:w-4/5'
-            }`}
+            className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full shadow-[0_0_8px_rgba(250,204,21,0.6)] transition-all duration-300 ease-out ${isActive ? 'w-4/5 -translate-x-1/2 shadow-[0_0_12px_rgba(250,204,21,0.8)]' : 'w-0 -translate-x-1/2 group-hover:w-4/5'
+                }`}
         />
     </Link>
 );
@@ -34,11 +33,10 @@ const MobileNavLink = ({ to, label, icon, isActive, onClick, index }) => (
     <Link
         to={to}
         onClick={onClick}
-        className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-200 ${
-            isActive
-                ? 'bg-yellow-50 text-yellow-600 shadow-[0_0_12px_rgba(250,204,21,0.5)]'
-                : 'text-gray-700 hover:bg-yellow-50/60 hover:text-yellow-600 active:scale-[0.98]'
-        }`}
+        className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-200 ${isActive
+            ? 'bg-yellow-50 text-yellow-600 shadow-[0_0_12px_rgba(250,204,21,0.5)]'
+            : 'text-gray-700 hover:bg-yellow-50/60 hover:text-yellow-600 active:scale-[0.98]'
+            }`}
         style={{ animationDelay: `${index * 60}ms` }}
     >
         <span className={`text-xl ${isActive ? 'text-yellow-500' : 'text-gray-400'}`}>{icon}</span>
@@ -104,11 +102,10 @@ const Navbar = () => {
             {/* ───── Top bar ───── */}
             <nav
                 ref={navRef}
-                className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-                    scrolled
-                        ? 'bg-white shadow-[0_2px_24px_rgba(0,0,0,0.06)]'
-                        : 'bg-white'
-                }`}
+                className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled
+                    ? 'bg-white shadow-[0_2px_24px_rgba(0,0,0,0.06)]'
+                    : 'bg-white'
+                    }`}
             >
                 <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                     {/* Logo */}
@@ -134,16 +131,17 @@ const Navbar = () => {
                         {/* User actions */}
                         {user && (
                             <div className="flex items-center gap-1 ml-2 pl-3 border-l border-gray-200">
-                                <Link
-                                    to="/profile"
-                                    className={`p-2 rounded-full transition-colors duration-200 ${
-                                        isActive('/profile')
+                                {user.role !== 'Landlord' && (
+                                    <Link
+                                        to="/profile"
+                                        className={`p-2 rounded-full transition-colors duration-200 ${isActive('/profile')
                                             ? 'text-yellow-500 bg-yellow-50 shadow-[0_0_12px_rgba(250,204,21,0.5)]'
                                             : 'text-gray-500 hover:text-yellow-500 hover:bg-yellow-50/60'
-                                    }`}
-                                >
-                                    <FaRegUserCircle className="text-xl" />
-                                </Link>
+                                            }`}
+                                    >
+                                        <FaRegUserCircle className="text-xl" />
+                                    </Link>
+                                )}
                                 <Link
                                     to="/"
                                     onClick={logOutHandler}
@@ -164,14 +162,12 @@ const Navbar = () => {
                     >
                         <div className="flex flex-col justify-center items-center w-5 h-5">
                             <span
-                                className={`block h-0.5 w-5 rounded-full bg-gray-800 transition-all duration-300 ease-out ${
-                                    mobileOpen ? 'rotate-45 translate-y-[3px]' : ''
-                                }`}
+                                className={`block h-0.5 w-5 rounded-full bg-gray-800 transition-all duration-300 ease-out ${mobileOpen ? 'rotate-45 translate-y-[3px]' : ''
+                                    }`}
                             />
                             <span
-                                className={`block h-0.5 w-5 rounded-full bg-gray-800 mt-1.5 transition-all duration-300 ease-out ${
-                                    mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''
-                                }`}
+                                className={`block h-0.5 w-5 rounded-full bg-gray-800 mt-1.5 transition-all duration-300 ease-out ${mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''
+                                    }`}
                             />
                         </div>
                     </button>
@@ -180,9 +176,8 @@ const Navbar = () => {
 
             {/* ───── Mobile drawer overlay ───── */}
             <div
-                className={`fixed inset-0 z-40 md:hidden transition-opacity duration-300 ${
-                    mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                }`}
+                className={`fixed inset-0 z-40 md:hidden transition-opacity duration-300 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                    }`}
                 onClick={closeMobile}
             >
                 <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
@@ -190,9 +185,8 @@ const Navbar = () => {
 
             {/* ───── Mobile drawer ───── */}
             <div
-                className={`fixed top-0 right-0 z-40 md:hidden h-full w-[min(80vw,320px)] bg-white/95 backdrop-blur-2xl shadow-2xl transition-transform duration-[400ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                    mobileOpen ? 'translate-x-0' : 'translate-x-full'
-                }`}
+                className={`fixed top-0 right-0 z-40 md:hidden h-full w-[min(80vw,320px)] bg-white/95 backdrop-blur-2xl shadow-2xl transition-transform duration-[400ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${mobileOpen ? 'translate-x-0' : 'translate-x-full'
+                    }`}
             >
                 <div className="flex flex-col h-full pt-24 pb-8 px-4 overflow-y-auto">
                     {/* Nav links */}
@@ -214,18 +208,19 @@ const Navbar = () => {
                     {/* User section at bottom */}
                     {user && (
                         <div className="border-t border-gray-100 pt-4 mt-4 flex flex-col gap-1">
-                            <Link
-                                to="/profile"
-                                onClick={closeMobile}
-                                className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-200 ${
-                                    isActive('/profile')
-                                        ? 'bg-yellow-50 text-yellow-700'
-                                        : 'text-gray-700 hover:bg-yellow-50'
-                                }`}
-                            >
-                                <FaRegUserCircle className="text-xl" />
-                                <span className="text-base font-semibold">Profile</span>
-                            </Link>
+                            {user.role !== 'Landlord' && (
+                                <Link
+                                    to="/profile"
+                                    onClick={closeMobile}
+                                    className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-200 ${isActive('/profile')
+                                            ? 'bg-yellow-50 text-yellow-700'
+                                            : 'text-gray-700 hover:bg-yellow-50'
+                                        }`}
+                                >
+                                    <FaRegUserCircle className="text-xl" />
+                                    <span className="text-base font-semibold">Profile</span>
+                                </Link>
+                            )}
                             <Link
                                 to="/"
                                 onClick={logOutHandler}
