@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { amenityIcon } from '../components/amenityIcons';
 import { FaRegTrashCan } from "react-icons/fa6";
 import { getPropertyById } from '../API/getPropertyById';
+import { updatePropertyData } from '../API/updatePropertyData';
 
 const EditProperty = () => {
 
@@ -138,11 +139,13 @@ const EditProperty = () => {
     });
 
     try {
-      console.log("更新データ:", formData);
+      console.log("送信するFormData:", formData);
+      await updatePropertyData(formData);
+
       alert('Information updated successfully!');
       navigate('/manage');
     } catch (error) {
-      console.error(error);
+      console.error("更新エラー:", error);
       alert(error.message);
     }
   }
