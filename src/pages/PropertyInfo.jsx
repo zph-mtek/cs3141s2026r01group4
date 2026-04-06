@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import addressIcon from "../assets/maps-and-flags.png";
-import { CiCircleChevLeft, CiCircleChevRight} from "react-icons/ci";
+import { CiCircleChevLeft, CiCircleChevRight } from "react-icons/ci";
 import pfp from "../assets/catpfp.jpg"
 import { Link, useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating.jsx';
@@ -32,52 +32,52 @@ const CommentCard = ({ commentInfo, cardKey }) => {
 }
 
 const PropertyInfo = () => {
-  const toggleModal = () => {
-    setModalStatus(!modalStatus)
-  }
-  
-  const { propertyId } = useParams();
-  const [properties, setProperties] = useState(null); 
-  const [rentals, setRentals] = useState([]);
-  const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
-  const [modalStatus, setModalStatus] = useState(false);
-  const [slidePhotos, setSlidePhotos] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [amenities, setAmenities] = useState([]);
-  const [propertyRating, setPropertyRating] = useState('N/A')
-  const [propertyComments, setPropertyComments] = useState([]);
+    const toggleModal = () => {
+        setModalStatus(!modalStatus)
+    }
 
-  useEffect(()=>{
-    if (propertyId != null && propertyId != '') {
-        const fetchComments = async () => {
-            const getCommentData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
-                propertyId: parseInt(propertyId),
-                getReviews: 'yes'
-            });
+    const { propertyId } = useParams();
+    const [properties, setProperties] = useState(null);
+    const [rentals, setRentals] = useState([]);
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+    const [modalStatus, setModalStatus] = useState(false);
+    const [slidePhotos, setSlidePhotos] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [amenities, setAmenities] = useState([]);
+    const [propertyRating, setPropertyRating] = useState('N/A')
+    const [propertyComments, setPropertyComments] = useState([]);
 
-            if (getCommentData != null) {
-                setPropertyComments(getCommentData.data.data);
+    useEffect(() => {
+        if (propertyId != null && propertyId != '') {
+            const fetchComments = async () => {
+                const getCommentData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php', {
+                    propertyId: parseInt(propertyId),
+                    getReviews: 'yes'
+                });
+
+                if (getCommentData != null) {
+                    setPropertyComments(getCommentData.data.data);
+                }
             }
+            fetchComments();
         }
-        fetchComments();
-    }
-  },[propertyId]);
+    }, [propertyId]);
 
-  useEffect(()=>{
-    if(reviews.length > 0){
-        let total = 0
-        reviews.forEach((review)=>{
-            total += Number(review.rating)
-        })
-        const average = (total / reviews.length).toFixed(1);
-        setPropertyRating(average);
-    }
-    else{
-        setPropertyRating('N/A');
-    }
-  }, [reviews])
+    useEffect(() => {
+        if (reviews.length > 0) {
+            let total = 0
+            reviews.forEach((review) => {
+                total += Number(review.rating)
+            })
+            const average = (total / reviews.length).toFixed(1);
+            setPropertyRating(average);
+        }
+        else {
+            setPropertyRating('N/A');
+        }
+    }, [reviews])
 
-  useEffect(() => {
+    useEffect(() => {
         const fetchCoordinates = async () => {
             if (!properties?.address) return;
 
@@ -100,7 +100,7 @@ const PropertyInfo = () => {
         };
 
         fetchCoordinates();
-    }, [properties?.address]); 
+    }, [properties?.address]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -135,7 +135,7 @@ const PropertyInfo = () => {
         const isFirstSlide = currentIndex === 0
         const newIndex = isFirstSlide ? slidePhotos.length - 1 : currentIndex - 1;
         setCurrentIndex(newIndex);
-    }; 
+    };
 
     const nextSlide = () => {
         const isLastSlide = currentIndex === slidePhotos.length - 1
@@ -143,7 +143,7 @@ const PropertyInfo = () => {
         setCurrentIndex(newIndex);
     }
 
-    const goToSlides =(slideIndex) => {
+    const goToSlides = (slideIndex) => {
         setCurrentIndex(slideIndex)
     }
 
@@ -160,9 +160,9 @@ const PropertyInfo = () => {
             {/* image section */}
             <div className='max-w-[1000px] h-[600px] w-full mx-auto px-4 flex flex-col'>
                 {slidePhotos.length > 0 ? (
-                    <div 
-                        onClick={toggleModal} 
-                        style={{ backgroundImage: `url(https://huskyrentlens.cs.mtu.edu/backend/${slidePhotos[currentIndex].imageUrl})` }} 
+                    <div
+                        onClick={toggleModal}
+                        style={{ backgroundImage: `url(https://huskyrentlens.cs.mtu.edu/backend/${slidePhotos[currentIndex].imageUrl})` }}
                         className='w-full h-full rounded-2xl bg-center bg-cover duration-300 cursor-pointer'
                     ></div>
                 ) : (
@@ -175,16 +175,16 @@ const PropertyInfo = () => {
                     <CiCircleChevLeft
                         onClick={prevSlide}
                         size={50}
-                        className='cursor-pointer text-black hover:text-gray-500 transition-colors'/>
+                        className='cursor-pointer text-black hover:text-gray-500 transition-colors' />
                     <CiCircleChevRight
                         onClick={nextSlide}
                         size={50}
-                        className='cursor-pointer text-black hover:text-gray-500 transition-colors'/>
+                        className='cursor-pointer text-black hover:text-gray-500 transition-colors' />
                 </div>
 
                 {modalStatus && (
-                <ImageModal toggleModal={toggleModal} photos={slidePhotos}/>
-                 )}
+                    <ImageModal toggleModal={toggleModal} photos={slidePhotos} />
+                )}
 
             </div>
 
@@ -236,7 +236,7 @@ const PropertyInfo = () => {
                     </div>
 
                     <div className='grid grid-cols-3 text-center pb-8 gap-3'>
-                        {amenities && amenities.map((amenity, i)=>(
+                        {amenities && amenities.map((amenity, i) => (
                             <div key={i} className='flex items-center justify-center gap-2 leading-none'>
                                 <span className='text-xl'>{amenityIcon[amenity.amenityName || amenity] || "✨"}</span>
                                 <span className='text-sm'>{amenity.amenityName || amenity}</span>
@@ -247,12 +247,16 @@ const PropertyInfo = () => {
                     <div className='space-y-4 pb-10'>
                         {rentals.map((rental, i) => (
                             <div key={i} className='border border-gray-200 rounded-xl p-5 bg-white shadow-sm'>
+                                <h3 className='text-xl font-extrabold text-gray-900 mb-3 pb-2 border-b border-gray-100'>
+                                    {rental.roomName || 'Standard Room'}
+                                </h3>
+
                                 <div className='flex justify-between items-center'>
-                                        <p className='font-bold text-lg'>Bedroom: {rental.bedroomCt}</p>
-                                        <p className='font-bold text-yellow-500'>$ {rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
+                                    <p className='font-bold text-lg'>Bedroom: {rental.bedroomCt}</p>
+                                    <p className='font-bold text-yellow-500'>$ {rental.cost}<span className='text-gray-500 font-normal'>/mo</span></p>
                                 </div>
                                 <p className='font-bold text-lg'>In room bathroom: {rental.bathroomCt}</p>
-                                <p className='text-sm text-gray-500 mt-1'>{rental.description }</p>
+                                <p className='text-sm text-gray-500 mt-1'>{rental.description}</p>
                             </div>
                         ))}
                     </div>
@@ -277,10 +281,10 @@ const PropertyInfo = () => {
                         )}
                     </div>
 
-                    <Link to={`/addreview/${properties.propertyId}`}>            
+                    <Link to={`/addreview/${properties.propertyId}`}>
                         <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
                             <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
-                        </div>  
+                        </div>
                     </Link>
                 </div>
             </div>
@@ -293,17 +297,17 @@ const PropertyInfo = () => {
 
                 <div className='grid grid-cols-1 2xl:grid-cols-[1fr_1fr] gap-5'>
                     {propertyComments.length > 0 ? (
-                        propertyComments.map((thisComment,i) => (
-                        <Fragment key={i}>
-                            <CommentCard commentInfo={thisComment} cardKey={i} />
-                        </Fragment>
-                    ))
+                        propertyComments.map((thisComment, i) => (
+                            <Fragment key={i}>
+                                <CommentCard commentInfo={thisComment} cardKey={i} />
+                            </Fragment>
+                        ))
                     ) : (
-                    <Fragment>
-                        <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
-                        <p>There is no review on this property yet :(</p>
-                    </div>
-                    </Fragment>
+                        <Fragment>
+                            <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
+                                <p>There is no review on this property yet :(</p>
+                            </div>
+                        </Fragment>
                     )}
                 </div>
             </div>
