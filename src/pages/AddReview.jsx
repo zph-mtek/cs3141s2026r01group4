@@ -6,15 +6,49 @@
   import { Database } from '../Architect/Architect';
   import StatusMessageBox from '../components/StatusMessage';
 import { comment } from 'postcss';
-
 import { jwtDecode } from "jwt-decode";
+import { TbBackground } from 'react-icons/tb';
+import { useNavigate } from 'react-router-dom';
+
+const onUtilityCheckClick = (passSet) => {
+    const utilityCheckBox = document.getElementById('utilitiesCostCheck');
+
+    if (utilityCheckBox.checked) {
+        passSet(true);
+    } else { passSet(false); }
+}
+
+const UtilitiesField = () => {
+    const [ areUtilitiesIncluded, setUtilitiesIncluded ] = useState(false);
+
+    return (
+        <Fragment>
+            <br/>
+            <b>Were Utilities Included in Rental Cost?</b>
+            <input type='checkbox' id='utilitiesCostCheck' name='utilitiesCostCheck' onClick={() => {
+                onUtilityCheckClick(setUtilitiesIncluded);
+            }} /><br/>
+
+            { areUtilitiesIncluded === true ? 
+                (
+                    <Fragment>
+                        <input type='text' id='utilitiesCost' name='utilitiesCost' className='bg-gray-100' placeholder='Enter dollar amount....' />
+                    </Fragment>
+                )
+            : null }
+            
+        </Fragment>
+    );
+}
 
 const RentalIdPicker = ({ propertyId, options }) => {
 
     return (
         <Fragment>
             <p>
-              <select name="pets" id="rentalSelect">
+
+              <b>Rental:</b>
+              <select name="rentalOptionListProperty" id="rentalSelect" className='bg-gray-100'>
                   <option value="">--Please choose an option--</option>
                   {
                       options.map((rentalInfo) => {
@@ -35,8 +69,8 @@ const RentalIdPicker = ({ propertyId, options }) => {
 }
 
 //-- When press submit button
-const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText) => {
-  console.log(propertyId, rentalId, commentText);
+const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,utilitiesCost) => {
+  console.log(propertyId, rentalId, commentText, utilitiesCost);
 
   if (
       propertyId === null || rentalId === null || commentText === null
@@ -52,7 +86,8 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText) => 
           rentalId: rentalId,
           commentDesc: commentText,
           userId: 24,
-          stars: reviewStars
+          stars: reviewStars,
+          rentalUtilityCost: utilitiesCost
         });
 
         if (feedbackData != null) {
@@ -67,6 +102,8 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText) => 
 
 //-- Adding the review to the codebase
 const AddReview = () => {
+  const navigate = useNavigate();
+
   const { propertyId } = useParams();
   const [ propertyInfo, setPropertyInfo ] = useState({});
   const [ rentalId, setRentalId ] = useState(0);
@@ -149,6 +186,10 @@ const AddReview = () => {
                   options={rentalsForThisProperty}
                     />
 
+                  
+
+                <UtilitiesField />
+
                 {statusMsg ? statusMsg : null}
 
                 <StarRating />
@@ -162,6 +203,8 @@ const AddReview = () => {
                     const rentalPick = document.getElementById("rentalSelect");
                     const commentText = document.getElementById("reviewText");
                     const starRating = document.getElementById("reviewStars");
+                    const isUtilitesCostExtra = document.getElementById("utilitiesCostCheck");
+                    const utilitiesCost = document.getElementById("utilitiesCost");
 
                     // Don't allow comments to double submit while one comment is already uploading to server...
                     if (isLoading != 0) { 
@@ -169,28 +212,39 @@ const AddReview = () => {
                       return;
                     }
 
-                    // Ensure we have info needed to make a comment
+                    //-- Null CheckingEnsure we have info needed to make a comment
                     if (rentalPick && commentText && starRating &&
                       rentalPick.value != "" && commentText.value != "" && starRating != ""
+                      && (!isUtilitesCostExtra.checked
+                            || isUtilitesCostExtra.checked && utilitiesCost && utilitiesCost.value != "")
                     ){
                       isLoading = 1;
-                      console.log("Star Rating:"+starRating.value);
-
-                      //-- Add a comment with the text element
-                      console.log(user.userId);
                       
-                      if (onAddReviewPress(
-                        user.userId,
-                        propertyInfo.propertyId,
-                        parseInt(rentalPick.value),
-                        parseInt(starRating.value),
-                        commentText.value) == -1){
+                      //-- Add a comment with the text element
+                    
+                      const utilitiesCostValue = isUtilitesCostExtra.checked ? parseInt(utilitiesCost.value) : null;
+                      
+                      if (
+                          onAddReviewPress(
+                            user.userId,
+                            propertyInfo.propertyId,
+                            parseInt(rentalPick.value),
+                            parseInt(starRating.value),
+                            commentText.value,
+                            utilitiesCostValue
+                          ) == -1
+                      ){
                           setStatusMessage(<StatusMessageBox messageType='fail' text='Comment operation failed...' />);
                           isLoading = 0;
-                        } else {
-                          setStatusMessage(<StatusMessageBox messageType='success' text='Comment uploaded successfully...'/>)
-                          isLoading = 0;
-                        }
+                      } else {
+                          setStatusMessage(<StatusMessageBox messageType='success' text='Comment uploaded successfully...'/>);
+                          isLoading = 0; // debounce
+                          
+                          //-- redirect after 2 seconds
+                          const timer = setTimeout(() => {
+                            navigate(`/#/properties/${propertyId}`);
+                          }, 2000);
+                      }
                     } else { // for some reason, we could not get all of the fields and their values...
                       setStatusMessage(<StatusMessageBox messageType='warning' text='Please fill out all of the text fields' />);
                     }
