@@ -141,7 +141,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
         }
 
         // Submit message payload.
-        $headers = "MIME-Version: 1.0\r\nFrom: HuskyRentLens <{$from}>\r\nTo: <{$to}>\r\nSubject: {$subject}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n";
+        $headers = "From: HuskyRentLens <{$from}>\r\nTo: <{$to}>\r\nSubject: {$subject}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n";
         fwrite($connection, $headers . $body . "\r\n.\r\n");
         [$code] = $readReply($connection);
         fwrite($connection, "QUIT\r\n");
@@ -197,53 +197,8 @@ if (!$insertOtp->execute()) {
     exit();
 }
 
-$digitHtml = implode('', array_map(function ($d) {
-    return '<span style="display:inline-block;width:52px;height:64px;line-height:64px;text-align:center;font-size:34px;font-weight:800;color:#1a1a2e;background:#f7c948;border-radius:12px;margin:0 5px;font-family:monospace;">' . $d . '</span>';
-}, str_split((string)$otp)));
-
-$emailSubject = 'Your HuskyRentLens verification code';
-$emailBody = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#0d1b2a;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d1b2a;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-        <tr>
-          <td style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);padding:36px 48px;text-align:center;border-bottom:4px solid #f7c948;">
-            <div style="font-size:26px;font-weight:800;color:#f7c948;letter-spacing:3px;text-transform:uppercase;">HUSKY<span style="color:#ffffff;">RENT</span>LENS</div>
-            <div style="color:#94a3b8;font-size:12px;margin-top:6px;letter-spacing:1px;text-transform:uppercase;">Student Housing Platform</div>
-          </td>
-        </tr>
-        <tr>
-          <td style="background:#ffffff;padding:44px 48px 36px;">
-            <h1 style="margin:0 0 10px;font-size:24px;font-weight:700;color:#1a1a2e;">Verify your account</h1>
-            <p style="margin:0 0 32px;font-size:15px;color:#64748b;line-height:1.7;">Use the one-time code below to complete your registration. This code expires in <strong style="color:#1a1a2e;">5&nbsp;minutes</strong>.</p>
-            <div style="text-align:center;margin:0 0 36px;padding:24px 0;background:#f8fafc;border-radius:12px;">
-              {$digitHtml}
-            </div>
-            <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 24px;">
-            <table cellpadding="0" cellspacing="0" width="100%"><tr>
-              <td style="background:#fefce8;border-left:4px solid #f7c948;border-radius:0 8px 8px 0;padding:14px 18px;">
-                <p style="margin:0;font-size:13px;color:#713f12;line-height:1.6;"><strong>Security reminder:</strong> HuskyRentLens will never ask for this code by phone or chat. Never share it with anyone.</p>
-              </td>
-            </tr></table>
-          </td>
-        </tr>
-        <tr>
-          <td style="background:#f8fafc;padding:24px 48px;text-align:center;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 6px;font-size:12px;color:#94a3b8;">This email was sent because an account was created using this address.</p>
-            <p style="margin:0 0 14px;font-size:12px;color:#94a3b8;">If you didn&rsquo;t create an account, you can safely ignore this email.</p>
-            <p style="margin:0;font-size:11px;color:#cbd5e1;">&copy; 2026 HuskyRentLens</p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>
-HTML;
+$emailSubject = 'HuskyRentLens verification code';
+$emailBody = "Your verification code: $otp\nExpires in 5 minutes.";
 if (sendSMTPEmail($email, $emailSubject, $emailBody)) {
     echo json_encode(["status" => "success", "message" => "Verification code sent", "userId" => $userId]);
 } else {
