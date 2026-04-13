@@ -21,6 +21,10 @@ import Guidelines from './pages/Guidelines'
 import AddReview from './pages/AddReview.jsx';
 import Manage from './pages/Manage.jsx';
 import EditProperty from './pages/EditProperty.jsx';
+import Admin from './pages/Admin.jsx';
+import ManageUsers from './pages/ManageUsers.jsx';
+import ManageProperties from './pages/ManageProperties.jsx';
+import ManageReports from './pages/ManageReports.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -45,6 +49,13 @@ const App = () => {
         <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
         <Route path='/guidelines' element={<Guidelines/>}/>
         <Route path='/addreview/:propertyId' element={<AddReview/>}/> {/* Corresponds to rentalId and propertyId */}
+        
+        <Route path='/admin' element={<Admin/>}/>
+        <Route path='/admin/manageuser' element={<ManageUsers/>}/>
+        <Route path='/admin/manageproperties' element={<ManageProperties/>}/>
+        <Route path='/admin/reports' element={<ManageReports/>}/>
+
+
       </Routes>
     </div>
   )
