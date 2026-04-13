@@ -19,6 +19,7 @@ import Profile from './pages/Profile'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import Guidelines from './pages/Guidelines'
 import AddReview from './pages/AddReview.jsx';
+import MapView from './pages/MapView.jsx';
 import Manage from './pages/Manage.jsx';
 import EditProperty from './pages/EditProperty.jsx';
 import Admin from './pages/Admin.jsx';
@@ -42,6 +43,7 @@ const App = () => {
         <Route path='/about' element={<About/>}/>
         <Route path='/properties' element={<Properties/>}/>
         <Route path='/properties/:propertyId' element={<PropertyInfo/>}/>
+        <Route path='/map' element={<MapView/>}/>
         <Route path='/manage' element={<Manage/>}/>
         <Route path='/manage/add' element={<AddProperties/>}/>
         <Route path='/manage/edit/:propertyId' element={<EditProperty/>}/>
