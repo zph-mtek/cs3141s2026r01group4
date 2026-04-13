@@ -38,6 +38,13 @@ const AddProperties = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    setFormErrors({});
     const formData = new FormData();
 
     formData.append("name", propertyInfo.name)
@@ -113,6 +120,26 @@ const AddProperties = () => {
 
   const [amenities, setAmenities] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formErrors, setFormErrors] = useState({})
+
+  const validate = () => {
+    const errors = {};
+    if (!propertyInfo.name.trim())        errors.name        = 'Property name is required.';
+    if (!propertyInfo.address.trim())     errors.address     = 'Address is required.';
+    if (!propertyInfo.city.trim())        errors.city        = 'City is required.';
+    if (!propertyInfo.distance.toString().trim()) errors.distance = 'Distance from campus is required.';
+    if (!propertyInfo.walkDistance.trim()) errors.walkDistance = 'Walk distance is required.';
+    if (!propertyInfo.description.trim()) errors.description = 'Description is required.';
+
+    rooms.forEach((room, i) => {
+      if (!room.name.trim())              errors[`room_${i}_name`]      = 'Room name is required.';
+      if (!room.rent.toString().trim())   errors[`room_${i}_rent`]      = 'Price is required.';
+      if (!room.bedrooms.toString().trim()) errors[`room_${i}_bedrooms`] = 'Number of bedrooms is required.';
+      if (!room.bathrooms.toString().trim()) errors[`room_${i}_bathrooms`] = 'Number of bathrooms is required.';
+    });
+
+    return errors;
+  };
 
   //function to set image to propertyInfo
   const imageChangeHandler = (e) => {
@@ -258,31 +285,36 @@ const AddProperties = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Property Name</label>
                 <input type="text" value={propertyInfo.name}
-                  onChange={(e) => setPropertyInfo({ ...propertyInfo, name: e.target.value })} name="name" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
+                  onChange={(e) => { setPropertyInfo({ ...propertyInfo, name: e.target.value }); setFormErrors(p => ({...p, name: undefined})); }} name="name" className={`mt-1 block w-full rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors.name ? 'border-red-400' : 'border-gray-300'}`} placeholder='Husky Apartment' />
+                {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">City</label>
                 <input type="text" value={propertyInfo.city}
-                  onChange={(e) => setPropertyInfo({ ...propertyInfo, city: e.target.value })} name="city" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Houghton' />
+                  onChange={(e) => { setPropertyInfo({ ...propertyInfo, city: e.target.value }); setFormErrors(p => ({...p, city: undefined})); }} name="city" className={`mt-1 block w-full rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors.city ? 'border-red-400' : 'border-gray-300'}`} placeholder='Houghton' />
+                {formErrors.city && <p className="text-red-500 text-xs mt-1">{formErrors.city}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Distance from campus</label>
                 <input type="text" value={propertyInfo.distance}
-                  onChange={(e) => setPropertyInfo({ ...propertyInfo, distance: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='0.5mile' />
+                  onChange={(e) => { setPropertyInfo({ ...propertyInfo, distance: e.target.value }); setFormErrors(p => ({...p, distance: undefined})); }} name="distance" className={`mt-1 block w-full rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors.distance ? 'border-red-400' : 'border-gray-300'}`} placeholder='0.5mile' />
+                {formErrors.distance && <p className="text-red-500 text-xs mt-1">{formErrors.distance}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Address</label>
                 <input type="text" value={propertyInfo.address}
-                  onChange={(e) => setPropertyInfo({ ...propertyInfo, address: e.target.value })} name="address" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1801 Townsend Drive' />
+                  onChange={(e) => { setPropertyInfo({ ...propertyInfo, address: e.target.value }); setFormErrors(p => ({...p, address: undefined})); }} name="address" className={`mt-1 block w-full rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors.address ? 'border-red-400' : 'border-gray-300'}`} placeholder='1801 Townsend Drive' />
+                {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Distance from campus on foot</label>
                 <input type="text" value={propertyInfo.walkDistance}
-                  onChange={(e) => setPropertyInfo({ ...propertyInfo, walkDistance: e.target.value })} name="distance-walk" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='15 minues walk' />
+                  onChange={(e) => { setPropertyInfo({ ...propertyInfo, walkDistance: e.target.value }); setFormErrors(p => ({...p, walkDistance: undefined})); }} name="distance-walk" className={`mt-1 block w-full rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors.walkDistance ? 'border-red-400' : 'border-gray-300'}`} placeholder='15 minutes walk' />
+                {formErrors.walkDistance && <p className="text-red-500 text-xs mt-1">{formErrors.walkDistance}</p>}
               </div>
             </div>
           </section>
@@ -332,7 +364,8 @@ const AddProperties = () => {
             <div className='pb-20'>
               <label className="text-xl font-bold text-gray-900 mb-8 pb-4">Description</label>
               <textarea value={propertyInfo.description} maxLength={1000}
-                onChange={(e) => setPropertyInfo({ ...propertyInfo, description: e.target.value })} name="description" id="propertyDescription" placeholder="Property description..." className="w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none rounded-2 "></textarea>
+                onChange={(e) => { setPropertyInfo({ ...propertyInfo, description: e.target.value }); setFormErrors(p => ({...p, description: undefined})); }} name="description" id="propertyDescription" placeholder="Property description..." className={`w-full h-40 p-2 rounded border-2 mt-5 focus:outline-none ${formErrors.description ? 'border-red-400' : ''}`}></textarea>
+              {formErrors.description && <p className="text-red-500 text-xs mt-1">{formErrors.description}</p>}
             </div>
 
             {/* Section for adding property picture */}
@@ -373,25 +406,29 @@ const AddProperties = () => {
                           <div className='lg:col-span-2'>
                             <label className="block text-sm font-medium text-gray-700">Room Name</label>
                             <input value={room.name}
-                              onChange={(e) => handleRoomChange(room.id, 'name', e.target.value)} type="text" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='Husky Apartment' />
+                              onChange={(e) => { handleRoomChange(room.id, 'name', e.target.value); setFormErrors(p => ({...p, [`room_${index}_name`]: undefined})); }} type="text" className={`mt-1 block w-full bg-white rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors[`room_${index}_name`] ? 'border-red-400' : 'border-gray-300'}`} placeholder='Husky Apartment' />
+                            {formErrors[`room_${index}_name`] && <p className="text-red-500 text-xs mt-1">{formErrors[`room_${index}_name`]}</p>}
                           </div>
 
                           <div className='lg:col-span-2'>
-                            <label className="block text-sm font-medium text-gray-700">Number of bedroom</label>
+                            <label className="block text-sm font-medium text-gray-700">Number of bedrooms</label>
                             <input value={room.bedrooms}
-                              onChange={(e) => handleRoomChange(room.id, 'bedrooms', e.target.value)} type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1' />
+                              onChange={(e) => { handleRoomChange(room.id, 'bedrooms', e.target.value); setFormErrors(p => ({...p, [`room_${index}_bedrooms`]: undefined})); }} type="number" className={`mt-1 block w-full bg-white rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors[`room_${index}_bedrooms`] ? 'border-red-400' : 'border-gray-300'}`} placeholder='1' />
+                            {formErrors[`room_${index}_bedrooms`] && <p className="text-red-500 text-xs mt-1">{formErrors[`room_${index}_bedrooms`]}</p>}
                           </div>
 
                           <div className='lg:col-span-2'>
                             <label className="block text-sm font-medium text-gray-700">Price</label>
                             <input value={room.rent}
-                              onChange={(e) => handleRoomChange(room.id, 'rent', e.target.value)} type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='900' />
+                              onChange={(e) => { handleRoomChange(room.id, 'rent', e.target.value); setFormErrors(p => ({...p, [`room_${index}_rent`]: undefined})); }} type="number" className={`mt-1 block w-full bg-white rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors[`room_${index}_rent`] ? 'border-red-400' : 'border-gray-300'}`} placeholder='900' />
+                            {formErrors[`room_${index}_rent`] && <p className="text-red-500 text-xs mt-1">{formErrors[`room_${index}_rent`]}</p>}
                           </div>
 
                           <div className='lg:col-span-2'>
-                            <label className="block text-sm font-medium text-gray-700">Number of bathroom</label>
+                            <label className="block text-sm font-medium text-gray-700">Number of bathrooms</label>
                             <input value={room.bathrooms}
-                              onChange={(e) => handleRoomChange(room.id, 'bathrooms', e.target.value)} type="number" name="name" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border" required placeholder='1' />
+                              onChange={(e) => { handleRoomChange(room.id, 'bathrooms', e.target.value); setFormErrors(p => ({...p, [`room_${index}_bathrooms`]: undefined})); }} type="number" className={`mt-1 block w-full bg-white rounded-md shadow-sm focus:border-yellow-500 focus:ring-yellow-500 p-2 border ${formErrors[`room_${index}_bathrooms`] ? 'border-red-400' : 'border-gray-300'}`} placeholder='1' />
+                            {formErrors[`room_${index}_bathrooms`] && <p className="text-red-500 text-xs mt-1">{formErrors[`room_${index}_bathrooms`]}</p>}
                           </div>
                         </div>
 
