@@ -117,9 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $distance = $_POST['distance'] ?? '';
     $description = $_POST['description'] ?? '';
     $walkDistance = $_POST['walkDistance'] ?? '';
+    $lat = isset($_POST['lat']) && $_POST['lat'] !== '' ? floatval($_POST['lat']) : null;
+    $lng = isset($_POST['lng']) && $_POST['lng'] !== '' ? floatval($_POST['lng']) : null;
 
-    $stmtUpdate = $conn->prepare("UPDATE huskyrentlens_property SET name=?, city=?, description=?, distanceFromMTU=?, address=?, walkDistance=? WHERE propertyId=?");
-    $stmtUpdate->bind_param("ssssssi", $name, $city, $description, $distance, $address, $walkDistance, $propertyId);
+    $stmtUpdate = $conn->prepare("UPDATE huskyrentlens_property SET name=?, city=?, description=?, distanceFromMTU=?, address=?, walkDistance=?, lat=?, lng=? WHERE propertyId=?");
+    $stmtUpdate->bind_param("ssssssddi", $name, $city, $description, $distance, $address, $walkDistance, $lat, $lng, $propertyId);
     $stmtUpdate->execute();
     $stmtUpdate->close();
 

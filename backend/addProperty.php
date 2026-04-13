@@ -99,6 +99,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $distance = $_POST['distance'] ?? '';
     $description = $_POST['description'] ?? '';
     $walkDistance = $_POST['walkDistance'] ?? '';
+    $lat = isset($_POST['lat']) && $_POST['lat'] !== '' ? floatval($_POST['lat']) : null;
+    $lng = isset($_POST['lng']) && $_POST['lng'] !== '' ? floatval($_POST['lng']) : null;
 
     $amenities = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
     $roomsInfo = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
@@ -106,7 +108,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $propertyImages = $_FILES['propertyImages'] ?? null;
 
     //set to database
-    $sqlProperty = "INSERT INTO huskyrentlens_property (name, city, description, distanceFromMTU, address, walkDistance, landlordId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sqlProperty = "INSERT INTO huskyrentlens_property (name, city, description, distanceFromMTU, address, walkDistance, landlordId, lat, lng) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sqlProperty);
 
@@ -115,7 +117,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         exit();
     }
 
-    $stmt->bind_param("ssssssi", $name, $city, $description, $distance, $address, $walkDistance, $landlordId);
+    $stmt->bind_param("ssssssidd", $name, $city, $description, $distance, $address, $walkDistance, $landlordId, $lat, $lng);
 
     if ($stmt->execute()) {
         $newPropertyId = $conn->insert_id;
