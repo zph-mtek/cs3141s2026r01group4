@@ -5,6 +5,7 @@ import { amenityIcon } from '../components/amenityIcons';
 import { FaRegTrashCan } from "react-icons/fa6";
 import { getPropertyById } from '../API/getPropertyById';
 import { updatePropertyData } from '../API/updatePropertyData';
+import { deleteProperty } from '../API/deleteProperty';
 
 const EditProperty = () => {
 
@@ -98,6 +99,23 @@ const EditProperty = () => {
   // usestate to add rooms
   const [rooms, setRooms] = useState([initialRoom])
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteProperty(propertyId);
+      navigate('/manage');
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Failed to delete property. Please try again.');
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   // function to send data to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -138,14 +156,16 @@ const EditProperty = () => {
       });
     });
 
+    setIsSubmitting(true);
     try {
       await updatePropertyData(formData);
-
       alert('Information updated successfully!');
       navigate('/manage');
     } catch (error) {
       console.error("error:", error);
       alert(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -277,6 +297,34 @@ const EditProperty = () => {
 
   return (
     <div className='pt-25 space-y-5 pb-20'>
+
+      {/* Delete confirmation modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full mx-4 text-center">
+            <div className="text-4xl mb-4">🗑️</div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Delete this property?</h2>
+            <p className="text-gray-500 text-sm mb-6">This action cannot be undone. All rooms, images, and reviews associated with this property will be permanently removed.</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 px-5 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 px-5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors cursor-pointer disabled:opacity-60"
+              >
+                {isDeleting ? 'Deleting…' : 'Yes, delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className='max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10'>
         <h1 className="text-3xl font-bold text-gray-900 mb-8 pb-4 border-b-1">Edit Property</h1>
 
@@ -409,30 +457,44 @@ const EditProperty = () => {
                           ></textarea>
                         </div>
 
-                        <label className="text-xl font-bold text-gray-900 mb-8 block">Add image for this room</label>
-                        <span className='text-lg font-bold text-gray-600'>images selected {room.images?.length || 0}/5</span>
-                        <input type="file" onChange={(e) => roomImageChangeHandler(e, room.id)} multiple accept="image/*" className="mt-2 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-yellow-400 hover:file:bg-yellow-300 cursor-pointer" />
+                        <div className="bg-white rounded-xl border border-gray-200 p-4 mt-2">
+                          <div className="flex items-center justify-between mb-3">
+                            <p className="text-sm font-bold text-gray-700">Room {index + 1} Photos <span className="font-normal text-gray-400">({room.images?.length || 0}/5)</span></p>
+                            <label className="cursor-pointer bg-yellow-400 hover:bg-yellow-300 text-gray-900 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                              + Add Photos
+                              <input type="file" onChange={(e) => roomImageChangeHandler(e, room.id)} multiple accept="image/*" className="hidden" />
+                            </label>
+                          </div>
 
-                        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                          {room.images && room.images.map((image, imageIndex) => (
-                            <div key={imageIndex} className="aspect-square border border-gray-200 rounded-lg overflow-hidden relative">
-                              <img
-                                src={
-                                  image.previewUrl ||
-                                  `https://huskyrentlens.cs.mtu.edu/backend/${image.image_url || image.imageUrl}` // 🚨 image_url と imageUrl 両方試す
-                                }
-                                alt={`preview ${imageIndex}`}
-                                className="w-full h-full object-cover"
-                              />
-                              <button
-                                type="button"
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-lg shadow hover:bg-red-600 cursor-pointer"
-                                onClick={() => removeRoomImageHandler(room.id, imageIndex)}
-                              >
-                                ×
-                              </button>
+                          {(!room.images || room.images.length === 0) ? (
+                            <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-yellow-400 hover:bg-yellow-50 transition-colors">
+                              <span className="text-2xl mb-1">🖼️</span>
+                              <span className="text-sm text-gray-500">Click to upload room photos</span>
+                              <input type="file" onChange={(e) => roomImageChangeHandler(e, room.id)} multiple accept="image/*" className="hidden" />
+                            </label>
+                          ) : (
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                              {room.images.map((image, imageIndex) => (
+                                <div key={imageIndex} className="aspect-square rounded-lg overflow-hidden relative group">
+                                  <img
+                                    src={
+                                      image.previewUrl ||
+                                      `https://huskyrentlens.cs.mtu.edu/backend/${image.image_url || image.imageUrl}`
+                                    }
+                                    alt={`preview ${imageIndex}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-lg shadow hover:bg-red-600 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => removeRoomImageHandler(room.id, imageIndex)}
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          )}
                         </div>
 
                         {rooms.length > 1 ?
@@ -452,9 +514,21 @@ const EditProperty = () => {
               </div>
             </div>
 
-            <div className="pt-6 text-right">
-              <button type="submit" className="bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-3 px-10 rounded-xl shadow-sm transition-colors text-lg cursor-pointer">
-                Change Information
+            <div className="pt-6 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 px-8 rounded-xl transition-colors text-lg cursor-pointer flex items-center gap-2"
+              >
+                <FaRegTrashCan />
+                Delete Property
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-yellow-400 hover:bg-yellow-300 disabled:opacity-60 disabled:cursor-not-allowed text-black font-bold py-3 px-10 rounded-xl shadow-sm transition-colors text-lg cursor-pointer"
+              >
+                {isSubmitting ? 'Saving…' : 'Change Information'}
               </button>
             </div>
 

@@ -4,10 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { FaRegUserCircle } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 import { MdLogout } from "react-icons/md";
-import { HiOutlineSearch, HiOutlineInformationCircle, HiOutlineLogin, HiOutlineOfficeBuilding } from "react-icons/hi";
+import { HiOutlineSearch, HiOutlineInformationCircle, HiOutlineLogin, HiOutlineOfficeBuilding, HiOutlineMap } from "react-icons/hi";
 
 const navLinks = [
     { to: "/properties", label: "Find Properties", icon: <HiOutlineSearch /> },
+    { to: "/map", label: "Map View", icon: <HiOutlineMap /> },
     { to: "/about", label: "About", icon: <HiOutlineInformationCircle /> },
 ];
 
