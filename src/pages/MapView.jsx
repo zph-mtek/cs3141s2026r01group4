@@ -59,6 +59,7 @@ const PropertyCard = React.forwardRef(({ prop, active, onClick }, ref) => (
 PropertyCard.displayName = 'PropertyCard';
 
 const MapView = () => {
+    document.title = 'Map View | HuskyRentLens';
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);

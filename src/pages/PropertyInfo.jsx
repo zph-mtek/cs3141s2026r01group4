@@ -47,6 +47,15 @@ const PropertyInfo = () => {
     const [amenities, setAmenities] = useState([]);
     const [propertyRating, setPropertyRating] = useState('N/A')
     const [propertyComments, setPropertyComments] = useState([]);
+    const [copied, setCopied] = useState(false);
+
+    const copyShareLink = () => {
+        const url = `https://huskyrentlens.cs.mtu.edu/property-preview.php?id=${propertyId}`;
+        navigator.clipboard.writeText(url).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
 
     useEffect(() => {
         if (propertyId != null && propertyId != '') {
@@ -86,6 +95,7 @@ const PropertyInfo = () => {
                 if (response.status === "success" && response.data) {
                     const fetchedData = response.data;
                     setProperties(fetchedData.property || {});
+                    document.title = `${fetchedData.property?.name || 'Property'} | HuskyRentLens`;
                     setRentals(fetchedData.rentals || []);
                     setSlidePhotos(fetchedData.images || []);
                     setAmenities(fetchedData.amenities || []);
@@ -262,10 +272,21 @@ const PropertyInfo = () => {
                     </div>
 
                     <Link to={`/addreview/${properties.propertyId}`}>
-                        <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300'>
+                        <div className='flex justify-center bg-yellow-400 px-5 py-3 w-full rounded-2xl hover:bg-yellow-300 mb-3'>
                             <button className='cursor-pointer font-extrabold'>Lived here before? Share your experience to help future Huskies!</button>
                         </div>
                     </Link>
+
+                    <button
+                        onClick={copyShareLink}
+                        className='flex items-center justify-center gap-2 w-full px-5 py-3 rounded-2xl border-2 border-gray-200 hover:border-yellow-400 hover:bg-yellow-50 transition-colors font-semibold text-gray-700 cursor-pointer'
+                    >
+                        {copied ? (
+                            <><span>✅</span> Link Copied!</>
+                        ) : (
+                            <><span>🔗</span> Copy Share Link</>
+                        )}
+                    </button>
                 </div>
             </div>
 

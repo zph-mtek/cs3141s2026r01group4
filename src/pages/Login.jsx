@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import StatusMessageBox from '../components/StatusMessage';
 
 const Login = () => {
+  document.title = 'Sign In | HuskyRentLens';
 
   //const logoImage = "";
   //const googleImage = "";

@@ -51,6 +51,7 @@ const PropertyCard = ({ propInfo }) => {
 
 //-- Properties Page
 const Properties = () => {
+  document.title = 'Find Properties | HuskyRentLens';
   const [ availableProperties, updateProperties ] = useState([]);
   const [ isLoading, setIsLoading ] = useState(true);
 

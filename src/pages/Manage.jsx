@@ -5,6 +5,7 @@ import axios from 'axios';
 import { getPropertyiesByLandlordId } from '../API/getPropertyiesByLandlordId';
 
 const Manage = () => {
+  document.title = 'Manage Properties | HuskyRentLens';
   const [user, setUser] = useState(null);
   const [propertyData, setPropertyData] = useState([]);
 

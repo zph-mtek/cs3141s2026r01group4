@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import { getAllProperties } from '../API/getAllProperties';
 
 const Home = () => {
+    document.title = 'HuskyRentLens | Student Housing Near MTU';
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 

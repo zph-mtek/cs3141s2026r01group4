@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const LandlordSignup = () => {
+    document.title = 'Landlord Sign Up | HuskyRentLens';
 
     const navigate = useNavigate();
     

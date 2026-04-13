@@ -100,6 +100,7 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,util
 
 //-- Adding the review to the codebase
 const AddReview = () => {
+  document.title = 'Write a Review | HuskyRentLens';
   const navigate = useNavigate();
 
   const { propertyId } = useParams();

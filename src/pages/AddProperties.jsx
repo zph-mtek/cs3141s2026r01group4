@@ -7,6 +7,7 @@ import { submitPropertyData } from '../API/sendPropertyData';
 import PinDropMap from '../components/PinDropMap';
 
 const AddProperties = () => {
+  document.title = 'Add Property | HuskyRentLens';
 
   const navigate = useNavigate();
 

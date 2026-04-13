@@ -2,6 +2,7 @@ import React from 'react'
 import './Guidelines.css'
 
 const Guidelines = () => {
+  document.title = 'Community Guidelines | HuskyRentLens';
   return (
     <main className="legal-page">
       <div className="legal-shell">

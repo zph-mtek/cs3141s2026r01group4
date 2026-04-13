@@ -5,6 +5,7 @@ import axios from 'axios';
 import pfp from "../assets/catpfp.jpg"
 
 const Profile = () => {
+    document.title = 'My Profile | HuskyRentLens';
 
     //kick out user if landlord
     const navigate = useNavigate();

@@ -65,6 +65,7 @@ const Heading = ({ tag, title, subtitle }) => (
 
 /* ─── main component ─── */
 const About = () => {
+  document.title = 'About | HuskyRentLens';
   /* scroll-triggered fade-up */
   const pageRef = useRef(null)
 

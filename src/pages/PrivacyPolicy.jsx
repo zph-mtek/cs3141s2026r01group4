@@ -1,6 +1,7 @@
 import React from 'react'
 
 const PrivacyPolicy = () => {
+  document.title = 'Privacy Policy | HuskyRentLens';
   return (
     <main className="legal-page">
       <div className="legal-shell">

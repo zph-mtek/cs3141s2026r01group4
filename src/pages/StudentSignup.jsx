@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 const StudentSignup = () => {
+    document.title = 'Student Sign Up | HuskyRentLens';
 
     const navigate = useNavigate();
 

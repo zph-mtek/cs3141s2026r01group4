@@ -9,6 +9,7 @@ import { deleteProperty } from '../API/deleteProperty';
 import PinDropMap from '../components/PinDropMap.jsx';
 
 const EditProperty = () => {
+  document.title = 'Edit Property | HuskyRentLens';
 
   const navigate = useNavigate();
   const { propertyId } = useParams();

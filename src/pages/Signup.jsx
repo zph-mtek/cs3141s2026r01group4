@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const Signup = () => {
+  document.title = 'Sign Up | HuskyRentLens';
 
   return (
     <div className='flex flex-col justify-center w-full text-center'>
