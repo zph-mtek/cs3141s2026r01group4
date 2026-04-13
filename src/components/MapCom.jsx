@@ -30,7 +30,7 @@ const MapCom = (props) => {
   });
 
 return (
-    <div className='h-[400px] w-full rounded-2xl overflow-hidden'>
+    <div className='h-[400px] w-full rounded-2xl overflow-hidden isolate'>
       <MapContainer center={[props.lat, props.lng]} zoom={14} className='h-full w-full'>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
