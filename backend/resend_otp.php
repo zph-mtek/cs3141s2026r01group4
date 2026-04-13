@@ -141,7 +141,7 @@ function sendSMTPEmail($to, $subject, $body, $from = '') {
         }
 
         // Submit message payload.
-        $headers = "From: HuskyRentLens <{$from}>\r\nTo: <{$to}>\r\nSubject: {$subject}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n";
+        $headers = "MIME-Version: 1.0\r\nFrom: HuskyRentLens <{$from}>\r\nTo: <{$to}>\r\nSubject: {$subject}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n";
         fwrite($connection, $headers . $body . "\r\n.\r\n");
         [$code] = $readReply($connection);
         fwrite($connection, "QUIT\r\n");
@@ -197,8 +197,18 @@ if (!$insertOtp->execute()) {
     exit();
 }
 
-$emailSubject = 'HuskyRentLens verification code';
-$emailBody = "Your verification code: $otp\nExpires in 5 minutes.";
+$emailSubject = 'Your HuskyRentLens verification code';
+$emailBody = <<<HTML
+<!DOCTYPE html>
+<html><body style="margin:0;padding:24px;font-family:Arial,sans-serif;background:#f0f0f0;color:#222;">
+<div style="max-width:460px;margin:0 auto;background:#fff;padding:28px 32px;border-radius:8px;border-top:4px solid #1a1a2e;">
+  <p style="margin:0 0 4px;font-size:18px;font-weight:bold;color:#1a1a2e;">HuskyRentLens</p>
+  <p style="margin:0 0 20px;font-size:14px;color:#555;">Here is your one-time verification code:</p>
+  <div style="text-align:center;padding:18px 0;background:#f7f7f7;border-radius:6px;font-size:30px;font-weight:bold;letter-spacing:10px;color:#1a1a2e;font-family:monospace;">$otp</div>
+  <p style="margin:18px 0 0;font-size:13px;color:#888;">This code expires in <strong>5 minutes</strong>. Never share it with anyone.</p>
+</div>
+</body></html>
+HTML;
 if (sendSMTPEmail($email, $emailSubject, $emailBody)) {
     echo json_encode(["status" => "success", "message" => "Verification code sent", "userId" => $userId]);
 } else {
