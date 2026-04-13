@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $propData = $stmtCheck->get_result()->fetch_assoc();
     $stmtCheck->close();
 
-    if (!$propData || $propData['landlordId'] !== $landlordId) {
+    if (!$propData || (int)$propData['landlordId'] !== (int)$landlordId) {
         http_response_code(403);
         echo json_encode(["status" => "error", "message" => "You don't own this property"]);
         exit();
