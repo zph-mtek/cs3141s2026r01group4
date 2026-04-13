@@ -93,7 +93,7 @@ const Home = () => {
                                     </p>
 
                                     {/* mobile button */}
-                                    <Link to={"/properties/id"}>
+                                    <Link to={`/properties/${property.propertyId}`}>
                                         <div className="mt-4 md:hidden">
                                             <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-xl cursor-pointer">
                                                 See Property

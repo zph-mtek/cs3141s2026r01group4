@@ -136,9 +136,9 @@ const PropertyInfo = () => {
     }
 
     return (
-        <div className='grid grid-cols-1 xl:grid-rows-[auto_1fr] xl:grid-cols-[1.5fr_1fr] gap-8 p-10 xl:p-20'>
+        <div className='grid grid-cols-1 xl:grid-rows-[auto_1fr] xl:grid-cols-[1.5fr_1fr] gap-8 p-4 sm:p-6 xl:p-20'>
             {/* image section */}
-            <div className='max-w-[1000px] h-[600px] w-full mx-auto px-4 flex flex-col'>
+            <div className='max-w-[1000px] h-[280px] sm:h-[400px] md:h-[500px] xl:h-[600px] w-full mx-auto px-4 flex flex-col'>
                 {slidePhotos.length > 0 ? (
                     <div
                         onClick={toggleModal}
@@ -171,9 +171,9 @@ const PropertyInfo = () => {
 
             {/* info section */}
             <div className='min-h-[400px] xl:row-span-2 xl:sticky xl:top-8 self-start'>
-                <div className='flex flex-col bg-white h-full rounded-2xl shadow-xl p-8'>
+                    <div className='flex flex-col bg-white h-full rounded-2xl shadow-xl p-4 sm:p-8'>
                     <div className='flex flex-col md:flex-row justify-between items-center pb-5'>
-                        <h1 className='text-4xl pb-5 md:pb-0 font-extrabold leading-none text-gray-900'>
+                        <h1 className='text-2xl md:text-4xl pb-5 md:pb-0 font-extrabold leading-none text-gray-900'>
                             {properties.name}
                         </h1>
                         <p className='flex items-center text-lg leading-none'>

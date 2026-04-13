@@ -39,7 +39,7 @@ const Manage = () => {
   return (
     <div className='max-w-4xl mx-auto pt-20 px-5 pb-20'>
       
-      <div className='flex justify-between items-end mb-10 border-b pb-5'>
+      <div className='flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-10 border-b pb-5'>
         <div>
           <h1 className='text-3xl font-bold'>Hello, {user ? user.firstName : 'Loading...'}!</h1>
           <p className='text-gray-500 mt-2'>Manage your properties</p>
@@ -57,12 +57,12 @@ const Manage = () => {
           propertyData.map((property) => (
             <div 
               key={property.propertyId} 
-              className="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow gap-4"
             >
               
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-4">
 
-                <div className="w-32 h-24 bg-gray-200 rounded-xl flex-shrink-0 overflow-hidden flex justify-center items-center text-gray-400">
+                <div className="w-24 h-18 sm:w-32 sm:h-24 bg-gray-200 rounded-xl flex-shrink-0 overflow-hidden flex justify-center items-center text-gray-400">
                   {property.images && property.images.length > 0 ? (
                     <img 
                       src={`https://huskyrentlens.cs.mtu.edu/backend/${property.images[0].imageUrl}`} 
@@ -81,9 +81,9 @@ const Manage = () => {
                 
               </div>
 
-              <div className="ml-4">
+              <div className="sm:ml-4 sm:flex-shrink-0">
                 <Link to={`/manage/edit/${property.propertyId}`}>
-                  <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg transition-colors cursor-pointer border border-gray-200">
+                  <button className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg transition-colors cursor-pointer border border-gray-200">
                     Manage
                   </button>
                 </Link>

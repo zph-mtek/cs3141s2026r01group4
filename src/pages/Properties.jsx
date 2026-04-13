@@ -166,7 +166,7 @@ const Properties = () => {
         
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 bg-gray-50 px-10 py-10 rounded-t-[3rem]'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 bg-gray-50 px-4 md:px-10 py-10 rounded-t-[3rem]'>
         { isLoading ? (
           <div className="col-span-full flex flex-col items-center justify-center py-20">
             <div className="w-12 h-12 border-4 border-yellow-200 border-t-yellow-500 rounded-full animate-spin mb-4"></div>

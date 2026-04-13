@@ -204,7 +204,7 @@ const Profile = () => {
     }
 
     return (
-        <div className='pt-30 md:pt-12 grid grid-cols-1 xl:grid-cols-[auto_auto] p-8 xl:p-16 gap-8 justify-center items-start'>
+        <div className='pt-8 md:pt-12 grid grid-cols-1 xl:grid-cols-[auto_auto] p-4 sm:p-8 xl:p-16 gap-8 justify-center items-start'>
             <div className='md:sticky top-30 flex flex-col items-center justify-center shrink-0'>
                 <img src={pfp} alt="" className='rounded-full shrink-0 object-cover h-70 border-yellow-400 border-4' />
 
