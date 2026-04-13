@@ -1,6 +1,7 @@
 //-- Import things
 import React from 'react';
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
 
 export const Database = async (apiURL,jsonData) => {
     console.log('Function is running...');
@@ -37,4 +38,32 @@ export const Database = async (apiURL,jsonData) => {
             console.error('error: ',error);
         }
     }
+}
+
+export const performBanCheck = () => {
+
+    let user = null;
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        try {
+            const decoded = jwtDecode(token);
+            user = decoded.data;
+
+            if (user && user.role == "Banned") {
+                console.log("User is banned!");
+                return  true;
+            }
+        } catch (error) {
+            console.error("Invalid token", error);
+            localStorage.removeItem('token');
+            return false;
+        }
+    } else {
+        console.log("No token!");
+    }
+
+    user = null;
+
+    return false;
 }

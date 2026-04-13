@@ -3,6 +3,7 @@ import addressIcon from "../assets/maps-and-flags.png";
 import { Link } from 'react-router-dom';
 import { getAllProperties } from '../API/getAllProperties'; 
 
+//-- Card for displaying Properties
 const PropertyCard = ({ propInfo }) => {
   const mainImage = propInfo.images && propInfo.images.length > 0 
     ? `https://huskyrentlens.cs.mtu.edu/backend/${propInfo.images[0].imageUrl}` 
@@ -48,6 +49,7 @@ const PropertyCard = ({ propInfo }) => {
   )
 }
 
+//-- Properties Page
 const Properties = () => {
   const [ availableProperties, updateProperties ] = useState([]);
   const [ isLoading, setIsLoading ] = useState(true);
@@ -75,7 +77,8 @@ const Properties = () => {
   const displayedProperties = availableProperties
     .filter((property) => {
       if (!searchTerm) return true;
-      return property.name.toLowerCase().includes(searchTerm.toLowerCase());
+      return property.name.toLowerCase().includes(searchTerm.toLowerCase())
+        // || property
     })
     .sort((a, b) => {
       const priceA = Number(a.lowest_price) || 0;
@@ -106,7 +109,7 @@ const Properties = () => {
             type="text" 
             placeholder='Search apartments by name...' 
             className='w-full h-13 border-2 border-yellow-400 pl-5 pr-10 rounded-3xl focus:outline-none focus:ring-4 focus:ring-yellow-400/20 transition-all text-gray-700 font-medium'
-            value={searchTerm}
+            value={searchTerm} // Search Term for the honey
             onChange={(e) => setSearchTerm(e.target.value)}
           /> 
           <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

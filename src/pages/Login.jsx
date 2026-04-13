@@ -51,6 +51,7 @@ const Login = () => {
         const token = data.token
         localStorage.setItem('token', token)
         setStatusMessage('Login successful! Redirecting...')
+
         setMessageType('success')
         setTimeout(() => {
           navigate('/')

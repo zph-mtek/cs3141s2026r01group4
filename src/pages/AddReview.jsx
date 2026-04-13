@@ -3,7 +3,7 @@
   import DatePicker from '../components/DatePicker';
   import ReviewTextBox from '../components/ReviewTextBox';
   import { useParams } from 'react-router-dom';
-  import { Database } from '../Architect/Architect';
+  import { Database, performBanCheck } from '../Architect/Architect';
   import StatusMessageBox from '../components/StatusMessage';
 import { comment } from 'postcss';
 import { jwtDecode } from "jwt-decode";
@@ -78,8 +78,6 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,util
       return -1;
   }
 
-  console.log("Get past this...");
-
   const addFeedback = async () => {
         const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
           propertyId: propertyId,
@@ -130,7 +128,8 @@ const AddReview = () => {
 
   //-- Get the property Information
   useEffect(() => {
-    if (user && user.role != "Landlord"){ // only fetch data if we logged in
+    if (user && user.role != "Landlord" && user.role != "Banned"){ // only fetch data if we logged in
+
         const fetchPropertyInfo = async () => {
         const propertyData = await Database('https://huskyrentlens.cs.mtu.edu/connect.php',{
           propertyId: propertyId,
@@ -159,112 +158,123 @@ const AddReview = () => {
 
   return (
     <Fragment>
-      {/* Only display page contents if this user is logged in */}
-      {user && user!='Landlord' ?
-        (
-          <Fragment>
-            <div className='flex text-center justify-center'>
-        <div>
-          <div className='max-w-2xl mx-auto pt-20 px-4'>
-            <div>
-                <div className='flex flex-col sm:flex-row items-center text-center sm:text-left'>
-                    <img src={propertyInfo.images != null ? propertyInfo.images.split(",")[0] : null}
-                    className='w-40 object-cover rounded-2xl'
-                    />
-                    <p className='pl-0 sm:pl-5 pt-4 sm:pt-0 text-2xl font-bold'>
-                      {propertyInfo.name}
-                      </p>
-                </div>
-            </div> 
-
-            { rentalsForThisProperty.length > 0 ? (
-              <Fragment>
-
-                <br/><br/>
-                <RentalIdPicker
-                  propertyId={propertyInfo.propertyId}
-                  options={rentalsForThisProperty}
-                    />
-
-                  
-
-                <UtilitiesField />
-
-                {statusMsg ? statusMsg : null}
-
-                <StarRating />
-                <DatePicker />
-                <ReviewTextBox />
-
-                <button
-                  className='w-full text-lg font-bold bg-yellow-400 mt-3 h-12 rounded-2xl cursor-pointer hover:bg-yellow-400/70 transition-colors mb-20'
-                  onClick={() => {
-                    // Make sure these elements exist first
-                    const rentalPick = document.getElementById("rentalSelect");
-                    const commentText = document.getElementById("reviewText");
-                    const starRating = document.getElementById("reviewStars");
-                    const isUtilitesCostExtra = document.getElementById("utilitiesCostCheck");
-                    const utilitiesCost = document.getElementById("utilitiesCost");
-
-                    // Don't allow comments to double submit while one comment is already uploading to server...
-                    if (isLoading != 0) { 
-                      setStatusMessage(<StatusMessageBox messageType='warning' text='Feedback upload in progress...' />);  
-                      return;
-                    }
-
-                    //-- Null CheckingEnsure we have info needed to make a comment
-                    if (rentalPick && commentText && starRating &&
-                      rentalPick.value != "" && commentText.value != "" && starRating != ""
-                      && (!isUtilitesCostExtra.checked
-                            || isUtilitesCostExtra.checked && utilitiesCost && utilitiesCost.value != "")
-                    ){
-                      isLoading = 1;
-                      
-                      //-- Add a comment with the text element
-                    
-                      const utilitiesCostValue = isUtilitesCostExtra.checked ? parseInt(utilitiesCost.value) : null;
-                      
-                      if (
-                          onAddReviewPress(
-                            user.userId,
-                            propertyInfo.propertyId,
-                            parseInt(rentalPick.value),
-                            parseInt(starRating.value),
-                            commentText.value,
-                            utilitiesCostValue
-                          ) == -1
-                      ){
-                          setStatusMessage(<StatusMessageBox messageType='fail' text='Comment operation failed...' />);
-                          isLoading = 0;
-                      } else {
-                          setStatusMessage(<StatusMessageBox messageType='success' text='Comment uploaded successfully...'/>);
-                          isLoading = 0; // debounce
-                          
-                          //-- redirect after 2 seconds
-                          const timer = setTimeout(() => {
-                            navigate(`/#/properties/${propertyId}`);
-                          }, 2000);
-                      }
-                    } else { // for some reason, we could not get all of the fields and their values...
-                      setStatusMessage(<StatusMessageBox messageType='warning' text='Please fill out all of the text fields' />);
-                    }
-                  }}>
-                    Post Review
-                </button>
-              </Fragment>
-              ) : "Loading rentals...." }
-            
-          </div>
-        </div>
-      </div>
-        </Fragment>
-      ) : (
+    { user && performBanCheck() == true ? (
         <Fragment>
-          <p>You do not meet the access requirements needed to view this page!</p>
+            <p>You are banned!</p>
         </Fragment>
-      )}
+      ) :
+        (
+            <Fragment>
+              {/* Only display page contents if this user is logged in */}
+              {user && user.role === 'MTU_student' ?
+                (
+                  <Fragment>
+                    <div className='flex text-center justify-center'>
+                <div>
+                  <div className='max-w-2xl mx-auto pt-20 px-4'>
+                    <div>
+                        <div className='flex flex-col sm:flex-row items-center text-center sm:text-left'>
+                            <img src={propertyInfo.images != null ? propertyInfo.images.split(",")[0] : null}
+                            className='w-40 object-cover rounded-2xl'
+                            />
+                            <p className='pl-0 sm:pl-5 pt-4 sm:pt-0 text-2xl font-bold'>
+                              {propertyInfo.name}
+                              </p>
+                        </div>
+                    </div> 
+
+                    { rentalsForThisProperty.length > 0 ? (
+                      <Fragment>
+
+                        <br/><br/>
+                        <RentalIdPicker
+                          propertyId={propertyInfo.propertyId}
+                          options={rentalsForThisProperty}
+                            />
+
+                          
+
+                        <UtilitiesField />
+
+                        {statusMsg ? statusMsg : null}
+
+                        <StarRating />
+                        <DatePicker />
+                        <ReviewTextBox />
+
+                        <button
+                          className='w-full text-lg font-bold bg-yellow-400 mt-3 h-12 rounded-2xl cursor-pointer hover:bg-yellow-400/70 transition-colors mb-20'
+                          onClick={() => {
+                            // Make sure these elements exist first
+                            const rentalPick = document.getElementById("rentalSelect");
+                            const commentText = document.getElementById("reviewText");
+                            const starRating = document.getElementById("reviewStars");
+                            const isUtilitesCostExtra = document.getElementById("utilitiesCostCheck");
+                            const utilitiesCost = document.getElementById("utilitiesCost");
+
+                            // Don't allow comments to double submit while one comment is already uploading to server...
+                            if (isLoading != 0) { 
+                              setStatusMessage(<StatusMessageBox messageType='warning' text='Feedback upload in progress...' />);  
+                              return;
+                            }
+
+                            //-- Null CheckingEnsure we have info needed to make a comment
+                            if (rentalPick && commentText && starRating &&
+                              rentalPick.value != "" && commentText.value != "" && starRating != ""
+                              && (!isUtilitesCostExtra.checked
+                                    || isUtilitesCostExtra.checked && utilitiesCost && utilitiesCost.value != "")
+                            ){
+                              isLoading = 1;
+                              
+                              //-- Add a comment with the text element
+                            
+                              const utilitiesCostValue = isUtilitesCostExtra.checked ? parseInt(utilitiesCost.value) : null;
+                              
+                              if (
+                                  onAddReviewPress(
+                                    user.userId,
+                                    propertyInfo.propertyId,
+                                    parseInt(rentalPick.value),
+                                    parseInt(starRating.value),
+                                    commentText.value,
+                                    utilitiesCostValue
+                                  ) == -1
+                              ){
+                                  setStatusMessage(<StatusMessageBox messageType='fail' text='Comment operation failed...' />);
+                                  isLoading = 0;
+                              } else {
+                                  setStatusMessage(<StatusMessageBox messageType='success' text='Comment uploaded successfully...'/>);
+                                  isLoading = 0; // debounce
+                                  
+                                  //-- redirect after 2 seconds
+                                  const timer = setTimeout(() => {
+                                    navigate(`/#/properties/${propertyId}`);
+                                  }, 2000);
+                              }
+                            } else { // for some reason, we could not get all of the fields and their values...
+                              setStatusMessage(<StatusMessageBox messageType='warning' text='Please fill out all of the text fields' />);
+                            }
+                          }}>
+                            Post Review
+                        </button>
+                      </Fragment>
+                      ) : "Loading rentals...." }
+                    
+                  </div>
+                </div>
+              </div>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <p>You do not meet the access requirements needed to view this page!</p>
+                </Fragment>
+              )}
+          </Fragment>
+        )
+      }
     </Fragment>
   )
+  
 }
 
 export default AddReview
