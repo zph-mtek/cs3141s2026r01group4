@@ -78,31 +78,6 @@ const PropertyInfo = () => {
     }, [reviews])
 
     useEffect(() => {
-        const fetchCoordinates = async () => {
-            if (!properties?.address) return;
-
-            try {
-                const encodedAddress = encodeURIComponent(properties.address);
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}`);
-                const data = await response.json();
-
-                if (data && data.length > 0) {
-                    setCoordinates({
-                        lat: parseFloat(data[0].lat),
-                        lng: parseFloat(data[0].lon)
-                    });
-                } else {
-                    console.log("coordinate not found");
-                }
-            } catch (error) {
-                console.error("error finding coordinate:", error);
-            }
-        };
-
-        fetchCoordinates();
-    }, [properties?.address]);
-
-    useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await getPropertyById(propertyId);
@@ -114,6 +89,10 @@ const PropertyInfo = () => {
                     setSlidePhotos(fetchedData.images || []);
                     setAmenities(fetchedData.amenities || []);
                     setReviews(fetchedData.reviews || []);
+                    const p = fetchedData.property || {};
+                    if (p.lat != null && p.lat !== '' && p.lng != null && p.lng !== '') {
+                        setCoordinates({ lat: parseFloat(p.lat), lng: parseFloat(p.lng) });
+                    }
                 }
 
             } catch (error) {
