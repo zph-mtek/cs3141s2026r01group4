@@ -85,7 +85,7 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,util
           commentDesc: commentText,
           userId: 24,
           stars: reviewStars,
-          rentalUtilityCost: utilitiesCost
+          rentalUtilityCost: utilitiesCost || 0
         });
 
         if (feedbackData != null) {
