@@ -139,6 +139,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmtDelAm->execute();
     $stmtDelAm->close();
 
+    // Delete reviews
+    $stmtDelRev = $conn->prepare("DELETE FROM huskyrentlens_reviews WHERE propertyId = ?");
+    $stmtDelRev->bind_param("i", $propertyId);
+    $stmtDelRev->execute();
+    $stmtDelRev->close();
+
     // Delete property images
     $stmtDelImg = $conn->prepare("DELETE FROM huskyrentlens_property_image WHERE propertyId = ?");
     $stmtDelImg->bind_param("i", $propertyId);
