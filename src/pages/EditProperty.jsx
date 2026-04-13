@@ -6,6 +6,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { getPropertyById } from '../API/getPropertyById';
 import { updatePropertyData } from '../API/updatePropertyData';
 import { deleteProperty } from '../API/deleteProperty';
+import PinDropMap from '../components/PinDropMap.jsx';
 
 const EditProperty = () => {
 
@@ -45,6 +46,8 @@ const EditProperty = () => {
                 images: Array.isArray(rawData.images) ? rawData.images : []
               };
               setPropertyInfo(newInfo);
+              if (propertyBox.lat != null) setLat(parseFloat(propertyBox.lat));
+              if (propertyBox.lng != null) setLng(parseFloat(propertyBox.lng));
 
               if (Array.isArray(rawData.rentals) && rawData.rentals.length > 0) {
                 const formattedRooms = rawData.rentals.map(room => ({
@@ -98,6 +101,9 @@ const EditProperty = () => {
 
   // usestate to add rooms
   const [rooms, setRooms] = useState([initialRoom])
+
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -155,6 +161,8 @@ const EditProperty = () => {
     formData.append("description", propertyInfo.description);
     formData.append("walkDistance", propertyInfo.walkDistance);
     formData.append("amenities", JSON.stringify(propertyInfo.amenities));
+    if (lat !== null) formData.append("lat", lat);
+    if (lng !== null) formData.append("lng", lng);
 
     propertyInfo.images.forEach((imgObj) => {
       if (imgObj.file) {
@@ -393,6 +401,19 @@ const EditProperty = () => {
                 {formErrors.walkDistance && <p className="text-red-500 text-xs mt-1">{formErrors.walkDistance}</p>}
               </div>
             </div>
+          </section>
+
+          <section className='mt-10'>
+            <h2 className='pb-4 text-xl font-bold'>Property Location</h2>
+            <p className='text-sm text-gray-500 mb-4'>Click the map to place a pin or drag the existing pin to update the exact location.</p>
+            <PinDropMap
+              lat={lat}
+              lng={lng}
+              onChange={(newLat, newLng) => { setLat(newLat); setLng(newLng); }}
+            />
+            {lat !== null && lng !== null && (
+              <p className='text-xs text-gray-400 mt-2'>Pinned: {lat.toFixed(6)}, {lng.toFixed(6)}</p>
+            )}
           </section>
 
           <div>
