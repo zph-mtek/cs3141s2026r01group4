@@ -16,7 +16,7 @@ $siteUrl    = 'https://huskyrentlens.cs.mtu.edu';
 $title       = 'HuskyRentLens | Student Housing Near MTU';
 $description = 'Find the best student apartments near Michigan Technological University. Real reviews from Huskies, compare housing with confidence.';
 $image       = "$siteUrl/logo.png";
-$pageUrl     = $propertyId ? "$siteUrl/properties/$propertyId" : $siteUrl;
+$pageUrl     = $propertyId ? "$siteUrl/#/properties/$propertyId" : $siteUrl;
 
 if ($propertyId > 0) {
     $apiUrl = "$siteUrl/backend/fetchPropertyById.php?id=$propertyId";
