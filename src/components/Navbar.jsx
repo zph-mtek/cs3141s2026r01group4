@@ -108,13 +108,13 @@ const Navbar = () => {
                     : 'bg-white'
                     }`}
             >
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto flex h-14 md:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                     {/* Logo */}
                     <Link to="/" className="flex-shrink-0 group" onClick={closeMobile}>
                         <img
                             src={logoImage}
                             alt="HuskyRentLens"
-                            className="h-11 w-auto transition-transform duration-300 group-hover:scale-105"
+                            className="h-9 md:h-11 w-auto transition-transform duration-300 group-hover:scale-105"
                         />
                     </Link>
 
@@ -158,7 +158,7 @@ const Navbar = () => {
                     {/* Hamburger button — animated bars */}
                     <button
                         onClick={() => setMobileOpen((o) => !o)}
-                        className="relative md:hidden z-50 h-10 w-10 rounded-xl flex items-center justify-center hover:bg-gray-100/80 transition-colors focus:outline-none"
+                        className="relative md:hidden z-50 h-9 w-9 rounded-xl flex items-center justify-center hover:bg-gray-100/80 transition-colors focus:outline-none"
                         aria-label="Toggle menu"
                     >
                         <div className="flex flex-col justify-center items-center w-5 h-5">
@@ -189,7 +189,7 @@ const Navbar = () => {
                 className={`fixed top-0 right-0 z-40 md:hidden h-full w-[min(80vw,320px)] bg-white/95 backdrop-blur-2xl shadow-2xl transition-transform duration-[400ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${mobileOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
-                <div className="flex flex-col h-full pt-24 pb-8 px-4 overflow-y-auto">
+                <div className="flex flex-col h-full pt-20 pb-8 px-4 overflow-y-auto">
                     {/* Nav links */}
                     <div className="flex flex-col gap-1">
                         {allLinks.map((link, i) => (
@@ -236,7 +236,7 @@ const Navbar = () => {
             </div>
 
             {/* ───── Spacer so content doesn't hide behind fixed nav ───── */}
-            <div className="h-16" />
+            <div className="h-14 md:h-16" />
         </>
     );
 };

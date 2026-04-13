@@ -245,7 +245,7 @@ const AddProperties = () => {
   };
 
   return (
-    <div className='pt-25 space-y-5 pb-20'>
+    <div className='pt-8 md:pt-16 space-y-5 pb-20'>
       <div className='max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10'>
         <h1 className="text-3xl font-bold text-gray-900 mb-8 pb-4 border-b-1">Add New Property</h1>
 

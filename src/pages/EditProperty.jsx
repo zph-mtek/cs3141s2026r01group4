@@ -305,7 +305,7 @@ const EditProperty = () => {
   };
 
   return (
-    <div className='pt-25 space-y-5 pb-20'>
+    <div className='pt-8 md:pt-16 space-y-5 pb-20'>
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (

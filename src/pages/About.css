@@ -30,7 +30,7 @@
 
 /* gradient text helper */
 .gradient-text {
-  background: linear-gradient(135deg, #facc15, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #ffcc00, #e6b800, #cc9900);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -50,8 +50,8 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #facc15;
+  background: #ffcc00;
   border: 3px solid #fff;
-  box-shadow: 0 0 0 3px #facc15;
+  box-shadow: 0 0 0 3px #ffcc00;
   flex-shrink: 0;
 }

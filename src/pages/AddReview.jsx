@@ -172,7 +172,7 @@ const AddReview = () => {
                   <Fragment>
                     <div className='flex text-center justify-center'>
                 <div>
-                  <div className='max-w-2xl mx-auto pt-20 px-4'>
+                  <div className='max-w-2xl mx-auto pt-8 md:pt-16 px-4'>
                     <div>
                         <div className='flex flex-col sm:flex-row items-center text-center sm:text-left'>
                             <img src={propertyInfo.images != null ? propertyInfo.images.split(",")[0] : null}

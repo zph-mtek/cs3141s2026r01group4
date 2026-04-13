@@ -32,6 +32,35 @@ const CommentCard = ({ commentInfo, cardKey }) => {
     )
 }
 
+const getAmenityKey = (amenity) => {
+    const rawName = amenity?.amenityName || amenity || '';
+    return rawName.toString().trim().toLowerCase().replace(/[\s-]+/g, '_');
+};
+
+const formatAmenityLabel = (amenity) => {
+    const key = getAmenityKey(amenity);
+
+    const specialLabels = {
+        wifi: 'Wi-Fi',
+        ac: 'A/C',
+        tv: 'TV',
+        hot_tub: 'Hot Tub',
+        study_lounge: 'Study Lounge',
+        bike_storage: 'Bike Storage',
+        package_lockers: 'Package Lockers',
+        snow_removal: 'Snow Removal',
+        wheelchair_accessible: 'Wheelchair Accessible',
+    };
+
+    if (specialLabels[key]) return specialLabels[key];
+
+    return key
+        .split('_')
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+};
+
 const PropertyInfo = () => {
     const toggleModal = () => {
         setModalStatus(!modalStatus)
@@ -225,11 +254,13 @@ const PropertyInfo = () => {
                         <hr className='border-1 w-full rounded-3xl border-gray-400' />
                     </div>
 
-                    <div className='grid grid-cols-3 text-center pb-8 gap-3'>
+                    <div className='grid grid-cols-2 sm:grid-cols-3 text-center pb-8 gap-2 sm:gap-3'>
                         {amenities && amenities.map((amenity, i) => (
-                            <div key={i} className='flex items-center justify-center gap-2 leading-none'>
-                                <span className='text-xl'>{amenityIcon[amenity.amenityName || amenity] || "✨"}</span>
-                                <span className='text-sm'>{amenity.amenityName || amenity}</span>
+                            <div key={i} className='flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-left min-h-14'>
+                                <span className='text-lg shrink-0'>{amenityIcon[getAmenityKey(amenity)] || "✨"}</span>
+                                <span className='text-xs sm:text-sm font-medium leading-snug text-gray-700 break-words'>
+                                    {formatAmenityLabel(amenity)}
+                                </span>
                             </div>
                         ))}
                     </div>

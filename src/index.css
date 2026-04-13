@@ -1,4 +1,20 @@
 @import "tailwindcss";
+
+@theme {
+  /* MTU Yellow — PMS 116 C — #ffcc00 mapped to yellow-400 */
+  --color-yellow-50:  #fffde6;
+  --color-yellow-100: #fff9bf;
+  --color-yellow-200: #fff180;
+  --color-yellow-300: #ffe640;
+  --color-yellow-400: #ffcc00;
+  --color-yellow-500: #e6b800;
+  --color-yellow-600: #cc9900;
+  --color-yellow-700: #997300;
+  --color-yellow-800: #664d00;
+  --color-yellow-900: #332600;
+  --color-yellow-950: #1a1300;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 

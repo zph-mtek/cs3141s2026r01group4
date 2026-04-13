@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { Link } from 'react-router-dom';
@@ -64,7 +64,6 @@ const MapView = () => {
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);
     const [flyTarget, setFlyTarget] = useState(null);
-    const [search, setSearch] = useState('');
     const [sheetOpen, setSheetOpen] = useState(false);
     const cardRefs = useRef({});
 
@@ -87,15 +86,12 @@ const MapView = () => {
         load();
     }, []);
 
-    const filtered = properties.filter((p) => {
-        const q = search.toLowerCase();
-        return (
-            !q ||
-            p.name?.toLowerCase().includes(q) ||
-            p.address?.toLowerCase().includes(q) ||
-            p.city?.toLowerCase().includes(q)
-        );
-    });
+    const filtered = properties;
+
+    const selectedProperty = useMemo(
+        () => filtered.find((prop) => prop.propertyId === selected) || properties.find((prop) => prop.propertyId === selected) || null,
+        [filtered, properties, selected]
+    );
 
     const handleSelectFromList = (prop) => {
         setSelected(prop.propertyId);
@@ -140,22 +136,12 @@ const MapView = () => {
     );
 
     return (
-        <div className="flex h-screen pt-16 overflow-hidden">
+        <div className="flex h-[calc(100vh-3.5rem)] md:h-[calc(100vh-4rem)] overflow-hidden bg-gray-50">
 
             {/* ── Desktop sidebar ── */}
             <aside className="hidden md:flex flex-col w-80 lg:w-96 bg-white border-r border-gray-200 shadow-sm z-10 shrink-0">
                 <div className="p-4 border-b border-gray-100">
                     <h1 className="text-lg font-bold text-gray-900 mb-3">Browse Properties</h1>
-                    <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
-                        <input
-                            type="text"
-                            placeholder="Search by name, address, city…"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 bg-gray-50"
-                        />
-                    </div>
                     <p className="text-xs text-gray-400 mt-2">
                         {loading ? 'Loading…' : `${filtered.length} propert${filtered.length === 1 ? 'y' : 'ies'} on map`}
                     </p>
@@ -166,7 +152,7 @@ const MapView = () => {
             </aside>
 
             {/* ── Map ── */}
-            <div className="relative flex-1">
+            <div className="relative flex-1 isolate">
                 <MapContainer center={MTU_CENTER} zoom={13} className="h-full w-full z-0">
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -206,37 +192,61 @@ const MapView = () => {
                         </Marker>
                     ))}
                 </MapContainer>
-
-                {/* ── Mobile bottom sheet ── */}
-                <div className="md:hidden absolute bottom-0 left-0 right-0 z-[999]">
-                    <div className={`bg-white border-t border-gray-200 overflow-hidden transition-all duration-300 ${sheetOpen ? 'max-h-72' : 'max-h-0'}`}>
-                        <div className="px-4 pt-3 pb-2">
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
-                                <input
-                                    type="text"
-                                    placeholder="Search…"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yellow-400 bg-gray-50"
-                                />
+                {/* ── Mobile selected property card ── */}
+                {selectedProperty && (
+                    <div className="md:hidden absolute left-3 right-3 bottom-18 z-[999]">
+                        <div className="rounded-2xl bg-white/95 backdrop-blur shadow-xl border border-white/70 p-3">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                    <p className="font-bold text-sm text-gray-900 truncate">{selectedProperty.name}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{selectedProperty.address}</p>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {selectedProperty.lowest_price && (
+                                            <span className="text-xs font-semibold text-yellow-700 bg-yellow-100 px-2 py-1 rounded-full">
+                                                From ${selectedProperty.lowest_price}/mo
+                                            </span>
+                                        )}
+                                        {selectedProperty.distanceFromMTU && (
+                                            <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                                                {selectedProperty.distanceFromMTU} from campus
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                                <Link
+                                    to={`/properties/${selectedProperty.propertyId}`}
+                                    className="shrink-0 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-3 py-2 text-xs"
+                                >
+                                    View
+                                </Link>
                             </div>
                         </div>
-                        <div className="overflow-y-auto max-h-52">
-                            <PropertyList />
+                    </div>
+                )}
+
+                {/* ── Mobile bottom sheet ── */}
+                <div className="md:hidden absolute bottom-3 left-3 right-3 z-[999] pointer-events-none">
+                    <div className="pointer-events-auto">
+                        <div className={`bg-white/95 backdrop-blur border border-white/70 rounded-3xl shadow-[0_14px_40px_rgba(0,0,0,0.16)] overflow-hidden transition-all duration-300 ${sheetOpen ? 'max-h-[52vh]' : 'max-h-14'}`}>
+                            <button
+                                onClick={() => setSheetOpen((o) => !o)}
+                                className="w-full px-4 py-4 flex items-center justify-between gap-3"
+                            >
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-10 h-1.5 bg-gray-300 rounded-full" />
+                                    <span className="text-sm text-gray-800 font-semibold truncate">
+                                        {sheetOpen ? 'Property list' : loading ? 'Loading…' : `${filtered.length} propert${filtered.length === 1 ? 'y' : 'ies'} nearby`}
+                                    </span>
+                                </div>
+                                <span className="text-xs font-semibold text-yellow-700">
+                                    {sheetOpen ? 'Close' : 'Open'}
+                                </span>
+                            </button>
+                            <div className="border-t border-gray-100 overflow-y-auto max-h-[calc(52vh-56px)]">
+                                <PropertyList />
+                            </div>
                         </div>
                     </div>
-
-                    {/* Toggle handle */}
-                    <button
-                        onClick={() => setSheetOpen((o) => !o)}
-                        className="w-full bg-white border-t border-gray-200 py-3 flex items-center justify-center gap-2 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]"
-                    >
-                        <div className={`w-10 h-1 bg-gray-300 rounded-full transition-transform duration-300 ${sheetOpen ? 'rotate-180' : ''}`} />
-                        <span className="text-xs text-gray-700 font-semibold">
-                            {sheetOpen ? 'Hide list' : loading ? 'Loading…' : `${filtered.length} propert${filtered.length === 1 ? 'y' : 'ies'} nearby`}
-                        </span>
-                    </button>
                 </div>
             </div>
         </div>
