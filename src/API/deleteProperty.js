@@ -14,5 +14,9 @@ export const deleteProperty = async (propertyId) => {
         }
     );
 
+    if (response.data?.status !== 'success') {
+        throw new Error(response.data?.message || 'Delete failed');
+    }
+
     return response.data;
 };
