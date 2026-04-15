@@ -93,7 +93,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $propertyIdInt = (int)$propertyId;
 
     //-- Should match comments with specific property and inclusion of certain clubId
-    $stmt = $conn->prepare("SELECT tagTbl.cId, tagTbl.clubName, count(commentTbl.commentId) as support
+    $stmt = $conn->prepare("SELECT tagTbl.cId, tagTbl.clubName, commentTbl.propertyId, count(commentTbl.commentId) as support
         from huskyrentlens_comments as commentTbl
         left join huskyrentlens_communityTags as tagTbl
             on tagTbl.cId = commentTbl.clubId
