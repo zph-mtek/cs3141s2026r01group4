@@ -93,14 +93,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $propertyIdInt = (int)$propertyId;
 
     //-- Should match comments with specific property and inclusion of certain clubId
-    $stmt = $conn->prepare("SELECT clubTbl.clubName, commentTbl.clubId, COUNT(commentTbl.commentId)
-        AS comment_count FROM huskyrentlens_comments AS commentTbl
-        JOIN huskyrentlens_communityTags AS clubTbl
-        ON commentTbl.clubId = clubTbl.cId
-            WHERE commentTbl.propertyId = ?
-            GROUP BY  clubTbl.clubName, commentTbl.clubId
-            ORDER BY comment_count DESC
-            LIMIT 5");
+    $stmt = $conn->prepare("SELECT * from huskyrentlens_comments where propertyId = ?");
     
     //-- Statement error handling
     if (!$stmt) {
