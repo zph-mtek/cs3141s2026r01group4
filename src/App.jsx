@@ -12,6 +12,7 @@ import Signup from './pages/Signup'
 import About from './pages/About'
 import Properties from './pages/Properties'
 import PropertyInfo from './pages/PropertyInfo'
+import RentalInfo from './pages/RentalInfo'
 import AddProperties from './pages/AddProperties'
 import StudentSignup from './pages/StudentSignup'
 import LandlordSignup from './pages/LandlordSignup'
@@ -43,6 +44,7 @@ const App = () => {
         <Route path='/about' element={<About/>}/>
         <Route path='/properties' element={<Properties/>}/>
         <Route path='/properties/:propertyId' element={<PropertyInfo/>}/>
+        <Route path='/properties/:propertyId/rentals/:rentalId' element={<RentalInfo/>}/>
         <Route path='/map' element={<MapView/>}/>
         <Route path='/manage' element={<Manage/>}/>
         <Route path='/manage/add' element={<AddProperties/>}/>

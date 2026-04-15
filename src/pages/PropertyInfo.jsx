@@ -278,6 +278,12 @@ const PropertyInfo = () => {
                                 </div>
                                 <p className='font-bold text-lg'>In room bathroom: {rental.bathroomCt}</p>
                                 <p className='text-sm text-gray-500 mt-1'>{rental.description}</p>
+                                <Link
+                                    to={`/properties/${propertyId}/rentals/${rental.rentalId}`}
+                                    className='mt-4 inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black'
+                                >
+                                    View Unit →
+                                </Link>
                             </div>
                         ))}
                     </div>
