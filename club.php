@@ -93,7 +93,11 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $propertyIdInt = (int)$propertyId;
 
     //-- Should match comments with specific property and inclusion of certain clubId
-    $stmt = $conn->prepare("SELECT * from huskyrentlens_comments where propertyId = ?");
+    $stmt = $conn->prepare("SELECT *
+        from huskyrentlens_comments as commentTbl
+        left join huskyrentlens_communityTags as tagTbl
+            on tagTbl.clubId = commentTbl.cId
+        where propertyId = ?");
     
     //-- Statement error handling
     if (!$stmt) {
