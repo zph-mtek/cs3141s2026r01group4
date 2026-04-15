@@ -42,6 +42,7 @@ if (!is_array($input)) {
 //-- Retrieve signature data
 $propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
 $clubId = $input['clubId']            ?? $_POST['clubId']    ?? $_POST['clubId']    ?? null;
+$countClubs = $input['countClubs'] ??    $_POST['countClubs'] ?? $_POST['countClubs']    ?? null;
 
 error_log("propertyId=$propertyId, clubId=$clubId");
 
@@ -86,7 +87,64 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $stmt->close();
     $conn->close();
     exit();
-} else if ($getReviews !== null) { // we have something for getReviews
+} else if ($propertyId != null && $propertyId !== '' && $countClubs !== null && $countClubs === 'yes'){
+
+    // Prepare a statement
+    $propertyIdInt = (int)$propertyId;
+
+    //-- Should match comments with specific property and inclusion of certain clubId
+    $stmt = $conn->prepare(
+        "SELECT 
+            t.clubName, 
+            c.clubId, 
+            COUNT(c.id) AS comment_count
+        FROM 
+            huskyrentlens_comments AS c
+        JOIN 
+            huskyrentlens_communityTags AS t ON c.clubId = t.cId
+        WHERE 
+            c.propertyId = ?
+        GROUP BY 
+            t.clubName, 
+            c.clubId
+        ORDER BY 
+            comment_count DESC
+            LIMIT 5"
+    );
+    
+    //-- Statement error handling
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+    
+    // Bind parameters
+    $stmt->bind_param("i", $propertyIdInt);   
+
+    //-- Attempt to execute statement
+    if (!$stmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
+        exit();
+    }
+
+    //-- Get results from Query
+    $result = $stmt->get_result();
+    echo json_encode([
+        "status" => "success",
+        "received_property_id" => $propertyIdInt,
+        "count_clubs" => $countClubs,
+        "count" => $result->num_rows,
+        "data" => $result->fetch_all(MYSQLI_ASSOC)
+    ]);
+
+    // Close connection
+    $stmt->close();
+    $conn->close();
+    exit();
+
+    "";
+} else { // we have something for getReviews
      echo json_encode([
         "status" => "error",
         "message" => "Misconfigured property"
