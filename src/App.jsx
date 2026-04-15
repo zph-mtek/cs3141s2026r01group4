@@ -27,6 +27,7 @@ import Admin from './pages/Admin.jsx';
 import ManageUsers from './pages/ManageUsers.jsx';
 import ManageProperties from './pages/ManageProperties.jsx';
 import ManageReports from './pages/ManageReports.jsx';
+import ManageComments from './pages/ManageComments.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -58,6 +59,7 @@ const App = () => {
         <Route path='/admin/manageuser' element={<ManageUsers/>}/>
         <Route path='/admin/manageproperties' element={<ManageProperties/>}/>
         <Route path='/admin/reports' element={<ManageReports/>}/>
+        <Route path='/admin/managecomments' element={<ManageComments/>}/>
 
 
       </Routes>

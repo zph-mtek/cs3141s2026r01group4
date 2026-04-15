@@ -40,6 +40,7 @@ const getAmenityKey = (amenity) => {
 const formatAmenityLabel = (amenity) => {
     const key = getAmenityKey(amenity);
 
+    //-- Labels for the tags
     const specialLabels = {
         wifi: 'Wi-Fi',
         ac: 'A/C',
