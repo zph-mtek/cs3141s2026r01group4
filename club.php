@@ -97,7 +97,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
         from huskyrentlens_comments as commentTbl
         left join huskyrentlens_communityTags as tagTbl
             on tagTbl.clubId = commentTbl.cId
-        where propertyId = ?");
+        where commentTbl.propertyId = ?");
     
     //-- Statement error handling
     if (!$stmt) {
