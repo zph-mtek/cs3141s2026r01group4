@@ -95,21 +95,9 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     //-- Should match comments with specific property and inclusion of certain clubId
     $stmt = $conn->prepare(
         "SELECT 
-            t.clubName, 
-            c.clubId, 
-            COUNT(c.id) AS comment_count
+            *
         FROM 
-            huskyrentlens_comments AS c
-        JOIN 
-            huskyrentlens_communityTags AS t ON c.clubId = t.cId
-        WHERE 
-            c.propertyId = ?
-        GROUP BY 
-            t.clubName, 
-            c.clubId
-        ORDER BY 
-            comment_count DESC
-            LIMIT 5"
+            huskyrentlens_comments"
     );
     
     //-- Statement error handling
@@ -142,8 +130,6 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $stmt->close();
     $conn->close();
     exit();
-
-    "";
 } else { // we have something for getReviews
      echo json_encode([
         "status" => "error",
