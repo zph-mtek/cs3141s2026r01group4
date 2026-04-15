@@ -41,8 +41,8 @@ if (!is_array($input)) {
 
 //-- Retrieve signature data
 $propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
-$clubId = $input['clubId']            ?? $_POST['clubId']    ?? $_POST['clubId']    ?? null;
-$countClubs = $input['countClubs'] ??    $_POST['countClubs'] ?? $_POST['countClubs']    ?? null;
+$clubId = $input['clubId']            ?? $_POST['clubId']    ?? $_GET['clubId']    ?? null;
+$countClubs = $input['countClubs'] ??    $_POST['countClubs'] ?? $_GET['countClubs']    ?? null;
 
 error_log("propertyId=$propertyId, clubId=$clubId");
 
@@ -64,7 +64,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     }
     
     // Bind parameters
-    $stmt->bind_param("ii", $propertyIdInt,$clubId);   
+    $stmt->bind_param("ii", $propertyIdInt,$clubIdInt);   
 
     //-- Attempt to execute statement
     if (!$stmt->execute()) {
@@ -87,7 +87,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $stmt->close();
     $conn->close();
     exit();
-} else if ($propertyId != null && $propertyId !== '' && $countClubs !== null && $countClubs === 'yes'){
+} else if ($propertyId !== null && $propertyId !== '' && $countClubs !== null && $countClubs === 'yes'){
 
     // Prepare a statement
     $propertyIdInt = (int)$propertyId;
