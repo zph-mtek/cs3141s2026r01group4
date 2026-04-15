@@ -49,10 +49,11 @@ error_log("propertyId=$propertyId, clubId=$clubId");
 if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !== '' ){
     // Prepare a statement
     $propertyIdInt = (int)$propertyId;
+    $clubIdInt = (int)$clubId;
 
     //-- Should match comments with specific property and inclusion of certain clubId
     $stmt = $conn->prepare(
-        "select * from huskyrentlens_comments where propertyId = ? and assocClubs LIKE '%?%'"
+        "select * from huskyrentlens_comments where propertyId = ? and clubId = ?"
     );
     
     //-- Statement error handling
@@ -62,7 +63,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     }
     
     // Bind parameters
-    $stmt->bind_param("is", $propertyIdInt,$clubId);   
+    $stmt->bind_param("ii", $propertyIdInt,$clubId);   
 
     //-- Attempt to execute statement
     if (!$stmt->execute()) {
@@ -76,7 +77,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     echo json_encode([
         "status" => "success",
         "received_property_id" => $propertyIdInt,
-        "received_club_id" => $clubId,
+        "received_club_id" => $clubIdInt,
         "count" => $result->num_rows,
         "data" => $result->fetch_all(MYSQLI_ASSOC)
     ]);
