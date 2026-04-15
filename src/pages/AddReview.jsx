@@ -249,7 +249,7 @@ const AddReview = () => {
                                   
                                   //-- redirect after 2 seconds
                                   const timer = setTimeout(() => {
-                                    navigate(`properties/${propertyId}`);
+                                    navigate(`/#/properties/${propertyId}`);
                                   }, 2000);
                               }
                             } else { // for some reason, we could not get all of the fields and their values...
