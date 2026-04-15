@@ -96,7 +96,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $stmt = $conn->prepare("SELECT *
         from huskyrentlens_comments as commentTbl
         left join huskyrentlens_communityTags as tagTbl
-            on tagTbl.clubId = commentTbl.cId
+            on tagTbl.cId = commentTbl.clubId
         where commentTbl.propertyId = ?");
     
     //-- Statement error handling
