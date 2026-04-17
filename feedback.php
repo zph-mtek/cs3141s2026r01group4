@@ -46,7 +46,6 @@ $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userI
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
 $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
 $utilityCost = $input['rentalUtilityCost'] ?? $_POST['rentalUtilityCost'] ?? $_GET['rentalUtilityCost'] ?? 0;
-$clubId = $input['clubId'] ?? $_POST['clubId'] ?? $_GET['clubId'] ?? null;
 
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
@@ -103,8 +102,7 @@ if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
     || $commentDesc === null || $commentDesc === '' 
-    || $starCt === null || $commentDesc === ''
-       || $clubId === null || ($clubId !== null && (int)$clubId) > -1) {
+    || $starCt === null || $commentDesc === '') {
 
     echo json_encode([
         "status" => "error",
@@ -119,11 +117,10 @@ $rentalIdInt = (int)$rentalId;
 $userIdInt   = (int)$userId;
 $stars       = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
-$clubIdInt = ($clubId === "" || $clubId === null) ? null : (int)$clubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
-    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities,clubId) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities) VALUES (?, ?, ?, ?, ?, ?)"
 );
 
 if (!$stmt) {
@@ -131,7 +128,7 @@ if (!$stmt) {
     exit();
 }
 
-$stmt->bind_param("siiiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost,$clubIdInt);
+$stmt->bind_param("siiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
@@ -146,8 +143,7 @@ echo json_encode([
     "userId"      => $userIdInt,
     "commentDesc" => $commentDesc,
     "stars" => $stars,
-    "costOfUtilities" => $rentalUtilityCost,
-    "clubId" => $clubIdInt
+    "costOfUtilities" => $rentalUtilityCost
 ]);
 
 $stmt->close();
