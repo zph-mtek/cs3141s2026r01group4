@@ -147,7 +147,7 @@ const ClubIdPicker = () => {
                   }
               </select>
             </p>
-            <p><CustomClubTagField toggle={isCreatingCustom} /></p>
+            <CustomClubTagField toggle={isCreatingCustom} />
             
             </Fragment>) : <p>Loading communities...</p>}
         </Fragment>
@@ -318,21 +318,24 @@ const AddReview = () => {
                             
                               const utilitiesCostValue = isUtilitesCostExtra.checked ? parseInt(utilitiesCost.value) : null;
                               let clubPickValue = clubPick.value;
-                              console.log("Picked club:"+clubPick.value);
-                              if (clubPick.value == "") {
+                              console.log("Picked club:"+clubPickValue);
+                              console.log(clubPickValue==="custom");
+                              console.log(clubPickValue=="custom");
+                              if (clubPickValue === "") {
                                 clubPickValue = 0;
-                              } else if (clubPick === "custom") {
+                              } else if (clubPickValue === "custom") {
                                 console.log('club pick was custom...');
                                 
                                 // find out what our custom club tag was named...
                                 const newClubTag = document.getElementById('customClubName');
-                                if (newClubTag) {
+                                if (newClubTag && newClubTag.value != '') {
                                   // create a new club tag
                                   customClubTag = newClubTag.value;
-                                  console.log(customClubTag);
+                                  console.log("CustomTagValue:"+customClubTag);
 
 
                                 } else {
+                                  console.log('Nothing entered for custom tag value...')
                                   clubPickValue = 0;
                                 }
                               }
