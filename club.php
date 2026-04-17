@@ -87,7 +87,7 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $stmt->close();
     $conn->close();
     exit();
-} else if ($clubId !== null && $clubId ==='-1' ){
+} else if ($clubId !== null && ($clubId === -1 || $clubId === "-1") ){
     // Prepare a statement
     $clubIdInt = (int)$clubId;
 
