@@ -101,7 +101,7 @@ if ($userId) {
         "status" => "error",
         "message" => "Debugging",
         "userId" => $userId
-    ])
+    ]);
     exit();
 }
 
