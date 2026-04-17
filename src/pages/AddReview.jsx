@@ -156,7 +156,7 @@ const ClubIdPicker = () => {
 
 //-- When press submit button
 const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,commentText,utilitiesCost,clubPickId) => {
-  console.log(propertyId, rentalId, commentText, utilitiesCost,clubPickId);
+  console.log(userCommentId,propertyId, rentalId, commentText, utilitiesCost,clubPickId);
 
   if (
       propertyId === null || rentalId === null || commentText === null
@@ -169,7 +169,7 @@ const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,comment
           propertyId: propertyId,
           rentalId: rentalId,
           commentDesc: commentText,
-          userId: userCommentId,
+          userId: parseInt(userCommentId),
           stars: reviewStars,
           rentalUtilityCost: utilitiesCost || 0,
           assocClubId: clubPickId
@@ -340,10 +340,12 @@ const AddReview = () => {
                                   clubPickValue = 0;
                                 }
                               }
+
+                              console.log(user);
                               
                               if (
                                   onAddReviewPress(
-                                    user.userId,
+                                    user.id,
                                     propertyInfo.propertyId,
                                     parseInt(rentalPick.value),
                                     parseInt(starRating.value),
