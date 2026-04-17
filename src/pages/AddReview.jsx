@@ -118,12 +118,12 @@ const ClubIdPicker = () => {
 }
 
 //-- When press submit button
-const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,utilitiesCost) => {
+const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,utilitiesCost,clubPickId) => {
   console.log(propertyId, rentalId, commentText, utilitiesCost);
 
   if (
       propertyId === null || rentalId === null || commentText === null
-    || propertyId < 0 || rentalId < 0 || commentText === "") {
+    || propertyId < 0 || rentalId < 0 || commentText === "" || clubPickId === null) {
       return -1;
   }
 
@@ -134,7 +134,8 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,util
           commentDesc: commentText,
           userId: 24,
           stars: reviewStars,
-          rentalUtilityCost: utilitiesCost || 0
+          rentalUtilityCost: utilitiesCost || 0,
+          assocClubId: clubPickId
         });
 
         if (feedbackData != null) {
@@ -279,11 +280,14 @@ const AddReview = () => {
                             ){
                               isLoading = 1;
                               
-                              //-- Add a comment with the text element
                             
                               const utilitiesCostValue = isUtilitesCostExtra.checked ? parseInt(utilitiesCost.value) : null;
-
-                            console.log("Picked club:"+clubPick.value);
+                              let clubPickValue = clubPick.value;
+                              console.log("Picked club:"+clubPick.value);
+                              if (clubPick.value == "") {
+                                clubPickValue = 0;
+                              }
+                              
                               if (
                                   onAddReviewPress(
                                     user.userId,
@@ -291,7 +295,8 @@ const AddReview = () => {
                                     parseInt(rentalPick.value),
                                     parseInt(starRating.value),
                                     commentText.value,
-                                    utilitiesCostValue
+                                    utilitiesCostValue,
+                                    clubPickValue
                                   ) == -1
                               ){
                                   setStatusMessage(<StatusMessageBox messageType='fail' text='Comment operation failed...' />);
