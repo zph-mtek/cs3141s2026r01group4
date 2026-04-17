@@ -47,7 +47,7 @@ $countClubs = $input['countClubs'] ??    $_POST['countClubs'] ?? $_GET['countClu
 error_log("propertyId=$propertyId, clubId=$clubId");
 
 //-- INFORMATION FOR GETTING ALL FEEDBACK FOR A PROPERTY
-if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !== '' ){
+if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !== '' && $clubId !=='-1' ){
     // Prepare a statement
     $propertyIdInt = (int)$propertyId;
     $clubIdInt = (int)$clubId;
@@ -87,7 +87,45 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $stmt->close();
     $conn->close();
     exit();
-} else if ($propertyId !== null && $propertyId !== '' && $countClubs !== null && $countClubs === 'yes'){
+} else if ($clubId !== null && $clubId ==='-1' ){
+    // Prepare a statement
+    $clubIdInt = (int)$clubId;
+
+    //-- Should match comments with specific property and inclusion of certain clubId
+    $stmt = $conn->prepare(
+        "select * from huskyrentlens_communityTags"
+    );
+    
+    //-- Statement error handling
+    if (!$stmt) {
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+    
+    // Bind parameters
+    //$stmt->bind_param("ii", $propertyIdInt,$clubIdInt);   
+
+    //-- Attempt to execute statement
+    if (!$stmt->execute()) {
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+        $stmt->close();
+        exit();
+    }
+
+    //-- Get results from Query
+    $result = $stmt->get_result();
+    echo json_encode([
+        "status" => "success",
+        "received_club_id" => $clubIdInt,
+        "count" => $result->num_rows,
+        "data" => $result->fetch_all(MYSQLI_ASSOC)
+    ]);
+
+    // Close connection
+    $stmt->close();
+    $conn->close();
+    exit();
+}else if ($propertyId !== null && $propertyId !== '' && $countClubs !== null && $countClubs === 'yes'){
 
     // Prepare a statement
     $propertyIdInt = (int)$propertyId;
