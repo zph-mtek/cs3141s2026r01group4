@@ -10,7 +10,20 @@ import ImageModal from '../components/ImageModal.jsx';
 import { amenityIcon } from '../components/amenityIcons.jsx';
 import { Database } from '../Architect/Architect.jsx';
 
-const CommentCard = ({ commentInfo, cardKey }) => {
+const CommentCard = ({ commentInfo, cardKey, clubIndex }) => {
+    //console.log(clubIndex);
+
+    const [ thisClub, setThisClub] = useState(null);
+
+    useEffect(() => {
+        for (const clubInfo of clubIndex) {
+            if (clubInfo.cId == commentInfo.clubId) {
+                setThisClub(clubInfo);
+                break;
+            }
+        }
+    }, [clubIndex]);
+
     return (
         <div key={cardKey} className='border-2 shadow-xl p-3 rounded-2xl h-fit'>
             <div className='flex flex-col md:flex-row items-center text-center md:text-left'>
@@ -25,10 +38,12 @@ const CommentCard = ({ commentInfo, cardKey }) => {
                     <span className="ml-1 font-bold">{commentInfo.stars}</span>
                 </div>
             </div>
-            <p className='mt-4 text-gray-700'><b>RentalId:</b>{commentInfo.rentalId}</p>
-            <p className='mt-4 text-gray-700'><b>Additional Utilities Cost:</b> ${commentInfo.costOfUtilities ? commentInfo.costOfUtilities : "0"}</p>
-            <p className='mt-4 text-gray-700'><b>Voted Community:</b> ${commentInfo.clubId ? commentInfo.costOfUtilities : "0"}</p>
-            
+            <p className='mt-4 text-gray-700'>
+                <b>RentalId:</b>{commentInfo.rentalId}<br/>
+                <b>Additional Utilities Cost:</b> ${commentInfo.costOfUtilities ? commentInfo.costOfUtilities : "0"}<br/>
+                <b>Voted Community:</b> {commentInfo.clubId && thisClub ? thisClub.clubName : "loading..."}
+            </p>
+            <br/>
             <p>{commentInfo.commentDesc}</p>
         </div>
     )
@@ -81,6 +96,24 @@ const PropertyInfo = () => {
     const [propertyComments, setPropertyComments] = useState([]);
     const [copied, setCopied] = useState(false);
 
+    //-- Retrieve list of clubs :>
+    const [ clubList, setClubList ] = useState([]);
+    useEffect(()=>{
+          const fetchClubs = async() => {
+            const clubData = await Database('https://huskyrentlens.cs.mtu.edu/club.php',{
+                clubId: "-1"
+              });
+    
+              if (clubData != null) {
+                console.log("Clubs...");
+                console.log(clubData.data.data);
+                setClubList(clubData.data.data);
+              }
+          }
+    
+          fetchClubs();
+        },[]);
+
     const copyShareLink = () => {
         const url = `https://huskyrentlens.cs.mtu.edu/property-preview.php?id=${propertyId}`;
         navigator.clipboard.writeText(url).then(() => {
@@ -103,7 +136,7 @@ const PropertyInfo = () => {
             }
             fetchComments();
         }
-    }, [propertyId]);
+    }, [propertyId,clubList]);
 
     useEffect(() => {
         if (reviews.length > 0) {
@@ -340,7 +373,7 @@ const PropertyInfo = () => {
                     {propertyComments.length > 0 ? (
                         propertyComments.map((thisComment, i) => (
                             <Fragment key={i}>
-                                <CommentCard commentInfo={thisComment} cardKey={i} />
+                                <CommentCard commentInfo={thisComment} cardKey={i} clubIndex={clubList} />
                             </Fragment>
                         ))
                     ) : (
