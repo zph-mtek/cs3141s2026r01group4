@@ -114,46 +114,5 @@ if ( ($propertyId === null || $propertyId === '')
     exit();
 }
 
-// Make an integer
-$propertyIdInt = (int)$propertyId;
-$rentalIdInt = (int)$rentalId;
-$userIdInt = (int)$userId;
-$stars = (int)$starCt;
-$rentalUtilityCost = (int)$utilityCost;
-$clubIdInt = ($clubId === "" || $clubId === null) ? 0 : (int)$clubId;
 
-// Prepare a statement
-$stmt = $conn->prepare(
-    "INSERT INTO huskyrentlens_comments
-    (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities)
-    VALUES (?, ?, ?, ?, ?, ?)"
-);
-
-if (!$stmt) {
-    echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
-    exit();
-}
-
-$stmt->bind_param("siiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost);
-if (!$stmt->execute()) {
-    echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
-    $stmt->close();
-    exit();
-}
-
-echo json_encode([
-    "status"      => "success",
-    "message"     => "Comment inserted successfully",
-    "commentId"   => $conn->insert_id,
-    "rentalId"    => $rentalIdInt,
-    "userId"      => $userIdInt,
-    "commentDesc" => $commentDesc,
-    "stars" => $stars,
-    "costOfUtilities" => $rentalUtilityCost,
-    "clubId" => $clubIdInt
-]);
-
-$stmt->close();
-$conn->close();
-exit();
 ?>
