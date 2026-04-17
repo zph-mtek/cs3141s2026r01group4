@@ -329,8 +329,9 @@ const AddReview = () => {
                                 if (newClubTag) {
                                   // create a new club tag
                                   customClubTag = newClubTag.value;
+                                  console.log(customClubTag);
 
-                                  
+
                                 } else {
                                   clubPickValue = 0;
                                 }
