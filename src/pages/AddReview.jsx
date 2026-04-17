@@ -155,7 +155,7 @@ const ClubIdPicker = () => {
 }
 
 //-- When press submit button
-const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,utilitiesCost,clubPickId) => {
+const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,commentText,utilitiesCost,clubPickId) => {
   console.log(propertyId, rentalId, commentText, utilitiesCost,clubPickId);
 
   if (
@@ -169,7 +169,7 @@ const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,util
           propertyId: propertyId,
           rentalId: rentalId,
           commentDesc: commentText,
-          userId: 24,
+          userId: userCommentId,
           stars: reviewStars,
           rentalUtilityCost: utilitiesCost || 0,
           assocClubId: clubPickId
