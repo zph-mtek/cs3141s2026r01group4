@@ -156,7 +156,7 @@ const ClubIdPicker = () => {
 
 //-- When press submit button
 const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,utilitiesCost,clubPickId) => {
-  console.log(propertyId, rentalId, commentText, utilitiesCost);
+  console.log(propertyId, rentalId, commentText, utilitiesCost,clubPickId);
 
   if (
       propertyId === null || rentalId === null || commentText === null
@@ -330,6 +330,7 @@ const AddReview = () => {
                                 const newClubTag = document.getElementById('customClubName');
                                 if (newClubTag && newClubTag.value != '') {
                                   // create a new club tag
+                                  clubPickValue = -1;
                                   customClubTag = newClubTag.value;
                                   console.log("CustomTagValue:"+customClubTag);
 
@@ -348,7 +349,7 @@ const AddReview = () => {
                                     parseInt(starRating.value),
                                     commentText.value,
                                     utilitiesCostValue,
-                                    clubPickValue
+                                    (clubPickValue === -1 ? customClubTag : clubPickValue)
                                   ) == -1
                               ){
                                   setStatusMessage(<StatusMessageBox messageType='fail' text='Comment operation failed...' />);

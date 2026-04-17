@@ -27,6 +27,8 @@ const CommentCard = ({ commentInfo, cardKey }) => {
             </div>
             <p className='mt-4 text-gray-700'><b>RentalId:</b>{commentInfo.rentalId}</p>
             <p className='mt-4 text-gray-700'><b>Additional Utilities Cost:</b> ${commentInfo.costOfUtilities ? commentInfo.costOfUtilities : "0"}</p>
+            <p className='mt-4 text-gray-700'><b>Voted Community:</b> ${commentInfo.clubId ? commentInfo.costOfUtilities : "0"}</p>
+            
             <p>{commentInfo.commentDesc}</p>
         </div>
     )
