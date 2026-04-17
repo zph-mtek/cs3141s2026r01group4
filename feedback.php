@@ -46,7 +46,7 @@ $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userI
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
 $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
 $utilityCost = $input['rentalUtilityCost'] ?? $_POST['rentalUtilityCost'] ?? $_GET['rentalUtilityCost'] ?? 0;
-$clubId = $input['clubId'] ?? $_POST['clubId'] ?? $_GET['clubId'] ?? null;
+$clubId   = $input['clubId']   ?? $_POST['clubId'] ?? $_GET['clubId']        ?? null;
 
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
@@ -103,7 +103,7 @@ if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
     || $commentDesc === null || $commentDesc === '' 
-    || $starCt === null || $commentDesc === ''
+    || $starCt === null || $starCt === ''
        || ($clubId !== null && (int)$clubId < 0)
     ) {
     
@@ -117,14 +117,16 @@ if ( ($propertyId === null || $propertyId === '')
 // Make an integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
-$userIdInt   = (int)$userId;
-$stars       = (int)$starCt;
+$userIdInt = (int)$userId;
+$stars = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
 $clubIdInt = ($clubId === "" || $clubId === null) ? 0 : (int)$clubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
-    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities,clubId) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "INSERT INTO huskyrentlens_comments
+    (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities,clubId)
+    VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
 
 if (!$stmt) {
