@@ -68,6 +68,54 @@ const RentalIdPicker = ({ propertyId, options }) => {
     )
 }
 
+const ClubIdPicker = () => {
+
+  const [ clubList, setClubList ] = useState([]);
+
+    useEffect(()=>{
+      const fetchClubs = async() => {
+        const clubData = await Database('https://huskyrentlens.cs.mtu.edu/club.php',{
+            clubId: "-1"
+          });
+
+          if (clubData != null) {
+            console.log("Clubs...");
+            console.log(clubData.data);
+            setClubList(clubData.data);
+          }
+      }
+
+      fetchClubs();
+    },[]);
+
+    return (
+        <Fragment>
+            { clubList && clubList.length > 0 ? (<Fragment>
+              <p>
+
+              <b>Associate with Community? :</b>
+              <select name="clubOptionList" id="clubSelect" className='bg-gray-100'>
+                  <option value="">--Please choose an option--</option>
+                  {
+                      clubList.map((club) => {
+
+                        return  (
+                            <Fragment>
+                              <option value={club.cId}>
+                                  {club.clubName} ( {
+                                    club.communityType === 'S' ? "Sorority" : 
+                                      (club.communityType==='F' ? "Fraternity" : "Club") } )</option>
+                            </Fragment>
+                          )
+                      })
+                  }
+              </select>
+            </p>
+              </Fragment>) : <p>Loading communities...</p>}
+        </Fragment>
+    )
+}
+
 //-- When press submit button
 const onAddReviewPress = (user,propertyId, rentalId,reviewStars,commentText,utilitiesCost) => {
   console.log(propertyId, rentalId, commentText, utilitiesCost);
