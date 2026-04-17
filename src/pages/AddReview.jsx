@@ -164,6 +164,8 @@ const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,comment
       return -1;
   }
 
+  console.log("User Comment Id: "+parseInt(userCommentId));
+
   const addFeedback = async () => {
         const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
           propertyId: propertyId,
