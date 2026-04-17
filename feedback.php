@@ -123,9 +123,7 @@ $clubId = (int)$pickedClubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
-    "INSERT INTO
-    huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities,clubId)
-    VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "insert into huskyrentlens_comments (commentDesc,rentalId,userId,propertyId,stars,costOfUtilities,clubId) values (?, ?, ?, ?, ?, ?, ?)"
 );
 
 if (!$stmt) {
