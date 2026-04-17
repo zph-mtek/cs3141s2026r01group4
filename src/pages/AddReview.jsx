@@ -72,6 +72,7 @@ const CustomClubTagField = ({toggle}) => {
   
   useEffect(()=>{
     if (toggle == 0) { // toggle is off now
+      console.log("if toggle is off...")
       const customClubField = document.getElementById('customClubName');
       if (customClubField) {
         customClubField.value = ""; // reset its value if we toggle the option off
@@ -84,7 +85,7 @@ const CustomClubTagField = ({toggle}) => {
       {toggle == 0 ? null  : ( // will only show if toggle is on
         <Fragment>
           <p><b>Add a tag for this community?</b></p>
-          <input type='text' id='customClubName' name='customClubName' value='' className='bg-gray-100' />
+          <input type='text' id='customClubName' name='customClubName' className='bg-gray-100' />
         </Fragment>
       )}
     </Fragment>
@@ -297,6 +298,7 @@ const AddReview = () => {
                             const isUtilitesCostExtra = document.getElementById("utilitiesCostCheck");
                             const utilitiesCost = document.getElementById("utilitiesCost");
                             const clubPick = document.getElementById("clubSelect");
+                            let customClubTag = "";
 
                             // Don't allow comments to double submit while one comment is already uploading to server...
                             if (isLoading != 0) { 
@@ -319,6 +321,19 @@ const AddReview = () => {
                               console.log("Picked club:"+clubPick.value);
                               if (clubPick.value == "") {
                                 clubPickValue = 0;
+                              } else if (clubPick === "custom") {
+                                console.log('club pick was custom...');
+                                
+                                // find out what our custom club tag was named...
+                                const newClubTag = document.getElementById('customClubName');
+                                if (newClubTag) {
+                                  // create a new club tag
+                                  customClubTag = newClubTag.value;
+
+                                  
+                                } else {
+                                  clubPickValue = 0;
+                                }
                               }
                               
                               if (
