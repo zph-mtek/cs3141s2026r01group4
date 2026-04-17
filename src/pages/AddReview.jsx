@@ -35,8 +35,8 @@ const UtilitiesField = () => {
                         <input type='text' id='utilitiesCost' name='utilitiesCost' className='bg-gray-100' placeholder='Enter dollar amount....' />
                     </Fragment>
                 )
-            : null }
-            
+            : null
+            }
         </Fragment>
     );
 }
@@ -164,14 +164,14 @@ const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,comment
       return -1;
   }
 
-  console.log("User Comment Id: "+parseInt(userCommentId));
-
   const addFeedback = async () => {
+    console.log("User Comment Id: "+parseInt(userCommentId));
+
         const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
           propertyId: propertyId,
           rentalId: rentalId,
           commentDesc: commentText,
-          userId: parseInt(userCommentId),
+          userId: userCommentId,
           stars: reviewStars,
           rentalUtilityCost: utilitiesCost || 0,
           assocClubId: clubPickId
