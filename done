@@ -1,0 +1,490 @@
+[33mcommit 69480ddaefc2affcc7f3b629e5fb94ddd9d62083[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mviteReact[m[33m, [m[1;31morigin/viteReact[m[33m)[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 17 10:56:49 2026 -0400
+
+    just insurance
+
+[33mcommit acc674f8afade6b07e8ba82d1307b01f40eb2283[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 17 10:55:53 2026 -0400
+
+    Fixed club picker loading issue
+
+[33mcommit e7d0aa231c8ee84bcb7ca33be487d8245d068a28[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 17 10:54:58 2026 -0400
+
+    Fixed club picker loading issue
+
+[33mcommit 48bcf145e4ac595d20fb15f08c22d25fc53cac87[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 17 10:52:05 2026 -0400
+
+    Display club picker
+
+[33mcommit fd44aa0ac0c5f4a220c7ea02a79f2be1acb2fb70[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 17 10:42:50 2026 -0400
+
+    ClubId Picker component
+
+[33mcommit 179c9e8905253c0a9ea124b32c8bc8c44c5be7ae[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Wed Apr 15 15:08:57 2026 -0400
+
+    Updated Map View
+
+[33mcommit 2687629833e5e8ead78640f1a530bfa36650cef0[m
+Merge: ab5f103 399769b
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Wed Apr 15 14:58:43 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+
+[33mcommit ab5f1031f9fb499c6d2f64589f2b083f0a7ab536[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Wed Apr 15 14:58:17 2026 -0400
+
+    Creating the rentalinfo page
+
+[33mcommit 399769b598693276e6708580e3b8e1a64510ddc0[m
+Merge: de6caf9 b7632df
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Wed Apr 15 14:35:02 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+    t:# Please enter a commit message to explain why this merge is necessary,
+
+[33mcommit de6caf958fa79fce4572b984c8b023f7ec2889f4[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Wed Apr 15 14:34:51 2026 -0400
+
+    added UI for admin panel
+
+[33mcommit b7632df0dd3a44cdf1a689d8cb1220d4769dc07a[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Wed Apr 15 14:33:44 2026 -0400
+
+    actually actually fixed redirect
+
+[33mcommit 33be3f3e06c29dd23844f2030233bf09fc35db82[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Wed Apr 15 14:29:55 2026 -0400
+
+    Actually fixed addreview redirect
+
+[33mcommit 24f58392c6e19e7c494c7808507eb105820a2408[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Wed Apr 15 14:27:17 2026 -0400
+
+    Fixed redirect going to home page instead of property page after leaving a review
+
+[33mcommit 85108e301fdb6ad9802b2ac7f0d3b7070236a0fc[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 18:25:13 2026 -0400
+
+    UI overhaul
+
+[33mcommit c36369d8fde2457344c5c39187cadf700d887f4b[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 16:47:32 2026 -0400
+
+    Fixing map bleeding over header
+
+[33mcommit 3102480e40699e1e45a31c89a999c17907dc0a82[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 16:38:32 2026 -0400
+
+    Update document titles across multiple pages to include "HuskyRentLens"
+
+[33mcommit 0e551e73bfc9f0e42e600d4117688364438b4a34[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 16:10:17 2026 -0400
+
+    Mobile UI tweaks
+
+[33mcommit cdbcb9475fd86204b48ec22c673bf2182e22be78[m
+Merge: 9a1b932 23b35db
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Apr 13 15:30:39 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+    Rental utilities to comment card
+
+[33mcommit 9a1b9329c078b531010f1b47e97be4bed6e0e57f[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Apr 13 15:30:29 2026 -0400
+
+    Displays rental utilities in comment cards
+
+[33mcommit 23b35dbd2eebde01cf298e435d5351f329cf9247[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 15:16:27 2026 -0400
+
+    Fix delete error handling; use stored coords in PropertyInfo and MapView
+
+[33mcommit a7c83ff3878e097311d1e96fb9019226c770c1fd[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 15:14:36 2026 -0400
+
+    Refactor MapView to improve property handling and add map fly-to functionality; update PropertyInfo to set coordinates directly from fetched data
+
+[33mcommit 7a440f5ea2165eb70250701d3f1cc7882cd3f3f0[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 14:56:01 2026 -0400
+
+    Add PinDropMap coordinate editing to EditProperty
+
+[33mcommit 0d33f287cc756096d428d926894fc04b8dc43eba[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 14:36:52 2026 -0400
+
+    Add map page, pin-drop property location, form validation, delete property, room image UX improvements, submit locking
+
+[33mcommit f18a68cf3cff5aa0ea0084f8ee3a9b57cab67ee7[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Apr 13 14:30:34 2026 -0400
+
+    Add map view page, pin-drop on property creation, delete property, submit protection, improved room image UI
+
+[33mcommit fd7878410e3dc091a8288a29db4db0913ad22405[m
+Merge: 510b21d d423c0a
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Apr 13 14:05:46 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+    Ensures users are not able to access pages if banned
+
+[33mcommit 510b21d82db36ee7e49762875938928701e76ef6[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Apr 13 14:05:32 2026 -0400
+
+    Adds globalized function to check if a user is banned to Architect.jsx. AddReview.jsx now checks for ban status.
+
+[33mcommit d423c0a0890dcde7c8b623beb8b6054efd611dfd[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Mon Apr 13 13:59:38 2026 -0400
+
+    added some UI for admin panel
+
+[33mcommit 4f04a76d79fb2bfb8755dbd433b5d80ae9d96a93[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 10 13:48:44 2026 -0400
+
+    Added utilities cost feature to Add Review Page.jsx. Page redirects after submission of comment, 2 second wait.
+
+[33mcommit a469f9fee96d34b870647fd10c546a84a30b9354[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Mon Apr 6 12:13:10 2026 -0400
+
+    changed some UI
+
+[33mcommit cdab13cafed37d08670c81fdf028f2f343e249f1[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 20:44:41 2026 -0400
+
+    added some fucntions
+
+[33mcommit c7956af5e35c2b37f784682464492865b5114ec0[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 20:19:52 2026 -0400
+
+    added edit function
+
+[33mcommit 50bf9070bfb03f7705cf7d3cbf50a79ee96163fb[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 19:50:09 2026 -0400
+
+    fixed some issue with showind data
+
+[33mcommit fd77a39ea1342105f3b7ada108465cb8f4d19620[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 19:19:13 2026 -0400
+
+    fixed some stuff
+
+[33mcommit 0c62b1ae67edf630210f4b92db422292a4cf72de[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 19:10:38 2026 -0400
+
+    added some functions
+
+[33mcommit 156b07814da5231bb28aa4ccbac46dc320379020[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 15:57:12 2026 -0400
+
+    fixed some jwt issues
+
+[33mcommit 0eb57f3ab13d4676f03922637bfcc78d21b7ecd8[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 15:52:32 2026 -0400
+
+    fixed some problem
+
+[33mcommit dda17fca98660a13f9982b12eaefd692a8a267f0[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 15:31:17 2026 -0400
+
+    fixed some stuff
+
+[33mcommit b660396294f67fd1007e88a4704533bc408e9e62[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 15:18:52 2026 -0400
+
+    fixed some problem
+
+[33mcommit 5334c60a49b928f745e17fc77b86e1e95c6b1efa[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 14:32:59 2026 -0400
+
+    fixed fetch all data api
+
+[33mcommit 23fae7ebfebfedfb4d2c5a6e2a1d1e4da5bcc1b3[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 14:00:03 2026 -0400
+
+    added js file to get by landlord id
+
+[33mcommit dc62879b23c7c2d3d68c9719b3850e9b1b53bda4[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Apr 5 12:52:12 2026 -0400
+
+    changed some files to display image stored in the server
+
+[33mcommit 1b98fc22ce2c20d027ca1557a83f2c29c4b14854[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sat Apr 4 14:34:05 2026 -0400
+
+    fixed some input issue
+
+[33mcommit a3e10386dba09f3b15172c0916a28d00e0411af7[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 14:32:15 2026 -0400
+
+    fixed some url routing stuff
+
+[33mcommit 78807b14eff0d9f4027914a0ce0804047a0eab17[m
+Merge: 4759bba ede01ef
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 14:25:32 2026 -0400
+
+    rge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+
+[33mcommit 4759bba3b7d9d9201d7a8a1e943f410c56acaa9a[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 14:25:25 2026 -0400
+
+    testing add amenities function
+
+[33mcommit ede01ef7d7c3fb406136680afd669d33cc344374[m
+Merge: 7ad2067 7a1265e
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 3 14:16:52 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+
+[33mcommit 7ad2067af3db90ff5b1e20a56bf95398a728cf60[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Fri Apr 3 14:16:47 2026 -0400
+
+    Componetized the commend cards. Made them responsive to reviews left on the properties.
+
+[33mcommit 7a1265e6427327421ac4fe737a4a571dfc8bc633[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Fri Apr 3 14:08:13 2026 -0400
+
+    hashing react router seems to fix the
+
+[33mcommit d859032bb7f0da81e8c6de52aba83350047575f7[m
+Merge: 3c70a09 0b033c4
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 14:07:00 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+
+[33mcommit 3c70a092c97300d6314d024cc52409855b036614[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 14:06:51 2026 -0400
+
+    testing add property page
+
+[33mcommit 3889bd5c846f8fa72d6621ff6da9cca0ef3e2225[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 13:44:03 2026 -0400
+
+    added add property page
+
+[33mcommit 0b033c44e4a3e2551e3f10ae8a0a6b7d2f0e27ca[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Fri Apr 3 13:43:51 2026 -0400
+
+    Updated button names
+
+[33mcommit bb616bbbeafe3bbade929fce522c384e2ba3c5ea[m
+Merge: 13ad46c ff041a9
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 13:43:33 2026 -0400
+
+    erge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+
+[33mcommit 01101e957cd638cd39689d5fc3e4363aa10cc3ea[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Fri Apr 3 13:43:31 2026 -0400
+
+    Attempting to fix 404 error on refresh
+
+[33mcommit ff041a9c99197efe2768e12b38517a95392438bd[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Fri Apr 3 13:36:39 2026 -0400
+
+    Working profile page
+
+[33mcommit 13ad46ccc54285b1cdec759e4e24c3d6edefbd0f[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Fri Apr 3 12:41:02 2026 -0400
+
+    added add property page
+
+[33mcommit b9b1729ba1813e85c28398f7eedbd47107035240[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Wed Apr 1 22:56:43 2026 -0400
+
+    Added StatusMessage component to Login.jsx
+
+[33mcommit 55b02a6ec3b70752dfc29b85854c3f7797a6406d[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Wed Apr 1 22:50:32 2026 -0400
+
+    Created a StatusMessageBox component to make its display easier. Source code of style by Toya Chester(?). Added input warnings to form.
+
+[33mcommit 0919bda91f45b0ba6d2bbab15137f76802b81d81[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Wed Apr 1 22:06:50 2026 -0400
+
+    Connected addreview.jsx to database, added rental options with non-apparent rentalId for passed propertyId value, added star field to database, reformed starratings.jsx page to be able to pass the amount of stars selected, optimized the combined component into separate components
+
+[33mcommit 65a887860e835f4955f8a9262869101cea3ba77a[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Mar 30 15:34:09 2026 -0400
+
+    fixed picture name
+
+[33mcommit 4956d96aaa0ee464bd563b2b8b67a64f68eaeed1[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Mar 30 15:32:22 2026 -0400
+
+    Refactor Navbar component to enhance mobile responsiveness and user experience
+
+[33mcommit d7430955c12c82cf04f8e7d336262a30e1577606[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 15:26:12 2026 -0400
+
+    login asset reference fixed (?) by placing amenityIcons @Toya in proper components folder
+
+[33mcommit 36e61c911901d88239cebd84fbc4c1ccd7986294[m
+Merge: 45c268d 6a29e5d
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 15:24:24 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+    fixing login page asset references
+
+[33mcommit 45c268da8cce353c422301049b054f74a0a7d4f8[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 15:22:50 2026 -0400
+
+    moved amenity icons to components folder
+
+[33mcommit 6a29e5dccee48d42590d6d855ad2a1499df683fe[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Mar 30 15:10:20 2026 -0400
+
+    Fix logo image path in Navbar and Login components
+
+[33mcommit ff96c77597c0a589f2eca308bb6381aa98476f0c[m
+Merge: 54018e0 1334060
+Author: L10TOYA <toyaadayo1022@gmail.com~>
+Date:   Mon Mar 30 14:37:44 2026 -0400
+
+    Merge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+
+[33mcommit 54018e021701a824e9813aa7632b312fe77b696d[m
+Author: L10TOYA <toyaadayo1022@gmail.com~>
+Date:   Mon Mar 30 14:37:35 2026 -0400
+
+    changed some home.jsx to get all properties images
+
+[33mcommit 13340602adf070c00431b5cdcb48900981b267df[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 14:37:03 2026 -0400
+
+    ?
+
+[33mcommit 2a1151321e44ec61f6e27cb9c10d1e1873540090[m
+Merge: 85bd1c7 6a5ca99
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 14:33:32 2026 -0400
+
+    Add review page connected to database in retrieving propertyInfo
+
+[33mcommit 85bd1c7e92192ba18f717ac737de4847ef36e5fe[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 14:32:52 2026 -0400
+
+    Add review page connected to database in retrieving propertyInfo
+
+[33mcommit 6a5ca998bb3c8d4e9b3fb907ef5df1e8d2553ffe[m
+Author: zph-mtek <zphorsch@mtu.edu>
+Date:   Mon Mar 30 14:17:17 2026 -0400
+
+    Changing logo
+
+[33mcommit 0da36ef70d6a3efe77998a9d8218a42c7022c53b[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 13:59:22 2026 -0400
+
+    Forgot to uncomment the elements
+
+[33mcommit f5dd0262894023d5b7f36b04b1558a1830e18d3d[m
+Merge: 30efd08 52d62aa
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 13:57:34 2026 -0400
+
+    gitMerge branch 'viteReact' of https://github.com/zph-mtek/cs3141s2026r01group4 into viteReact
+    Optimizes addReview.jsx page
+
+[33mcommit 30efd089fef37289a3830db9251bd4c5f088256f[m
+Author: Soleil Ector <smector@mtu.edu>
+Date:   Mon Mar 30 13:57:09 2026 -0400
+
+    Optimized add review page by separating the components from one monolithic tag to multiple
+
+[33mcommit 52d62aa4b9c706515bc58c72ab8d7996ef25e939[m
+Author: L10TOYA <toyaadayo1022@gmail.com~>
+Date:   Mon Mar 30 13:45:41 2026 -0400
+
+    removed imports that is not used
+
+[33mcommit f94851c19410200e898b8c97e8b9b9f530edf72c[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Mar 29 18:18:10 2026 -0400
+
+    deleted backend folder on viteReact
+
+[33mcommit 87245840cb51ca79b2db821f87e6597aa711cc56[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Mar 29 18:17:21 2026 -0400
+
+    fixed info page and show all data
+
+[33mcommit f14117bab6c996bdaac4b5a3f0ff52a44e1d5a82[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Mar 29 17:51:55 2026 -0400
+
+    added file for icons and fixed some issues
+
+[33mcommit 0d8367cf1ebf171993046ae76cf80a9f5a7335b9[m
+Author: L10TOYA <112649759+L10TOYA@users.noreply.github.com>
+Date:   Sun Mar 29 16:43:41 2026 -0400
+
+    added image modal
