@@ -113,6 +113,37 @@ if ( ($propertyId === null || $propertyId === '')
     exit();
 }
 
+
+//-- We have been given a custom club name
+// Thanks @Claude!
+if (!is_int($pickedClubId)) { // we have been given an alphanumeric string instead of an integer for the club Id
+    //-- Check if this club already exists
+    $checkStmt = $conn->prepare("select cId from huskyrentlens_communityTags where clubName = ?");
+    $checkStmt->bind_param("s", $pickedClubId);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+
+    if ($checkStmt->num_rows > 0) {
+        //-- Club exists, grab its id
+        $checkStmt->bind_result($existingClubId);
+        $checkStmt->fetch();
+        $pickedClubId = $existingClubId;
+    } else {
+        //-- Club does not exist, insert it into communityTags
+        $insertClubStmt = $conn->prepare("insert into huskyrentlens_communityTags (clubName,communityType) values (?,?)");
+        
+        $communityType = "C"; // default value as club
+        $insertClubStmt->bind_param("ss", $pickedClubId, $communityType);
+
+        $insertClubStmt->execute();
+        $pickedClubId = $conn->insert_id; // we are going to upload this comment with this id
+        $insertClubStmt->close();
+    }
+
+    $checkStmt->close();
+}
+
+
 // Make an integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;

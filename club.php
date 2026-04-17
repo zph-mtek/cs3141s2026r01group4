@@ -88,6 +88,8 @@ if ($propertyId !== null && $propertyId !== '' && $clubId !== null && $clubId !=
     $conn->close();
     exit();
 } else if ($clubId !== null && ($clubId === -1 || $clubId === "-1") ){
+    // Gets all tags
+    
     // Prepare a statement
     $clubIdInt = (int)$clubId;
 
