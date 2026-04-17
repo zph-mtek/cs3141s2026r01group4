@@ -104,7 +104,8 @@ if ( ($propertyId === null || $propertyId === '')
     || ($userId === null || $userId === '')
     || $commentDesc === null || $commentDesc === '' 
     || $starCt === null || $commentDesc === ''
-       || $clubId === null || ($clubId !== null && (int)$clubId) > -1) {
+       || ($clubId !== null && (int)$clubId < 0)
+    ) {
     
     echo json_encode([
         "status" => "error",
