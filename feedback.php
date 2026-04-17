@@ -159,6 +159,15 @@ if (!$stmt) {
     exit();
 }
 
+if ($userId) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Debugging",
+        "userId" => $userId
+    ]);
+    exit();
+}
+
 $stmt->bind_param("siiiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost,$clubId);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
