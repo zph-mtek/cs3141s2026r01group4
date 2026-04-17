@@ -140,13 +140,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
         //save images
         $savedImageCount = 0;
+        $uploadDir = __DIR__ . '/uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true); 
+        }
 
         if (isset($_FILES['propertyImages']) && is_array($_FILES['propertyImages']['name'])){
-            $uploadDir = __DIR__ . '/uploads/';
-
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true); 
-            }
 
             $sqlImage = "INSERT INTO huskyrentlens_property_image (propertyId, imageUrl) VALUES (?, ?)";
             $stmtImg = $conn->prepare($sqlImage);

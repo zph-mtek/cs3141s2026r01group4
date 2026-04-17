@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (in_array($roomId, $existingRoomIds)) {
             $incomingRoomIds[] = $roomId; 
-            $stmtUpdateRoom->bind_param("siiiisi", $roomName, $bed, $bath, $cost, $desc, $roomId, $propertyId);
+            $stmtUpdateRoom->bind_param("siiisii", $roomName, $bed, $bath, $cost, $desc, $roomId, $propertyId);
             $stmtUpdateRoom->execute();
             $targetRentalId = $roomId;
         } else {
