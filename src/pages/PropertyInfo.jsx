@@ -41,7 +41,7 @@ const CommentCard = ({ commentInfo, cardKey, clubIndex }) => {
             <p className='mt-4 text-gray-700'>
                 <b>RentalId:</b>{commentInfo.rentalId}<br/>
                 <b>Additional Utilities Cost:</b> ${commentInfo.costOfUtilities ? commentInfo.costOfUtilities : "0"}<br/>
-                <b>Voted Community:</b> {commentInfo.clubId && thisClub ? thisClub.clubName : "loading..."}
+                <b>Voted Community:</b> {commentInfo.clubId && thisClub ? thisClub.clubName : "No Associated Club"}
             </p>
             <br/>
             <p>{commentInfo.commentDesc}</p>
@@ -113,6 +113,29 @@ const PropertyInfo = () => {
     
           fetchClubs();
         },[]);
+
+    //-- Grab most voted clubs
+    const [ mostVotedClubs, setMostVotedClubs ] = useState([]);
+    useEffect(()=>{
+        if (propertyId){ // just a quick null check
+            const fetchMostVotedClubs = async() => {
+                        console.log('find most voted clubs');
+                        const clubData = await Database('https://huskyrentlens.cs.mtu.edu/club.php',{
+                                propertyId: propertyId,
+                                countClubs: "yes"
+                        });
+                
+                        if (clubData != null) {
+                            console.log("Most voted clubs:");
+                            console.log(clubData.data.data);
+                            setMostVotedClubs(clubData.data.data);
+                        }
+                    }
+                
+            fetchMostVotedClubs();
+        }
+        
+    },[propertyId]);
 
     const copyShareLink = () => {
         const url = `https://huskyrentlens.cs.mtu.edu/property-preview.php?id=${propertyId}`;
@@ -296,6 +319,17 @@ const PropertyInfo = () => {
                                 <span className='text-lg shrink-0'>{amenityIcon[getAmenityKey(amenity)] || "✨"}</span>
                                 <span className='text-xs sm:text-sm font-medium leading-snug text-gray-700 break-words'>
                                     {formatAmenityLabel(amenity)}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Insert most voted clubs */}
+                    <div className='grid grid-cols-2 sm:grid-cols-3 text-center pb-8 gap-2 sm:gap-3'>
+                        {mostVotedClubs && mostVotedClubs.length > 0 && mostVotedClubs.map((club, i) => (
+                            <div key={i} className='flex items-center gap-2 rounded-xl border border-yellow-400 bg-yellow-200 px-3 py-2 text-left min-h-14 overflow-hidden min-w-0'>
+                                <span className='text-xs sm:text-sm font-medium leading-snug text-gray-700 break-words min-w-0 w-full'>
+                                    {club.clubName}
                                 </span>
                             </div>
                         ))}
