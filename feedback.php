@@ -96,16 +96,6 @@ if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
     exit();
 }
 
-if ($userId) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Debugging",
-        "userId" => $userId
-    ]);
-    exit();
-}
-
-
 //-- ALL INFORMATION FOR GIVING FEEDBACK
 // Ensure that these are not null
 if ( ($propertyId === null || $propertyId === '')
@@ -121,6 +111,16 @@ if ( ($propertyId === null || $propertyId === '')
     ]);
     exit();
 }
+
+if ($userId) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Debugging",
+        "userId" => $userId
+    ]);
+    exit();
+}
+
 
 
 //-- We have been given a custom club name
