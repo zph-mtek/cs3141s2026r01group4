@@ -44,7 +44,7 @@ $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['comme
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
 $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
-$getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
+$getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['getReviews']        ?? null;
 $utilityCost = $input['rentalUtilityCost'] ?? $_POST['rentalUtilityCost'] ?? $_GET['rentalUtilityCost'] ?? 0;
 $clubId   = $input['clubId']   ?? $_POST['clubId'] ?? $_GET['clubId']        ?? null;
 
@@ -122,8 +122,8 @@ $stars = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
 $clubIdInt = 0;
 
-if ($clubId === "" || $clubId === null){
-    $clubId = 0;
+if ($clubId !== "" && $clubId !== null){
+    $clubIdInt = (int)$clubId;
 }
 
 // Prepare a statement
