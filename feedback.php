@@ -46,6 +46,7 @@ $userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userI
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
 $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
 $utilityCost = $input['rentalUtilityCost'] ?? $_POST['rentalUtilityCost'] ?? $_GET['rentalUtilityCost'] ?? 0;
+$pickedClubId   = $input['assocClubId']   ?? $_POST['assocClubId'] ?? $_GET['assocClubId']        ?? null;
 
 error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
 
@@ -102,7 +103,8 @@ if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
     || ($commentDesc === null || $commentDesc === '')
-    || ($starCt === null || $starCt === '')) {
+    || ($starCt === null || $starCt === '')
+    || ($pickedClubId === null || $pickedClubId === '')) {
 
     echo json_encode([
         "status" => "error",
