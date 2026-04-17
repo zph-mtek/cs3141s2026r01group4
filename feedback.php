@@ -112,17 +112,6 @@ if ( ($propertyId === null || $propertyId === '')
     exit();
 }
 
-if ($userId) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Debugging",
-        "userId" => $userId
-    ]);
-    exit();
-}
-
-
-
 //-- We have been given a custom club name
 // Thanks @Claude!
 if (!is_int($pickedClubId)) { // we have been given an alphanumeric string instead of an integer for the club Id
@@ -152,6 +141,14 @@ if (!is_int($pickedClubId)) { // we have been given an alphanumeric string inste
     $checkStmt->close();
 }
 
+if ($userId) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Debugging",
+        "userId" => $userId
+    ]);
+    exit();
+}
 
 // Make an integer
 $propertyIdInt = (int)$propertyId;
