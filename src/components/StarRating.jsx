@@ -39,7 +39,7 @@ const StarRating = () => {
                         })}
                     </div>
                     {/* Optional: Visual display to confirm it works */}
-                    <p className="ml-4 text-gray-500">{rating} Husky Stars</p>
+                    <p className="ml-4 text-gray-500">{rating ?? 0} Husky Stars</p>
                 </div>
             </div>
         </Fragment>

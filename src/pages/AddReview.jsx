@@ -68,9 +68,35 @@ const RentalIdPicker = ({ propertyId, options }) => {
     )
 }
 
+const CustomClubTagField = ({toggle}) => {
+  
+  useEffect(()=>{
+    if (toggle == 0) { // toggle is off now
+      const customClubField = document.getElementById('customClubName');
+      if (customClubField) {
+        customClubField.value = ""; // reset its value if we toggle the option off
+      }
+    }
+  },[toggle]);
+
+  return (
+    <Fragment>
+      {toggle == 0 ? null  : ( // will only show if toggle is on
+        <Fragment>
+          <p><b>Add a tag for this community?</b></p>
+          <input type='text' id='customClubName' name='customClubName' value='' className='bg-gray-100' />
+        </Fragment>
+      )}
+    </Fragment>
+  )
+  const [ customClub, setCustomClubValue ] = useState("");
+
+}
+
 const ClubIdPicker = () => {
 
   const [ clubList, setClubList ] = useState([]);
+  const [ isCreatingCustom, toggleCustomClub ] = useState(0);
 
     useEffect(()=>{
       const fetchClubs = async() => {
@@ -94,8 +120,16 @@ const ClubIdPicker = () => {
               <p>
 
               <b>Associate with Community? :</b>
-              <select name="clubOptionList" id="clubSelect" className='bg-gray-100'>
+              <select name="clubOptionList" id="clubSelect" className='bg-gray-100'
+                  onChange={(e)=>{ // handle a custom community tag being created...
+                          if (e.target.value === 'custom'){
+                            toggleCustomClub(1); // make custom club field appear
+                          } else {
+                            toggleCustomClub(0); // make custom club field disappear
+                          }
+                      }}>
                   <option value="">--Please choose an option--</option>
+                  <option value="custom">Can't Find Your Community?</option>
                   {
                       clubList.map((club) => {
 
@@ -112,7 +146,9 @@ const ClubIdPicker = () => {
                   }
               </select>
             </p>
-              </Fragment>) : <p>Loading communities...</p>}
+            <p><CustomClubTagField toggle={isCreatingCustom} /></p>
+            
+            </Fragment>) : <p>Loading communities...</p>}
         </Fragment>
     )
 }
@@ -241,11 +277,8 @@ const AddReview = () => {
                         <RentalIdPicker
                           propertyId={propertyInfo.propertyId}
                           options={rentalsForThisProperty}
-                            />
-
-                        <ClubIdPicker />
-                          
-
+                          /><br/>
+                        <ClubIdPicker /><br/>
                         <UtilitiesField />
 
                         {statusMsg ? statusMsg : null}
