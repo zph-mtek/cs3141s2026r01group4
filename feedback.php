@@ -120,7 +120,7 @@ $rentalIdInt = (int)$rentalId;
 $userIdInt   = (int)$userId;
 $stars       = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
-$clubIdInt = ($clubId === "" || $clubId === null) ? null : (int)$clubId;
+$clubIdInt = ($clubId === "" || $clubId === null) ? 0 : (int)$clubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
