@@ -167,7 +167,7 @@ const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,comment
   const addFeedback = async () => {
     console.log("User Comment Id: "+parseInt(userCommentId));
 
-        const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',{
+      const reqData = {
           propertyId: propertyId,
           rentalId: rentalId,
           commentDesc: commentText,
@@ -175,7 +175,9 @@ const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,comment
           stars: reviewStars,
           rentalUtilityCost: utilitiesCost || 0,
           assocClubId: clubPickId
-        });
+        };
+
+        const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',reqData);
 
         if (feedbackData != null) {
           console.log(feedbackData);
