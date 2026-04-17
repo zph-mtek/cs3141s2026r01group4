@@ -119,7 +119,7 @@ $rentalIdInt = (int)$rentalId;
 $userIdInt   = (int)$userId;
 $stars       = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
-$clubIdInt = (int)$clubId;
+$clubIdInt = ($clubId === "" || $clubId === null) ? null : (int)$clubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
@@ -131,7 +131,7 @@ if (!$stmt) {
     exit();
 }
 
-$stmt->bind_param("siiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost,$clubIdInt);
+$stmt->bind_param("siiiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost,$clubIdInt);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
