@@ -119,10 +119,12 @@ $rentalIdInt = (int)$rentalId;
 $userIdInt   = (int)$userId;
 $stars       = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
+$clubId = (int)$pickedClubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
-    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities) VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars,costOfUtilities,clubId)
+    VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
 
 if (!$stmt) {
@@ -130,7 +132,7 @@ if (!$stmt) {
     exit();
 }
 
-$stmt->bind_param("siiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost);
+$stmt->bind_param("siiiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost,$clubId);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
@@ -144,6 +146,7 @@ echo json_encode([
     "rentalId"    => $rentalIdInt,
     "userId"      => $userIdInt,
     "commentDesc" => $commentDesc,
+    "clubId" => $clubId,
     "stars" => $stars,
     "costOfUtilities" => $rentalUtilityCost
 ]);
