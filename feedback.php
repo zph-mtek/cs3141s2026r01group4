@@ -74,7 +74,7 @@ if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
         exit();
     }
 
-    // Get results from queryy
+    // Get results from query
     $result = $stmt->get_result();
     echo json_encode([
         "status" => "success",
@@ -101,8 +101,8 @@ if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
     || ($userId === null || $userId === '')
-    || $commentDesc === null || $commentDesc === '' 
-    || $starCt === null || $commentDesc === '') {
+    || ($commentDesc === null || $commentDesc === '')
+    || ($starCt === null || $starCt === '')) {
 
     echo json_encode([
         "status" => "error",
