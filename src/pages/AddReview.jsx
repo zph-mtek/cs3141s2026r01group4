@@ -104,7 +104,8 @@ const ClubIdPicker = () => {
                               <option value={club.cId}>
                                   {club.clubName} ( {
                                     club.communityType === 'S' ? "Sorority" : 
-                                      (club.communityType==='F' ? "Fraternity" : "Club") } )</option>
+                                      (club.communityType==='F' ? "Fraternity" : "Club") } )
+                              </option>
                             </Fragment>
                           )
                       })
@@ -241,6 +242,7 @@ const AddReview = () => {
                           options={rentalsForThisProperty}
                             />
 
+                        <ClubIdPicker />
                           
 
                         <UtilitiesField />
@@ -260,6 +262,7 @@ const AddReview = () => {
                             const starRating = document.getElementById("reviewStars");
                             const isUtilitesCostExtra = document.getElementById("utilitiesCostCheck");
                             const utilitiesCost = document.getElementById("utilitiesCost");
+                            const clubPick = document.getElementById("clubSelect");
 
                             // Don't allow comments to double submit while one comment is already uploading to server...
                             if (isLoading != 0) { 
@@ -271,14 +274,16 @@ const AddReview = () => {
                             if (rentalPick && commentText && starRating &&
                               rentalPick.value != "" && commentText.value != "" && starRating != ""
                               && (!isUtilitesCostExtra.checked
-                                    || isUtilitesCostExtra.checked && utilitiesCost && utilitiesCost.value != "")
+                                    || isUtilitesCostExtra.checked && utilitiesCost && utilitiesCost.value != ""
+                                  || clubPick)
                             ){
                               isLoading = 1;
                               
                               //-- Add a comment with the text element
                             
                               const utilitiesCostValue = isUtilitesCostExtra.checked ? parseInt(utilitiesCost.value) : null;
-                              
+
+                            console.log("Picked club:"+clubPick.value);
                               if (
                                   onAddReviewPress(
                                     user.userId,
