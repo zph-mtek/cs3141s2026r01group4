@@ -80,8 +80,8 @@ const ClubIdPicker = () => {
 
           if (clubData != null) {
             console.log("Clubs...");
-            console.log(clubData.data);
-            setClubList(clubData.data);
+            console.log(clubData.data.data);
+            setClubList(clubData.data.data);
           }
       }
 
