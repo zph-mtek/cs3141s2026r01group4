@@ -42,13 +42,13 @@ if (!is_array($input)) {
 $propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
 $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['commentDesc']  ?? null;
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
-$userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
+$commenterId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
 $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
 $utilityCost = $input['rentalUtilityCost'] ?? $_POST['rentalUtilityCost'] ?? $_GET['rentalUtilityCost'] ?? 0;
 $pickedClubId   = $input['assocClubId']   ?? $_POST['assocClubId'] ?? $_GET['assocClubId']        ?? null;
 
-error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
+error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$commenterId");
 
 //-- INFORMATION FOR GETTING ALL FEEDBACK FOR A PROPERTY
 if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
@@ -100,7 +100,7 @@ if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
 // Ensure that these are not null
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
-    || ($userId === null || $userId === '')
+    || ($commenterId === null || $commenterId === '')
     || ($commentDesc === null || $commentDesc === '')
     || ($starCt === null || $starCt === '')
     || ($pickedClubId === null || $pickedClubId === '')) {
@@ -144,7 +144,7 @@ if (!is_int($pickedClubId)) { // we have been given an alphanumeric string inste
 // Make an integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
-$userIdInt   = (int)$userId;
+$userIdInt   = (int)$commenterId;
 $stars       = (int)$starCt;
 $rentalUtilityCost = (int)$utilityCost;
 $clubId = (int)$pickedClubId;
@@ -166,14 +166,7 @@ if (!$stmt->execute()) {
     exit();
 }
 
-if ($userId) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Debugging",
-        "userId" => $userId
-    ]);
-    exit();
-}
+
 
 echo json_encode([
     "status"      => "success",
