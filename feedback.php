@@ -141,15 +141,6 @@ if (!is_int($pickedClubId)) { // we have been given an alphanumeric string inste
     $checkStmt->close();
 }
 
-if ($userId) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Debugging",
-        "userId" => $userId
-    ]);
-    exit();
-}
-
 // Make an integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
