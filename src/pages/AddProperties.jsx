@@ -74,7 +74,12 @@ const AddProperties = () => {
 
     setIsSubmitting(true);
     try {
-      await submitPropertyData(formData);
+      // DEBUG: log FormData entries
+      for (let [key, value] of formData.entries()) {
+        console.log('FormData:', key, value instanceof File ? `File(${value.name})` : value);
+      }
+      const result = await submitPropertyData(formData);
+      console.log('Server response:', result);
       navigate('/manage');
     } catch (error) {
       console.error(error);

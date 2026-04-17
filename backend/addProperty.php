@@ -93,6 +93,18 @@ try {
 }
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    // DEBUG: log $_FILES keys
+    $debugLog = "=== addProperty " . date('Y-m-d H:i:s') . " ===\n";
+    $debugLog .= "FILES keys: " . implode(', ', array_keys($_FILES)) . "\n";
+    foreach ($_FILES as $fkey => $fval) {
+        $debugLog .= "  $fkey: names=" . json_encode($fval['name']) . " errors=" . json_encode($fval['error']) . "\n";
+    }
+    $roomsInfoRaw = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
+    $debugLog .= "roomsInfo IDs: " . json_encode(array_column($roomsInfoRaw, 'id')) . "\n";
+    $debugLog .= "Expected keys: " . json_encode(array_map(function($r){ return 'roomImages_' . $r['id']; }, $roomsInfoRaw)) . "\n";
+    file_put_contents(__DIR__ . '/debug_upload.log', $debugLog, FILE_APPEND);
+    // END DEBUG
+
     $name = $_POST['name'] ?? '';
     $address = $_POST['address'] ?? '';
     $city = $_POST['city'] ?? '';
@@ -233,7 +245,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         echo json_encode([
             "status" => "success", 
             "message" => "Property, " . count($amenityList) . " amenities, " . $savedImageCount . " shared images, " . $savedRoomCount . " rooms, and " . $savedRoomImageCount . " room images saved!",
-            "propertyId" => $newPropertyId
+            "propertyId" => $newPropertyId,
+            "debug" => [
+                "filesKeys" => array_keys($_FILES),
+                "expectedRoomKeys" => array_map(function($r){ return 'roomImages_' . $r['id']; }, $roomsInfo),
+                "savedRoomImageCount" => $savedRoomImageCount
+            ]
         ]);
         exit();
 

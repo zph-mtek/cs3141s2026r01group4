@@ -167,7 +167,12 @@ const EditProperty = () => {
 
     setIsSubmitting(true);
     try {
-      await updatePropertyData(formData);
+      // DEBUG: log FormData entries
+      for (let [key, value] of formData.entries()) {
+        console.log('FormData:', key, value instanceof File ? `File(${value.name})` : value);
+      }
+      const result = await updatePropertyData(formData);
+      console.log('Server response:', result);
       alert('Information updated successfully!');
       navigate('/manage');
     } catch (error) {
