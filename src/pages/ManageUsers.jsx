@@ -7,15 +7,21 @@ const ManageUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
+useEffect(() => {
     const fetchUsers = async () => {
       try {
         const result = await getAllUsers();
+        // 🚨 ここでAPIからのお返事をコンソールに出力します！
+        console.log("APIからのお返事:", result); 
+
         if (result.status === 'success') {
-          setUsers(result.data);
+          setUsers(result.data || []);
+        } else {
+          // 🚨 エラーメッセージがあれば表示
+          console.error("APIエラー原因:", result.message);
         }
       } catch (error) {
-        alert("Failed to fetch users");
+        console.error("Fetch users error:", error);
       } finally {
         setIsLoading(false);
       }
