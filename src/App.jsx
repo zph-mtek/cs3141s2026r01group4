@@ -4,6 +4,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 //-- Components
 import Navbar from './components/Navbar';
 import StarRating from './components/StarRating';
+import AdminRoute from './components/AdminRoute';
 
 //-- Pages
 import Home from './pages/Home'
@@ -55,11 +56,13 @@ const App = () => {
         <Route path='/guidelines' element={<Guidelines/>}/>
         <Route path='/addreview/:propertyId' element={<AddReview/>}/> {/* Corresponds to rentalId and propertyId */}
         
-        <Route path='/admin' element={<Admin/>}/>
-        <Route path='/admin/manageuser' element={<ManageUsers/>}/>
-        <Route path='/admin/manageproperties' element={<ManageProperties/>}/>
-        <Route path='/admin/reports' element={<ManageReports/>}/>
-        <Route path='/admin/managecomments' element={<ManageComments/>}/>
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/manageproperties" element={<ManageProperties />} />
+          <Route path="/admin/managecomments" element={<ManageComments />} />
+          <Route path="/admin/manageusers" element={<ManageUsers />} />
+          <Route path="/admin/reports" element={<ManageReports />} />
+        </Route>
 
 
       </Routes>
