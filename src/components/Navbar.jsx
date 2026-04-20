@@ -92,9 +92,15 @@ const Navbar = () => {
     // Build dynamic links
     const allLinks = [
         ...navLinks,
+        // Landlord 
         ...(user && user.role === 'Landlord'
             ? [{ to: "/manage", label: "Manage Properties", icon: <HiOutlineOfficeBuilding /> }]
             : []),
+        // Admin
+        ...(user && user.role === 'admin'
+            ? [{ to: "/admin", label: "Admin Dashboard", icon: <HiOutlineOfficeBuilding /> }] 
+            : []),
+        // not login
         ...(!user ? [{ to: "/login", label: "Sign In", icon: <HiOutlineLogin /> }] : []),
     ];
 
