@@ -42,27 +42,29 @@ if (!is_array($input)) {
 $propertyId   = $input['propertyId']   ?? $_POST['propertyId']   ?? $_GET['propertyId']   ?? null;
 $commentDesc  = $input['commentDesc']  ?? $_POST['commentDesc']  ?? $_GET['commentDesc']  ?? null;
 $rentalId     = $input['rentalId']     ?? $_POST['rentalId']     ?? $_GET['rentalId']     ?? null;
-$userId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
+$commenterId       = $input['userId']       ?? $_POST['userId']       ?? $_GET['userId']       ?? null;
 $starCt       = $input['stars']        ?? $_POST['stars']        ?? $_GET['stars']        ?? null;
 $getReviews   = $input['getReviews']   ?? $_POST['getReviews'] ?? $_GET['reviews']        ?? null;
+$utilityCost = $input['rentalUtilityCost'] ?? $_POST['rentalUtilityCost'] ?? $_GET['rentalUtilityCost'] ?? 0;
+$pickedClubId   = $input['assocClubId']   ?? $_POST['assocClubId'] ?? $_GET['assocClubId']        ?? null;
 
-error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$userId");
+error_log("commentDesc=$commentDesc, rentalId=$rentalId, userId=$commenterId");
 
 //-- INFORMATION FOR GETTING ALL FEEDBACK FOR A PROPERTY
 if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
     // Prepare a statement
     $propertyIdInt = (int)$propertyId;
-    
+
     $stmt = $conn->prepare(
         "select * from huskyrentlens_comments where propertyId = ?"
     );
-    
+
     // Statement error handling
     if (!$stmt) {
         echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
         exit();
     }
-    
+
     // Bind parameters
     $stmt->bind_param("i", $propertyIdInt);   
 
@@ -73,7 +75,7 @@ if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
         exit();
     }
 
-    // Get results from queryy
+    // Get results from query
     $result = $stmt->get_result();
     echo json_encode([
         "status" => "success",
@@ -94,15 +96,15 @@ if ($getReviews === 'yes' && $propertyId !== null && $propertyId !== ''){
     exit();
 }
 
-
 //-- ALL INFORMATION FOR GIVING FEEDBACK
 // Ensure that these are not null
 if ( ($propertyId === null || $propertyId === '')
     || ($rentalId === null || $rentalId === '' )
-    || ($userId === null || $userId === '')
-    || $commentDesc === null || $commentDesc === '' 
-    || $starCt === null || $commentDesc === '') {
-    
+    || ($commenterId === null || $commenterId === '')
+    || ($commentDesc === null || $commentDesc === '')
+    || ($starCt === null || $starCt === '')
+    || ($pickedClubId === null || $pickedClubId === '')) {
+
     echo json_encode([
         "status" => "error",
         "message" => "Misconfigured property"
@@ -110,15 +112,46 @@ if ( ($propertyId === null || $propertyId === '')
     exit();
 }
 
+//-- We have been given a custom club name
+// Thanks @Claude!
+if (!is_numeric($pickedClubId)) { // we have been given an alphanumeric string instead of an integer for the club Id
+    //-- Check if this club already exists
+    $checkStmt = $conn->prepare("select cId from huskyrentlens_communityTags where clubName = ?");
+    $checkStmt->bind_param("s", $pickedClubId);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+
+    if ($checkStmt->num_rows > 0) {
+        //-- Club exists, grab its id
+        $checkStmt->bind_result($existingClubId);
+        $checkStmt->fetch();
+        $pickedClubId = $existingClubId;
+    } else {
+        //-- Club does not exist, insert it into communityTags
+        $insertClubStmt = $conn->prepare("insert into huskyrentlens_communityTags (clubName,communityType) values (?,?)");
+        
+        $communityType = "C"; // default value as club
+        $insertClubStmt->bind_param("ss", $pickedClubId, $communityType);
+
+        $insertClubStmt->execute();
+        $pickedClubId = $conn->insert_id; // we are going to upload this comment with this id
+        $insertClubStmt->close();
+    }
+
+    $checkStmt->close();
+}
+
 // Make an integer
 $propertyIdInt = (int)$propertyId;
 $rentalIdInt = (int)$rentalId;
-$userIdInt   = (int)$userId;
+$userIdInt   = (int)$commenterId;
 $stars       = (int)$starCt;
+$rentalUtilityCost = (int)$utilityCost;
+$clubId = (int)$pickedClubId;
 
 // Prepare a statement
 $stmt = $conn->prepare(
-    "INSERT INTO huskyrentlens_comments (commentDesc, rentalId, userId,propertyId,stars) VALUES (?, ?, ?,?,?)"
+    "insert into huskyrentlens_comments (commentDesc,rentalId,userId,propertyId,stars,costOfUtilities,clubId) values (?, ?, ?, ?, ?, ?, ?)"
 );
 
 if (!$stmt) {
@@ -126,12 +159,14 @@ if (!$stmt) {
     exit();
 }
 
-$stmt->bind_param("siiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars);
+$stmt->bind_param("siiiiii", $commentDesc, $rentalIdInt, $userIdInt, $propertyIdInt,$stars,$rentalUtilityCost,$clubId);
 if (!$stmt->execute()) {
     echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
     $stmt->close();
     exit();
 }
+
+
 
 echo json_encode([
     "status"      => "success",
@@ -140,7 +175,9 @@ echo json_encode([
     "rentalId"    => $rentalIdInt,
     "userId"      => $userIdInt,
     "commentDesc" => $commentDesc,
-    "stars" => $stars
+    "clubId" => $clubId,
+    "stars" => $stars,
+    "costOfUtilities" => $rentalUtilityCost
 ]);
 
 $stmt->close();

@@ -93,12 +93,26 @@ try {
 }
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    // DEBUG: log $_FILES keys
+    $debugLog = "=== addProperty " . date('Y-m-d H:i:s') . " ===\n";
+    $debugLog .= "FILES keys: " . implode(', ', array_keys($_FILES)) . "\n";
+    foreach ($_FILES as $fkey => $fval) {
+        $debugLog .= "  $fkey: names=" . json_encode($fval['name']) . " errors=" . json_encode($fval['error']) . "\n";
+    }
+    $roomsInfoRaw = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
+    $debugLog .= "roomsInfo IDs: " . json_encode(array_column($roomsInfoRaw, 'id')) . "\n";
+    $debugLog .= "Expected keys: " . json_encode(array_map(function($r){ return 'roomImages_' . $r['id']; }, $roomsInfoRaw)) . "\n";
+    file_put_contents(__DIR__ . '/debug_upload.log', $debugLog, FILE_APPEND);
+    // END DEBUG
+
     $name = $_POST['name'] ?? '';
     $address = $_POST['address'] ?? '';
     $city = $_POST['city'] ?? '';
     $distance = $_POST['distance'] ?? '';
     $description = $_POST['description'] ?? '';
     $walkDistance = $_POST['walkDistance'] ?? '';
+    $lat = isset($_POST['lat']) && $_POST['lat'] !== '' ? floatval($_POST['lat']) : null;
+    $lng = isset($_POST['lng']) && $_POST['lng'] !== '' ? floatval($_POST['lng']) : null;
 
     $amenities = isset($_POST['amenities']) ? json_decode($_POST['amenities'], true) : [];
     $roomsInfo = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
@@ -106,7 +120,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $propertyImages = $_FILES['propertyImages'] ?? null;
 
     //set to database
-    $sqlProperty = "INSERT INTO huskyrentlens_property (name, city, description, distanceFromMTU, address, walkDistance, landlordId) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sqlProperty = "INSERT INTO huskyrentlens_property (name, city, description, distanceFromMTU, address, walkDistance, landlordId, lat, lng) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sqlProperty);
 
@@ -115,7 +129,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         exit();
     }
 
-    $stmt->bind_param("ssssssi", $name, $city, $description, $distance, $address, $walkDistance, $landlordId);
+    $stmt->bind_param("ssssssidd", $name, $city, $description, $distance, $address, $walkDistance, $landlordId, $lat, $lng);
 
     if ($stmt->execute()) {
         $newPropertyId = $conn->insert_id;
@@ -138,13 +152,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
         //save images
         $savedImageCount = 0;
+        $uploadDir = __DIR__ . '/uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true); 
+        }
 
         if (isset($_FILES['propertyImages']) && is_array($_FILES['propertyImages']['name'])){
-            $uploadDir = __DIR__ . '/uploads/';
-
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true); 
-            }
 
             $sqlImage = "INSERT INTO huskyrentlens_property_image (propertyId, imageUrl) VALUES (?, ?)";
             $stmtImg = $conn->prepare($sqlImage);
@@ -232,7 +245,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         echo json_encode([
             "status" => "success", 
             "message" => "Property, " . count($amenityList) . " amenities, " . $savedImageCount . " shared images, " . $savedRoomCount . " rooms, and " . $savedRoomImageCount . " room images saved!",
-            "propertyId" => $newPropertyId
+            "propertyId" => $newPropertyId,
+            "debug" => [
+                "filesKeys" => array_keys($_FILES),
+                "expectedRoomKeys" => array_map(function($r){ return 'roomImages_' . $r['id']; }, $roomsInfo),
+                "savedRoomImageCount" => $savedRoomImageCount
+            ]
         ]);
         exit();
 

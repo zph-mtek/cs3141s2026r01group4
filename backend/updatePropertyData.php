@@ -92,6 +92,18 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // DEBUG: log $_FILES keys
+    $debugLog = "=== updateProperty " . date('Y-m-d H:i:s') . " ===\n";
+    $debugLog .= "FILES keys: " . implode(', ', array_keys($_FILES)) . "\n";
+    foreach ($_FILES as $fkey => $fval) {
+        $debugLog .= "  $fkey: names=" . json_encode($fval['name']) . " errors=" . json_encode($fval['error']) . "\n";
+    }
+    $roomsInfoRaw = isset($_POST['roomsInfo']) ? json_decode($_POST['roomsInfo'], true) : [];
+    $debugLog .= "roomsInfo IDs: " . json_encode(array_column($roomsInfoRaw, 'id')) . "\n";
+    $debugLog .= "Expected keys: " . json_encode(array_map(function($r){ return 'roomImages_' . $r['id']; }, $roomsInfoRaw)) . "\n";
+    file_put_contents(__DIR__ . '/debug_upload.log', $debugLog, FILE_APPEND);
+    // END DEBUG
+
     $propertyId = $_POST['propertyId'] ?? null;
 
     if (!$propertyId) {
@@ -105,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $propData = $stmtCheck->get_result()->fetch_assoc();
     $stmtCheck->close();
 
-    if (!$propData || $propData['landlordId'] !== $landlordId) {
+    if (!$propData || (int)$propData['landlordId'] !== (int)$landlordId) {
         http_response_code(403);
         echo json_encode(["status" => "error", "message" => "You don't own this property"]);
         exit();
@@ -117,9 +129,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $distance = $_POST['distance'] ?? '';
     $description = $_POST['description'] ?? '';
     $walkDistance = $_POST['walkDistance'] ?? '';
+    $lat = isset($_POST['lat']) && $_POST['lat'] !== '' ? floatval($_POST['lat']) : null;
+    $lng = isset($_POST['lng']) && $_POST['lng'] !== '' ? floatval($_POST['lng']) : null;
 
-    $stmtUpdate = $conn->prepare("UPDATE huskyrentlens_property SET name=?, city=?, description=?, distanceFromMTU=?, address=?, walkDistance=? WHERE propertyId=?");
-    $stmtUpdate->bind_param("ssssssi", $name, $city, $description, $distance, $address, $walkDistance, $propertyId);
+    $stmtUpdate = $conn->prepare("UPDATE huskyrentlens_property SET name=?, city=?, description=?, distanceFromMTU=?, address=?, walkDistance=?, lat=?, lng=? WHERE propertyId=?");
+    $stmtUpdate->bind_param("ssssssddi", $name, $city, $description, $distance, $address, $walkDistance, $lat, $lng, $propertyId);
     $stmtUpdate->execute();
     $stmtUpdate->close();
 
@@ -183,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (in_array($roomId, $existingRoomIds)) {
             $incomingRoomIds[] = $roomId; 
-            $stmtUpdateRoom->bind_param("siiiisi", $roomName, $bed, $bath, $cost, $desc, $roomId, $propertyId);
+            $stmtUpdateRoom->bind_param("siiisii", $roomName, $bed, $bath, $cost, $desc, $roomId, $propertyId);
             $stmtUpdateRoom->execute();
             $targetRentalId = $roomId;
         } else {
