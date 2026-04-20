@@ -10,19 +10,28 @@ import ImageModal from '../components/ImageModal.jsx';
 import { amenityIcon } from '../components/amenityIcons.jsx';
 import { Database } from '../Architect/Architect.jsx';
 
-const CommentCard = ({ commentInfo, cardKey, clubIndex }) => {
+const CommentCard = ({ commentInfo, cardKey, clubIndex, rentalInfo }) => {
     //console.log(clubIndex);
 
     const [ thisClub, setThisClub] = useState(null);
+    const [ thisRental, setThisRental ] = useState(null);
 
     useEffect(() => {
-        for (const clubInfo of clubIndex) {
-            if (clubInfo.cId == commentInfo.clubId) {
-                setThisClub(clubInfo);
-                break;
+       if (commentInfo) {
+            //-- Find out which rental in passed array matches this comment
+            if (rentalInfo.length > 0) {
+                setThisRental(rentalInfo.filter(rental => rental.rentalId == commentInfo.rentalId)[0]);
             }
-        }
-    }, [clubIndex]);
+
+            //-- Find out which club is associated with this comment
+            for (const clubInfo of clubIndex) {
+                if (clubInfo.cId == commentInfo.clubId) {
+                    setThisClub(clubInfo);
+                    break;
+                }
+            }
+       }
+    }, [clubIndex,rentalInfo]);
 
     return (
         <div key={cardKey} className='border-2 shadow-xl p-3 rounded-2xl h-fit'>
@@ -39,7 +48,7 @@ const CommentCard = ({ commentInfo, cardKey, clubIndex }) => {
                 </div>
             </div>
             <p className='mt-4 text-gray-700'>
-                <b>RentalId:</b>{commentInfo.rentalId}<br/>
+                <b>Rental:</b> {thisRental != null ? thisRental.roomName : "Unnamed"} (#{commentInfo.rentalId})<br/>
                 <b>Additional Utilities Cost:</b> ${commentInfo.costOfUtilities ? commentInfo.costOfUtilities : "0"}<br/>
                 <b>Voted Community:</b> {commentInfo.clubId && thisClub ? thisClub.clubName : "No Associated Club"}
             </p>
@@ -95,9 +104,37 @@ const PropertyInfo = () => {
     const [propertyRating, setPropertyRating] = useState('N/A')
     const [propertyComments, setPropertyComments] = useState([]);
     const [copied, setCopied] = useState(false);
-
-    //-- Retrieve list of clubs :>
+    const [ communityFilter, setCommunity ] = useState('All');
+    const [ propertyCommunityList, setPropertyClubList ] = useState([]);
     const [ clubList, setClubList ] = useState([]);
+
+    //-- Compile list of unique communities for this property
+    useEffect(()=>{
+        if (propertyComments && propertyComments.length > 0 && clubList && clubList.length > 0
+        ) {
+            let shortList = [];
+
+            // iterate through each comment to see if we have this club in the list already
+            //      if not, add it!
+            propertyComments.forEach((comment) => {
+                if (!shortList.includes(comment.clubId)) { // this club mentioned in a comment has not been shortlisted yet
+                    // Go through list of clubs to find the club info
+                    const clubMatches = clubList.filter((club) => club.cId == comment.clubId); // filter our clublist to find one that matches the club id mentioned in comment
+
+                    if (clubMatches.length > 0) { // we have a match!
+                        shortList.push(clubMatches[0]); // shortlist the club info!
+                    }
+                } // if we have already added the club to the shortlist, don't do anything
+            });
+
+            console.log("Clubs mentioned for this property: "+JSON.stringify(shortList)); 
+            
+            //-- Set shortlist as official associated club list for this property
+            setPropertyClubList(shortList);
+        }
+    },[clubList]);
+
+    //-- Retrieve list of all clubs :>
     useEffect(()=>{
           const fetchClubs = async() => {
             const clubData = await Database('https://huskyrentlens.cs.mtu.edu/club.php',{
@@ -126,8 +163,7 @@ const PropertyInfo = () => {
                         });
                 
                         if (clubData != null) {
-                            console.log("Most voted clubs:");
-                            console.log(clubData.data.data);
+                            console.log("Most voted clubs:"+JSON.stringify(clubData.data.data)  );
                             setMostVotedClubs(clubData.data.data);
                         }
                     }
@@ -401,15 +437,54 @@ const PropertyInfo = () => {
             <div className='h-full p-5 flex flex-col'>
                 <div className='pb-5'>
                     <p className='text-2xl font-bold'>Reviews From Huskies</p>
+                    {/* Club Filter Selector */}
+                    <select name="clubOptionList" id="clubSelect" className='bg-gray-100'
+                        onChange={(e)=>{ // handle a custom community tag being created...
+                                if (e.target.value !== 'All') {
+                                    // Set comments to only those that have a community
+                                    setCommunity(e.target.value);
+                                } else {
+                                    // Display all comments regardless of associated community
+                                    setCommunity('All');
+                                }
+                            }}>
+                            <option value="All">--Please choose an option--</option>
+                            {/* Add options for all clubs associated with property */}
+                            {
+                                propertyCommunityList.map((clubInfo,i) => (
+                                    <Fragment>
+                                        <option key={i} value={clubInfo.cId}>{clubInfo.clubName}</option>
+                                    </Fragment>
+                                ))
+                            }
+                    </select>
                 </div>
 
                 <div className='grid grid-cols-1 2xl:grid-cols-[1fr_1fr] gap-5'>
-                    {propertyComments.length > 0 ? (
-                        propertyComments.map((thisComment, i) => (
-                            <Fragment key={i}>
-                                <CommentCard commentInfo={thisComment} cardKey={i} clubIndex={clubList} />
-                            </Fragment>
-                        ))
+                    {propertyComments.length > 0 ? (communityFilter === 'All' ?
+                        (
+                            propertyComments.map((thisComment, i) => (
+                                <Fragment key={i}>
+                                    <CommentCard
+                                        commentInfo={thisComment}
+                                        cardKey={i}
+                                        clubIndex={clubList}
+                                        rentalInfo={rentals} />
+                                </Fragment>
+                            ))
+                        ) :
+                        (
+                            propertyComments.filter(thisComment => thisComment.clubId == parseInt(communityFilter))
+                                .map((thisComment, i) => (
+                                <Fragment key={i}>
+                                    <CommentCard
+                                        commentInfo={thisComment}
+                                        cardKey={i}
+                                        clubIndex={clubList}
+                                        rentalInfo={rentals} />
+                                </Fragment>
+                            ))
+                        )
                     ) : (
                         <Fragment>
                             <div className="col-span-full w-full h-full rounded-2xl flex items-center justify-center text-xl text-gray-500 font-bold">
