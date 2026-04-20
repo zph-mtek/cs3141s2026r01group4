@@ -176,6 +176,8 @@ const onAddReviewPress = (userCommentId,propertyId, rentalId,reviewStars,comment
           rentalUtilityCost: utilitiesCost || 0,
           assocClubId: clubPickId
         };
+        
+        console.log(reqData);
 
         const feedbackData = await Database('https://huskyrentlens.cs.mtu.edu/feedback.php',reqData);
 
