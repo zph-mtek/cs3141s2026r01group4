@@ -19,3 +19,21 @@ export const deleteUser = async (data) => {
     });
     return response.data;
 };
+
+// all properites
+export const getAdminProperties = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_BASE_URL}/backend/getAdminProperties.php`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.data;
+};
+
+// delete comments
+export const deleteProperty = async (propertyId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_BASE_URL}/backend/deleteProperty.php`, { propertyId }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.data;
+};
