@@ -13,7 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once __DIR__ . '/collectSet.php';
+$bootstrapCandidates = [
+    __DIR__ . '/../../server_backend/collectSet.php',
+    __DIR__ . '/../server_backend/collectSet.php',
+    __DIR__ . '/collectSet.php'
+];
+
 require_once __DIR__ . '/../server_backend/vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
