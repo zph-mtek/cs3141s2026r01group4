@@ -26,16 +26,20 @@ const ManageUsers = () => {
     fetchUsers();
   }, []);
 
-  const handleRoleChange = async (userId, currentRole, newRole) => {
+const handleRoleChange = async (userId, currentRole, newRole) => {
+    alert(`関数が動きました！\n対象ID: ${userId}\n今の役職: ${currentRole}\n新しい役職: ${newRole}`);
+    
     try {
       const res = await updateUser({ userId, currentRole, newRole });
-      if (res.status === 'success') {
+      
+      if (res.status === 'success') { 
         alert("役職を変更しました");
         fetchUsers(); 
       } else {
         alert("変更に失敗しました: " + res.message);
       }
     } catch (error) {
+      alert("🚨 通信エラー発生！"); 
       console.error(error);
     }
   };
