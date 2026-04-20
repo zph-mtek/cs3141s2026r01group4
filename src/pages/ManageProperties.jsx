@@ -27,25 +27,24 @@ const ManageProperties = () => {
   }, []);
 
   const handleDeleteProperty = async (propertyId, propertyName) => {
-    if (!window.confirm(`「${propertyName}」を本当に削除しますか？\n⚠️この物件についている全てのコメントも同時に削除されます。元には戻せません。`)) {
+    if (!window.confirm(`「${propertyName}」delete this property?`)) {
       return;
     }
 
     try {
       const res = await deleteProperty(propertyId);
       if (res.status === 'success') {
-        alert("✅ 物件と関連コメントを削除しました。");
-        fetchProperties(); // 画面を更新して消す
+        alert("delete");
+        fetchProperties(); 
       } else {
-        alert("❌ 削除に失敗しました: " + res.message);
+        alert("failed to delete: " + res.message);
       }
     } catch (error) {
-      alert("🚨 通信エラーが発生しました");
+      alert("connection error");
       console.error(error);
     }
   };
 
-  // 検索フィルター
   const displayedProperties = properties.filter((property) => {
     if (!searchTerm) return true;
     return (property.name || '').toLowerCase().includes(searchTerm.toLowerCase());
@@ -90,7 +89,7 @@ const ManageProperties = () => {
               <div className='flex items-center gap-5 lg:w-1/2 w-full'>
                 <div className='h-24 w-32 shrink-0 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center'>
                   {property.imageUrl ? (
-                    <img src={property.imageUrl} alt={property.name} className='h-full w-full object-cover' />
+                    <img src={'https://huskyrentlens.cs.mtu.edu//' + property.imageUrl} />
                   ) : (
                     <span className='text-gray-400 text-xs font-bold'>No Image</span>
                   )}
