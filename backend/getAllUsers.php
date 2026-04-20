@@ -87,7 +87,11 @@ try {
     exit();
 }
 
-$sql = "SELECT userId AS id, firstName, lastName, email, role, isVerified, createdAt FROM huskyrentlens_users";
+$sql = "
+    SELECT userId AS id, firstName, lastName, email, role, is_verified AS isVerified, createdAt FROM huskyrentlens_users
+    UNION ALL
+    SELECT userId AS id, firstName, lastName, email, role, is_verified AS isVerified, createdAt FROM huskyrentlens_landlords
+";
 $result = $conn->query($sql);
 
 $users = [];
