@@ -24,13 +24,13 @@ const Admin = () => {
                 </div>
             </Link>
 
-                        {/* Reports section */}
+                        {/* Reports section
             <Link to={"/admin/reports"} className='w-150 border-2 rounded-2xl h-20 hover:bg-yellow-300 cursor-pointer'>
                 <div className='flex items-center h-full justify-center gap-3'>
                     <BsExclamationOctagon className='text-2xl'/>
                     <p className='text-2xl'>Reports</p>
                 </div>
-            </Link>
+            </Link> */}
         </div>
     </div>
   )
