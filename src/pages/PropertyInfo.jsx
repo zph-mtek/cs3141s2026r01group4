@@ -198,18 +198,18 @@ const PropertyInfo = () => {
     }, [propertyId,clubList]);
 
     useEffect(() => {
-        if (reviews.length > 0) {
+        if (propertyComments.length > 0) {
             let total = 0
-            reviews.forEach((review) => {
-                total += Number(review.rating)
+            propertyComments.forEach((commentInfo) => {
+                total += Number(commentInfo.stars)
             })
-            const average = (total / reviews.length).toFixed(1);
+            const average = (total / propertyComments.length).toFixed(1);
             setPropertyRating(average);
         }
         else {
             setPropertyRating('N/A');
         }
-    }, [reviews])
+    }, [propertyComments])
 
     useEffect(() => {
         const fetchData = async () => {
