@@ -63,13 +63,21 @@ if (!$token) {
 }
 
 try {
-    $secretKey = getenv('JWT_SECRET');
+    $envPath = __DIR__ . '/../../keys/.env';
+    if (!file_exists($envPath)) {
+        $envPath = __DIR__ . '/../keys/.env';
+    }
+    
+    $envData = parse_ini_file($envPath);
+    $secretKey = $envData['JWT_SECRET'] ?? '';
+
     if (!$secretKey) {
-        throw new Exception("Server configuration error");
+        throw new Exception("Secret key not found in .env");
     }
 
     $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
     if ($decoded->data->role !== 'admin') throw new Exception("Not admin");
+    
 } catch (Exception $e) {
     echo json_encode(["status" => "error", "message" => "Unauthorized: " . $e->getMessage()]);
     exit();
