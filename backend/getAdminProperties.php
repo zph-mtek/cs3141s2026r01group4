@@ -17,9 +17,6 @@ $bootstrapLoaded = false;
 foreach ($bootstrapCandidates as $candidate) {
     if (is_readable($candidate)) { require_once $candidate; $bootstrapLoaded = true; break; }
 }
-if (!$bootstrapLoaded || !isset($conn)) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]); exit();
-}
 
 $autoloadCandidates = [ __DIR__ . '/../../server_backend/vendor/autoload.php', __DIR__ . '/../server_backend/vendor/autoload.php' ];
 $autoloadLoaded = false;
@@ -45,11 +42,14 @@ try {
 }
 
 $sql = "
-    SELECT r.id, r.name, r.created_at AS listedAt, r.image_url AS imageUrl, 
-           COUNT(rev.id) AS commentCount 
-    FROM huskyrentlens_rentals r
-    LEFT JOIN huskyrentlens_reviews rev ON r.id = rev.rentalId
-    GROUP BY r.id
+    SELECT 
+        p.propertyId AS id, 
+        p.name, 
+        p.createdAt AS listedAt,
+        (SELECT imageUrl FROM huskyrentlens_property_image WHERE propertyId = p.propertyId LIMIT 1) AS imageUrl,
+        (SELECT COUNT(*) FROM huskyrentlens_comments WHERE propertyId = p.propertyId) AS commentCount
+    FROM huskyrentlens_property p
+    ORDER BY p.createdAt DESC
 ";
 $result = $conn->query($sql);
 

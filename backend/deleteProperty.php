@@ -46,15 +46,19 @@ if (!$propertyId) {
     echo json_encode(["status" => "error", "message" => "Missing propertyId"]); exit();
 }
 
-$stmt1 = $conn->prepare("DELETE FROM huskyrentlens_reviews WHERE rentalId = ?");
+$stmt1 = $conn->prepare("DELETE FROM huskyrentlens_comments WHERE propertyId = ?");
 $stmt1->bind_param("i", $propertyId);
 $stmt1->execute();
 
-$stmt2 = $conn->prepare("DELETE FROM huskyrentlens_rentals WHERE id = ?");
+$stmt2 = $conn->prepare("DELETE FROM huskyrentlens_property_image WHERE propertyId = ?");
 $stmt2->bind_param("i", $propertyId);
+$stmt2->execute();
 
-if ($stmt2->execute()) {
-    echo json_encode(["status" => "success", "message" => "Property and its comments deleted successfully"]);
+$stmt3 = $conn->prepare("DELETE FROM huskyrentlens_property WHERE propertyId = ?");
+$stmt3->bind_param("i", $propertyId);
+
+if ($stmt3->execute()) {
+    echo json_encode(["status" => "success", "message" => "Property, images, and comments deleted successfully"]);
 } else {
     echo json_encode(["status" => "error", "message" => "Failed to delete property"]);
 }
