@@ -194,7 +194,7 @@ const AddReview = () => {
                 <img
                   src={propertyInfo.images.split(",")[0].startsWith('http')
                     ? propertyInfo.images.split(",")[0]
-                    : `https://huskyrentlens.cs.mtu.edu/backend/uploads/${propertyInfo.images.split(",")[0]}`}
+                    : `https://huskyrentlens.cs.mtu.edu/backend/${propertyInfo.images.split(",")[0]}`}
                   className='w-full h-full object-cover'
                   alt="property"
                 />

@@ -16,15 +16,15 @@ const ManageComments = () => {
     try {
 
       const result = await getAdminComments(propertyId);
-      console.log("コメントAPIレスポンス:", result);
+      console.log("res:", result);
       
       if (result.status === 'success') {
         setComments(result.data || []);
       } else {
-        console.error("コメント取得エラー:", result.message);
+        console.error("error fetching comments:", result.message);
       }
     } catch (error) {
-      console.error("通信エラー:", error);
+      console.error("connection error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -35,20 +35,23 @@ const ManageComments = () => {
   }, [propertyId]); 
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("このコメントを本当に削除しますか？元には戻せません。")) {
+    if (!window.confirm("Delete this comment?")) {
       return;
     }
 
     try {
       const res = await deleteComment(commentId);
       if (res.status === 'success') {
-        alert("✅ コメントを削除しました");
+        alert("Deleted comment");
         fetchComments(); 
       } else {
-        alert("❌ 削除に失敗しました: " + res.message);
+        alert("Failed to delete comment: " + res.message);
       }
-    } catch (error) {
-      alert("🚨 通信エラーが発生しました");
+} catch (error) {
+      const errorMsg = error.response?.data?.message 
+                    || error.response?.statusText 
+                    || error.message;
+      alert(`connection error\nproblem: ${errorMsg}\nstatus: ${error.response?.status}`);
       console.error(error);
     }
   };
