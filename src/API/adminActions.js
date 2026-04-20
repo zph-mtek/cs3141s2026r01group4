@@ -37,3 +37,25 @@ export const deleteProperty = async (propertyId) => {
     });
     return response.data;
 };
+
+//delete commnets
+export const deleteComment = async (commentId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_BASE_URL}/backend/deleteComment.php`, { commentId }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.data;
+};
+
+//comments
+export const getAdminComments = async (propertyId = null) => {
+    const token = localStorage.getItem('token');
+    const url = propertyId 
+        ? `${API_BASE_URL}/backend/getAdminComments.php?propertyId=${propertyId}`
+        : `${API_BASE_URL}/backend/getAdminComments.php`;
+
+    const response = await axios.get(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.data;
+};
