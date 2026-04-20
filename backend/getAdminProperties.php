@@ -18,10 +18,20 @@ foreach ($bootstrapCandidates as $candidate) {
     if (is_readable($candidate)) { require_once $candidate; $bootstrapLoaded = true; break; }
 }
 
+if (!$bootstrapLoaded || !isset($conn)) {
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
+    exit();
+}
+
 $autoloadCandidates = [ __DIR__ . '/../../server_backend/vendor/autoload.php', __DIR__ . '/../server_backend/vendor/autoload.php' ];
 $autoloadLoaded = false;
 foreach ($autoloadCandidates as $candidate) {
     if (is_readable($candidate)) { require_once $candidate; $autoloadLoaded = true; break; }
+}
+
+if (!$autoloadLoaded) {
+    echo json_encode(["status" => "error", "message" => "JWT autoload not found"]);
+    exit();
 }
 
 use Firebase\JWT\JWT;
@@ -31,14 +41,18 @@ $headers = apache_request_headers();
 $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 $token = str_replace('Bearer ', '', $authHeader);
 
-if (!$token) { echo json_encode(["status" => "error", "message" => "No token provided"]); exit(); }
+if (!$token) {
+    echo json_encode(["status" => "error", "message" => "No token provided"]); 
+    exit();
+}
 
 try {
     $secretKey = getenv('JWT_SECRET');
     $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
     if ($decoded->data->role !== 'admin') throw new Exception("Not admin");
 } catch (Exception $e) {
-    echo json_encode(["status" => "error", "message" => "Unauthorized"]); exit();
+    echo json_encode(["status" => "error", "message" => "Unauthorized"]); 
+    exit();
 }
 
 $sql = "
@@ -51,13 +65,17 @@ $sql = "
     FROM huskyrentlens_property p
     ORDER BY p.createdAt DESC
 ";
+
 $result = $conn->query($sql);
 
+if (!$result) {
+    echo json_encode(["status" => "error", "message" => "SQL Error: " . $conn->error]);
+    exit();
+}
+
 $properties = [];
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $properties[] = $row;
-    }
+while ($row = $result->fetch_assoc()) {
+    $properties[] = $row;
 }
 
 echo json_encode(["status" => "success", "data" => $properties]);
