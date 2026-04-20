@@ -1,5 +1,4 @@
 <?php
-// backend/updateUser.php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -15,11 +14,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $bootstrapCandidates = [
     __DIR__ . '/../../server_backend/collectSet.php',
-    __DIR__ . '/../server_backend/collectSet.php',
-    __DIR__ . '/collectSet.php'
+    __DIR__ . '/../server_backend/collectSet.php'
 ];
 
-require_once __DIR__ . '/../server_backend/vendor/autoload.php';
+$bootstrapLoaded = false;
+foreach ($bootstrapCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $bootstrapLoaded = true;
+        break;
+    }
+}
+
+if (!$bootstrapLoaded || !isset($conn)) {
+    echo json_encode(["status" => "error", "message" => "Database bootstrap not found"]);
+    exit();
+}
+
+$autoloadCandidates = [
+    __DIR__ . '/../../server_backend/vendor/autoload.php',
+    __DIR__ . '/../server_backend/vendor/autoload.php'
+];
+
+$autoloadLoaded = false;
+foreach ($autoloadCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        require_once $candidate;
+        $autoloadLoaded = true;
+        break;
+    }
+}
+
+if (!$autoloadLoaded) {
+    echo json_encode(["status" => "error", "message" => "JWT autoload not found"]);
+    exit();
+}
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -27,13 +57,21 @@ $headers = apache_request_headers();
 $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 $token = str_replace('Bearer ', '', $authHeader);
 
+if (!$token) {
+    echo json_encode(["status" => "error", "message" => "No token provided"]);
+    exit();
+}
+
 try {
-    $envData = parse_ini_file(__DIR__ . '/../../keys/.env');
-    $decoded = JWT::decode($token, new Key($envData['JWT_SECRET'], 'HS256'));
+    $secretKey = getenv('JWT_SECRET');
+    if (!$secretKey) {
+        throw new Exception("Server configuration error");
+    }
+
+    $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
     if ($decoded->data->role !== 'admin') throw new Exception("Not admin");
 } catch (Exception $e) {
-    http_response_code(403);
-    echo json_encode(["status" => "error", "message" => "Unauthorized"]);
+    echo json_encode(["status" => "error", "message" => "Unauthorized: " . $e->getMessage()]);
     exit();
 }
 
@@ -50,16 +88,17 @@ if (!$userId) {
 
 $tableName = (strtolower($currentRole) === 'landlord') ? 'huskyrentlens_landlords' : 'huskyrentlens_users';
 
+$stmt = null;
 if ($newRole !== null) {
     $stmt = $conn->prepare("UPDATE {$tableName} SET role = ? WHERE userId = ?");
     $stmt->bind_param("si", $newRole, $userId);
 } else if ($isVerified !== null) {
-    $verifiedInt = ($isVerified === 'verified') ? 1 : 0;
+    $verifiedInt = ($isVerified === 'verified' || $isVerified === true || $isVerified === 1) ? 1 : 0;
     $stmt = $conn->prepare("UPDATE {$tableName} SET is_verified = ? WHERE userId = ?");
     $stmt->bind_param("ii", $verifiedInt, $userId);
 }
 
-if ($stmt->execute()) {
+if ($stmt && $stmt->execute()) {
     echo json_encode(["status" => "success", "message" => "User updated successfully"]);
 } else {
     echo json_encode(["status" => "error", "message" => "Failed to update user"]);
