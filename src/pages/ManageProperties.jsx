@@ -53,7 +53,7 @@ const ManageProperties = () => {
   return (
     <div className='max-w-6xl mx-auto p-6 md:p-10 flex flex-col gap-10'>
 
-      {/* ───── Search Bar Section ───── */}
+      {/*Search Bar Section*/}
       <div className='flex justify-center items-center w-full pt-10 gap-3 md:gap-5'>
         <Link to="/admin" className="flex items-center justify-center w-12 h-12 bg-white border-2 border-gray-200 rounded-full text-gray-500 hover:text-yellow-600 hover:border-yellow-400 hover:bg-yellow-50 transition-all shadow-sm shrink-0" title="Back to Admin Dashboard">
           <svg className="w-6 h-6 pr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
@@ -70,7 +70,7 @@ const ManageProperties = () => {
         </div>
       </div>
 
-      {/* ───── Card Section ───── */}
+      {/* Card Section*/}
       <div className='flex flex-col gap-4'>
         <div className='flex items-center justify-between border-b-2 border-gray-100 pb-3'>
           <h2 className='text-xl font-bold text-gray-800'>Manage Properties</h2>
@@ -120,7 +120,7 @@ const ManageProperties = () => {
                   )}
                 </Link>
 
-                {/* 🚨 Delete Button */}
+                {/* Delete Button */}
                 <button 
                   onClick={() => handleDeleteProperty(property.id, property.name)}
                   className='cursor-pointer w-full sm:w-auto flex items-center justify-center gap-2 bg-white border-2 border-red-100 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 font-bold py-2 px-5 rounded-xl transition-all duration-200 text-sm'

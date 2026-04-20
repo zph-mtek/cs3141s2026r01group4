@@ -86,7 +86,7 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
   return (
     <div className='max-w-6xl mx-auto p-6 md:p-10 flex flex-col gap-10'>
       
-      {/* ───── Search Bar Section ───── */}
+      {/* Search Bar Section*/}
       <div className='flex justify-center items-center w-full pt-10 gap-3 md:gap-5'>
         <Link to="/admin" className="flex items-center justify-center w-12 h-12 bg-white border-2 border-gray-200 rounded-full text-gray-500 hover:text-yellow-600 hover:border-yellow-400 hover:bg-yellow-50 transition-all shadow-sm shrink-0" title="Back to Admin Dashboard">
           <svg className="w-6 h-6 pr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
@@ -97,7 +97,7 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
         </div>
       </div>
 
-      {/* ───── User Card Section ───── */}
+      {/*User Card Section*/}
       <div className='flex flex-col gap-4'>
         <div className='flex items-center justify-between border-b-2 border-gray-100 pb-3'>
           <h2 className='text-xl font-bold text-gray-800'>Manage Users</h2>
@@ -126,7 +126,7 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
                 <p className='text-xs text-gray-400 mt-1'>Joined: {user.createdAt}</p>
               </div>
 
-              {/* 🚨 Role Dropdown */}
+              {/* Role Dropdown */}
               <div className='lg:w-1/6'>
                 <select 
                   defaultValue={user.role}
@@ -139,7 +139,6 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
                 >
                   <option value="MTU_student">Student</option>
                   <option value="admin">Admin</option>
-                  {/* 注: Student⇔Landlordの変更はテーブル移動が必要になるため、あえて外しておくか、DB設計に依存します */}
                   <option value="Landlord">Landlord</option>
                 </select>
               </div>
@@ -147,7 +146,7 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
               {/* Verification & Ban */}
               <div className='flex items-center gap-4 lg:w-auto w-full justify-between lg:justify-end mt-2 lg:mt-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-gray-100'>
                 
-                {/* 🚨 Verify Dropdown */}
+                {/*Verify Dropdown */}
                 <div className='flex items-center gap-2'>
                   <select 
                     defaultValue={user.isVerified == 1 || user.isVerified === true ? "verified" : "unverified"}
@@ -161,7 +160,7 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
                   </select>
                 </div>
 
-                {/* 🚨 Ban button */}
+                {/*Ban button */}
                 <button 
                   onClick={() => handleBanUser(user.id, user.role)}
                   className='bg-red-50 cursor-pointer text-red-600 hover:bg-red-500 hover:text-white font-bold py-2 px-5 rounded-xl transition-colors duration-200 text-sm'
