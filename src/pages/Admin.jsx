@@ -9,7 +9,7 @@ const Admin = () => {
     <div className='flex items-center justify-center h-100 mr-auto ml-auto pt-70'>
         <div className='flex flex-col gap-10'>
             {/* user section */}
-            <Link to={"/admin/manageuser"} className='w-150 border-2 rounded-2xl h-20 hover:bg-yellow-300 cursor-pointer'>
+            <Link to={"/admin/manageusers"} className='w-150 border-2 rounded-2xl h-20 hover:bg-yellow-300 cursor-pointer'>
                 <div className='flex items-center h-full justify-center gap-3'>
                     <FaRegUser className='text-2xl'/>
                     <p className='text-2xl'>Manage user</p>
