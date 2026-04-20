@@ -114,7 +114,7 @@ if ( ($propertyId === null || $propertyId === '')
 
 //-- We have been given a custom club name
 // Thanks @Claude!
-if (!is_int($pickedClubId)) { // we have been given an alphanumeric string instead of an integer for the club Id
+if (!is_numeric($pickedClubId)) { // we have been given an alphanumeric string instead of an integer for the club Id
     //-- Check if this club already exists
     $checkStmt = $conn->prepare("select cId from huskyrentlens_communityTags where clubName = ?");
     $checkStmt->bind_param("s", $pickedClubId);
