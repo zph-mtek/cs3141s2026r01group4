@@ -27,19 +27,19 @@ const ManageUsers = () => {
   }, []);
 
 const handleRoleChange = async (userId, currentRole, newRole) => {
-    alert(`関数が動きました！\n対象ID: ${userId}\n今の役職: ${currentRole}\n新しい役職: ${newRole}`);
+    alert(`ID: ${userId}\nprev role: ${currentRole}\nnew role: ${newRole}`);
     
     try {
       const res = await updateUser({ userId, currentRole, newRole });
       
       if (res.status === 'success') { 
-        alert("役職を変更しました");
+        alert("role changed");
         fetchUsers(); 
       } else {
-        alert("変更に失敗しました: " + res.message);
+        alert("failed to change role: " + res.message);
       }
     } catch (error) {
-      alert("🚨 通信エラー発生！"); 
+      alert("connection error"); 
       console.error(error);
     }
   };
@@ -50,7 +50,7 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
       if (res.status === 'success') {
         fetchUsers(); 
       } else {
-        alert("変更に失敗しました");
+        alert("failed to change");
       }
     } catch (error) {
       console.error(error);
@@ -58,17 +58,17 @@ const handleRoleChange = async (userId, currentRole, newRole) => {
   };
 
   const handleBanUser = async (userId, currentRole) => {
-    if (!window.confirm("本当にこのユーザーをBAN（削除）しますか？元には戻せません。")) {
+    if (!window.confirm("Ban this user?")) {
       return;
     }
     
     try {
       const res = await deleteUser({ userId, currentRole });
       if (res.status === 'success') {
-        alert("ユーザーをBANしました");
+        alert("User banned");
         fetchUsers();
       } else {
-        alert("BANに失敗しました");
+        alert("failed to ban user");
       }
     } catch (error) {
       console.error(error);
