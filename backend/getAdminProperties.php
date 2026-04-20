@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
 
@@ -16,6 +16,9 @@ $bootstrapCandidates = [ __DIR__ . '/../../server_backend/collectSet.php', __DIR
 $bootstrapLoaded = false;
 foreach ($bootstrapCandidates as $candidate) {
     if (is_readable($candidate)) { require_once $candidate; $bootstrapLoaded = true; break; }
+}
+if (!$bootstrapLoaded || !isset($conn)) {
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]); exit();
 }
 
 $autoloadCandidates = [ __DIR__ . '/../../server_backend/vendor/autoload.php', __DIR__ . '/../server_backend/vendor/autoload.php' ];
@@ -31,6 +34,8 @@ $headers = apache_request_headers();
 $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 $token = str_replace('Bearer ', '', $authHeader);
 
+if (!$token) { echo json_encode(["status" => "error", "message" => "No token provided"]); exit(); }
+
 try {
     $secretKey = getenv('JWT_SECRET');
     $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
@@ -39,23 +44,21 @@ try {
     echo json_encode(["status" => "error", "message" => "Unauthorized"]); exit();
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
-$propertyId = $data['propertyId'] ?? null;
+$sql = "
+    SELECT r.id, r.name, r.created_at AS listedAt, r.image_url AS imageUrl, 
+           COUNT(rev.id) AS commentCount 
+    FROM huskyrentlens_rentals r
+    LEFT JOIN huskyrentlens_reviews rev ON r.id = rev.rentalId
+    GROUP BY r.id
+";
+$result = $conn->query($sql);
 
-if (!$propertyId) {
-    echo json_encode(["status" => "error", "message" => "Missing propertyId"]); exit();
+$properties = [];
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $properties[] = $row;
+    }
 }
 
-$stmt1 = $conn->prepare("DELETE FROM huskyrentlens_reviews WHERE rentalId = ?");
-$stmt1->bind_param("i", $propertyId);
-$stmt1->execute();
-
-$stmt2 = $conn->prepare("DELETE FROM huskyrentlens_rentals WHERE id = ?");
-$stmt2->bind_param("i", $propertyId);
-
-if ($stmt2->execute()) {
-    echo json_encode(["status" => "success", "message" => "Property and its comments deleted successfully"]);
-} else {
-    echo json_encode(["status" => "error", "message" => "Failed to delete property"]);
-}
+echo json_encode(["status" => "success", "data" => $properties]);
 ?>
